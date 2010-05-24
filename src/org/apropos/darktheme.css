@@ -1,0 +1,16 @@
+Button {
+    fill: BLACK;
+    focusFill: DARKGRAY;
+    borderFill: BLACK;
+    textFill: WHITE;
+    shadowFill: BLACK;
+}
+
+ToggleButton {
+    fill: BLACK;
+    focusFill: DARKGRAY;
+    borderFill: BLACK;
+    textFill: WHITE;
+    shadowFill: BLACK;
+    fontSize: 14pt;
+}
