@@ -29,10 +29,10 @@ package org.apropos.ui;
 
 import org.apropos.model.RallyModel;
 import org.apropos.ui.AnalyzeModule;
-import org.apropos.ui.PlanModule;
+import org.apropos.ui.ScopeModule;
 import org.apropos.ui.PortfolioModule;
 import org.apropos.ui.RoadmapModule;
-import org.apropos.ui.TrackModule;
+import org.apropos.ui.ResourceModule;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -178,8 +178,8 @@ public class AproposUI extends XCustomNode {
     def modules = XMap {
         entries: [
             XMap.Entry {key: "Portfolio", value: PortfolioModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
-            XMap.Entry {key: "Scope", value: PlanModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
-            XMap.Entry {key: "Resource", value: TrackModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
+            XMap.Entry {key: "Scope", value: ScopeModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
+            XMap.Entry {key: "Resource", value: ResourceModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
             XMap.Entry {key: "Analyze", value: AnalyzeModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
             XMap.Entry {key: "Roadmap", value: RoadmapModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
         ]

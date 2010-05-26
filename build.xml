@@ -44,4 +44,24 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <property name="generated.dir" value="gen_src"/>
+    <property name="local.wsdl" value="rally.xml"/>
+
+    <target name="check-soapapi">
+        <mkdir dir="${generated.dir}"/>
+        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${local.wsdl}" />
+    </target>
+
+    <target name="generate-wsdl" depends="check-soapapi" unless="soapapi.uptodate">
+        <path id="axis.classpath">
+          <fileset dir="lib">
+            <include name="**/*.jar" />
+          </fileset>
+        </path>
+        <taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
+        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${local.wsdl}"/>
+        <touch file="${generated.dir}/uptodate.txt"/>
+    </target>
+
+    <target name="-pre-compile" depends="generate-wsdl"/>
 </project>

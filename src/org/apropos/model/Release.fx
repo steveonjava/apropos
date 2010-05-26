@@ -27,8 +27,8 @@
  */
 package org.apropos.model;
 
-import org.apropos.api.HierarchicalRequirement;
-import org.apropos.api.QueryResult;
+import com.rallydev.webservice.v1_17.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_17.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
@@ -37,6 +37,12 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  */
 public class Release extends StoryContainer {
+
+    public var release:com.rallydev.webservice.v1_17.domain.Release on replace {
+        if (release != null) {
+            name = release.getName();
+        }
+    }
 
     package var model = RallyModel.instance;
 
@@ -51,14 +57,14 @@ public class Release extends StoryContainer {
     }
 
     override function moveBefore(story:Story) {
-        story.releasePlan = containerBefore.name;
+        story.release = containerBefore as Release;
         delete story from stories;
         insert story into containerBefore.stories;
         containerBefore.rerank();
     }
 
     override function moveAfter(story:Story) {
-        story.releasePlan = containerAfter.name;
+        story.release = containerAfter as Release;
         delete story from stories;
         insert story into containerAfter.stories;
         containerAfter.rerank();
@@ -95,7 +101,7 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                model.rallyService.query(null, model.bcmProject, false, false, "HierarchicalRequirement", "(ReleasePlan = \"{name}\")", "Rank", true, start, 100);
+                model.rallyService.query(null, model.mainProject, false, false, "HierarchicalRequirement", "(Release = \"{release.getRef()}\")", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;

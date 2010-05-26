@@ -6,6 +6,7 @@
             <name>Apropos</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
+                <root id="src.gen_src.dir" name="Generated Web Service Source"/>
                 <root id="src.dir"/>
             </source-roots>
         </data>

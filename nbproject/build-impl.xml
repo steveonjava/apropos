@@ -151,7 +151,7 @@ is divided into following sections:
     <target depends="init,deps-jar,-pre-compile" name="-do-compile">
         <exec executable="${platform.fxhome}/bin/javafxpackager${binary.extension}" failonerror="true" logerror="true">
             <arg value="-src"/>
-            <arg value="${src.dir}"/>
+            <arg value="${src.gen_src.dir};${src.dir}"/>
             <arg value="-workdir"/>
             <arg file="${build.dir}"/>
             <arg value="-d"/>
@@ -256,7 +256,7 @@ is divided into following sections:
                 <path path="${javac.classpath}"/>
             </classpath>
             <sourcepath>
-                <path path="${src.dir}"/>
+                <path path="${src.gen_src.dir};${src.dir}"/>
             </sourcepath>
         </nbjpdastart>
     </target>
@@ -266,7 +266,7 @@ is divided into following sections:
                 <path path="${javac.classpath}"/>
             </classpath>
             <sourcepath>
-                <path path="${src.dir}"/>
+                <path path="${src.gen_src.dir};${src.dir}"/>
             </sourcepath>
         </nbjpdastart>
     </target>
@@ -348,6 +348,7 @@ is divided into following sections:
     <target depends="jar" name="-javadoc-build">
         <mkdir dir="${dist.javadoc.dir}"/>
         <javadoc author="${javadoc.author}" classpath="${javac.classpath}:${build.dir}/compiled" destdir="${dist.javadoc.dir}" encoding="${source.encoding}" executable="${platform.fxhome}/bin/javafxdoc${binary.extension}" failonerror="true" private="${javadoc.private}" useexternalfile="true" version="${javadoc.version}">
+            <fileset dir="${src.gen_src.dir}" includes="**/*.fx"/>
             <fileset dir="${src.dir}" includes="**/*.fx"/>
         </javadoc>
         <condition property="javadoc.available">

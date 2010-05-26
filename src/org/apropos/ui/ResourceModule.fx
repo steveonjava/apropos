@@ -51,7 +51,7 @@ import org.jfxtras.util.SequenceUtil;
 /**
  * @author Stephen Chin
  */
-public class TrackModule extends XCustomNode {
+public class ResourceModule extends XCustomNode {
         
     def model = bind RallyModel.instance;
 

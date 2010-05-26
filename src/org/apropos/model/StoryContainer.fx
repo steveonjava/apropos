@@ -32,7 +32,7 @@ package org.apropos.model;
  */
 public abstract class StoryContainer {
 
-    public-init var name:String;
+    public var name:String;
 
     public var stories:Story[];
 
@@ -45,4 +45,8 @@ public abstract class StoryContainer {
     public abstract function moveAfter(story:Story):Void;
 
     public abstract function rerank():Void;
+
+    override function toString() {
+        return name;
+    }
 }

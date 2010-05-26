@@ -33,6 +33,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
+import org.apropos.model.Release;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.layout.XLayoutInfo;
@@ -48,11 +49,11 @@ public class AnalyzeModule extends XCustomNode {
     def model = RallyModel.instance;
 
     def releasePicker:XPicker = XPicker {
-        items: bind model.releasePlans
+        items: bind model.releases
         onIndexChange: function(ind) {rebuildChart()}
     }
 
-    def release = bind model.releases[releasePicker.selectedIndex];
+    def release = bind releasePicker.selectedItem as Release;
 
     def names = bind release.packageNames;
 

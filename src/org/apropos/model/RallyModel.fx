@@ -27,11 +27,12 @@
  */
 package org.apropos.model;
 
+import com.rallydev.webservice.v1_17.domain.Project;
+import com.rallydev.webservice.v1_17.service.RallyService;
+import com.rallydev.webservice.v1_17.service.RallyServiceServiceLocator;
 import javafx.stage.Alert;
+import java.util.Calendar;
 import javafx.util.Math;
-import org.apropos.api.Project;
-import org.apropos.api.RallyService_PortType;
-import org.apropos.api.RallyServiceServiceLocator;
 import org.apache.axis.client.Stub;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.SequenceUtil;
@@ -48,8 +49,8 @@ public def buttonSkin = "fill: BLACK;"
     "textFill: WHITE;"
     "shadowFill: BLACK;";
 
-def GUEST_USER = "build@inovis.com";
-def GUEST_PASSWORD = "StephenIsCool";
+def GUEST_USER = "sjc@browsecode.org";
+def GUEST_PASSWORD = "AproposFX";
 
 public def instance = RallyModel {}
 
@@ -58,20 +59,19 @@ public class RallyModel extends XObject {
     public var loggedIn = false;
     public var approval = false;
     public var showInDollars = false;
-    public-init var releasePlans = ["2010 Q2", "2010 Q3", "2010 Q4", "2011 Q1"];
-    public-init var currentRelease = "2010 Q2";
+    public-init var currentRelease:Release;
     public-init var iterations = ["Sprint 2010-04-13", "Sprint 2010-04-27", "Sprint 2010-05-11", "Sprint 2010-05-25", "Sprint 2010-06-08", "Sprint 2010-06-22"];
     public-init var owners:String[] = ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com", "michael.hatton@inovis.com"];
     public-init var ownerNames:String[] = ["Michelle Covey", "Tom Aydelotte", "David Gouge", "Murray Brook", "Brian Huddleston", "Peter Corliss", "Jason Westigard", "Michael Hatton"];
     public-init var initialTargets = ["450", "390", "180", "960", "107", "420", "320", "0"];
-    public-init var stageNames = ["Proposed", "Backlogged", "Scheduled", "In Process", "Deployed", "Enabled", "Adopted", "Validated"];
+    public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
     public-init var themeNames = ["Investment - App/Service Upsell", "Investment - Cloud Platform", "Investment - MFT Go to Market", "Investment - Dell Success", "Investment - Global", "Maintenance", "Sales Directed"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
     public-init var estimateToActualRatio = 4.53;
     public-init var actualToCostRatio = 66.5;
-    public-read var rallyService:RallyService_PortType;
+    public-read var rallyService:RallyService;
     public var releases:Release[];
     public var stages:Stage[];
     public var packageNames:String[];
@@ -79,23 +79,37 @@ public class RallyModel extends XObject {
     public var selectedPackage:String = bind if (selectedPackageIndex == 0) null else {
         packageNames[selectedPackageIndex - 1];
     }
-    public-read var bcmProject:Project;
+    public-read var mainProject:Project;
     public var waiting = 0;
 
     public function doLogin():Void {
-        readOnly = login.userName == GUEST_USER;
-        createService();
-        releases = for (r in releasePlans) Release {name: r, model: this}
-        for (r in releases) {
-            r.containerBefore = releases[indexof r - 1];
-            r.containerAfter = releases[indexof r + 1];
+        try {
+            readOnly = login.userName == GUEST_USER;
+            createService();
+            def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
+            releases = [
+                Release {name: "Backlog", model: this}
+                for (r in rallyReleases) Release {release: r as com.rallydev.webservice.v1_17.domain.Release, model: this}
+            ];
+            def now = Calendar.getInstance();
+            for (r in releases) {
+                if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
+                r.containerBefore = releases[indexof r - 1];
+                r.containerAfter = releases[indexof r + 1];
+            }
+            stages = for (stageName in stageNames) Stage {name: stageName}
+            for (s in stages) {
+                s.containerBefore = stages[indexof s - 1];
+                s.containerAfter = stages[indexof s + 1];
+            }
+            loggedIn = true;
+        } catch (e) {
+            e.printStackTrace();
         }
-        stages = for (stageName in stageNames) Stage {name: stageName}
-        for (s in stages) {
-            s.containerBefore = stages[indexof s - 1];
-            s.containerAfter = stages[indexof s + 1];
-        }
-        loggedIn = true;
+    }
+
+    public function getRelease(ref:String) {
+        return releases[r|r.release.getRef() == ref][0];
     }
 
     public bound function limitByCount(stageIndex:Integer):Boolean {
@@ -151,7 +165,8 @@ public class RallyModel extends XObject {
         stub.setPassword(login.password);
 
         stub.setMaintainSession(true);
-        bcmProject = rallyService.query(null, "Project", "(Name = \"Business Community Management\")", null, true, 0, 100).getResults()[0] as Project;
+        // todo - need to create a project selector dialog
+        mainProject = rallyService.query(null, "Project", null, null, true, 0, 100).getResults()[0] as Project;
     }
 
     public bound function convertEstimate(estimate:Double):String {

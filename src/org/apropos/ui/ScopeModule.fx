@@ -39,7 +39,7 @@ import org.jfxtras.scene.layout.XGridLayoutInfo.*;
 /**
  * @author Stephen Chin
  */
-public class PlanModule extends XCustomNode {
+public class ScopeModule extends XCustomNode {
     def model = RallyModel.instance;
     package var storyViews:StoryView[] = for (release in model.releases) StoryView {
         storyViews: bind storyViews;

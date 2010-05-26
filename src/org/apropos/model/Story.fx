@@ -30,8 +30,8 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import javafx.util.Math;
-import org.apropos.api.HierarchicalRequirement;
-import org.apropos.api.QueryResult;
+import com.rallydev.webservice.v1_17.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_17.domain.QueryResult;
 import org.apropos.model.RallyModel;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.lang.XObject;
@@ -60,9 +60,9 @@ public class Story extends XObject, Comparable {
             update();
         }
     }
-    public var releasePlan:String on replace {
+    public var release:Release on replace {
         if (initialized) {
-            hierarchicalRequirement.setReleasePlan(releasePlan);
+            hierarchicalRequirement.setRelease(release.release);
             update();
         }
     }
@@ -97,7 +97,7 @@ public class Story extends XObject, Comparable {
 
     function reapply():Void {
         // todo - find a cleaner way to do this
-        hierarchicalRequirement.setReleasePlan(releasePlan);
+        hierarchicalRequirement.setRelease(release.release);
         hierarchicalRequirement.setStage(stage);
         var rank3 = Math.floor(rank * 1000) / 1000;
         hierarchicalRequirement.setRank(rank3);
@@ -214,7 +214,7 @@ public class Story extends XObject, Comparable {
         description = hierarchicalRequirement.getDescription();
         textDescription = removeTags(description);
         parentName = hierarchicalRequirement.getParent().getRefObjectName();
-        releasePlan = hierarchicalRequirement.getReleasePlan();
+        release = model.getRelease(hierarchicalRequirement.getRelease().getRef());
         rank = if (hierarchicalRequirement.getRank() == null) 0 else hierarchicalRequirement.getRank();
         owner = hierarchicalRequirement.getOwner();
         inPackage = hierarchicalRequirement.get_package();
@@ -223,19 +223,19 @@ public class Story extends XObject, Comparable {
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
         stage = hierarchicalRequirement.getStage();
         if (stage == "") {
-            stage = "Proposed";
+            stage = "Propose";
         }
-        if (stage == "Proposed" and sizeof model.releasePlans[r|r == releasePlan] > 0) {
-            stage = "Backlogged";
+        if (stage == "Propose" and sizeof model.releases[1..][r|r == release] > 0) {
+            stage = "Backlog";
         }
-        if ((stage == "Proposed" or stage == "Backlogged") and releasePlan == model.currentRelease) {
-            stage = "Scheduled";
+        if ((stage == "Propose" or stage == "Backlog") and release == model.currentRelease) {
+            stage = "Schedule";
         }
-        if (stage == "Scheduled" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
-            stage = "In Process";
+        if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
+            stage = "Develop";
         }
-        if ((stage == "In Process" or stage == "Scheduled") and hierarchicalRequirement.getScheduleState() == "Accepted") {
-            stage = "Deployed";
+        if ((stage == "Develop" or stage == "Schedule") and hierarchicalRequirement.getScheduleState() == "Accepted") {
+            stage = "Deploy";
         }
         def children = hierarchicalRequirement.getChildren();
         if (children == null or children.length == 0) {
