@@ -3,3 +3,4 @@ syntax: glob
 dist/**
 build/**
 nbproject/private/**
+gen_src/**
