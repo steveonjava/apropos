@@ -43,11 +43,9 @@ import org.jfxtras.util.SequenceUtil;
  */
 public var readOnly:Boolean;
 
-public def buttonSkin = "fill: BLACK;"
-    "focusFill: DARKGRAY;"
-    "borderFill: BLACK;"
-    "textFill: WHITE;"
-    "shadowFill: BLACK;";
+public def buttonSkin = "-fx-color: BLACK;"
+    "-fx-focus-color: white;"
+    "-fx-background: black;";
 
 def GUEST_USER = "sjc@browsecode.org";
 def GUEST_PASSWORD = "AproposFX";
@@ -55,15 +53,16 @@ def GUEST_PASSWORD = "AproposFX";
 public def instance = RallyModel {}
 
 public class RallyModel extends XObject {
+    var warned = false;
     public var login = Login {userName: GUEST_USER, password: GUEST_PASSWORD};
     public var loggedIn = false;
     public var approval = false;
     public var showInDollars = false;
     public-init var currentRelease:Release;
     public-init var iterations = ["Sprint 2010-04-13", "Sprint 2010-04-27", "Sprint 2010-05-11", "Sprint 2010-05-25", "Sprint 2010-06-08", "Sprint 2010-06-22"];
-    public-init var owners:String[] = ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com", "michael.hatton@inovis.com"];
-    public-init var ownerNames:String[] = ["Michelle Covey", "Tom Aydelotte", "David Gouge", "Murray Brook", "Brian Huddleston", "Peter Corliss", "Jason Westigard", "Michael Hatton"];
-    public-init var initialTargets = ["450", "390", "180", "960", "107", "420", "320", "0"];
+    public-init var owners:String[] = ["vaan@finalfantasyxii.com", "ashe@finalfantasyxii.com", "basch@finalfantasyxii.com", "penelofinalfantasyxii.com", "balthier@finalfantasyxii.com", "fran@finalfantasyxii.com", "larsa@finalfantasyxii.com", "vossler@finalfantasyxii.com", "reddas@finalfantasyxii.com"];
+    public-init var ownerNames:String[] = ["Vaan", "Ashelia B'nargin Dalmasca", "Basche fon Ronsenburg", "Penelo", "Balthier", "Fran", "Larsa Ferrinas Solidor", "Vossler York Azelas", "Reddas"];
+    public-init var initialTargets = ["450", "390", "180", "960", "107", "420", "320", "93"];
     public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
     public-init var themeNames = ["Investment - App/Service Upsell", "Investment - Cloud Platform", "Investment - MFT Go to Market", "Investment - Dell Success", "Investment - Global", "Maintenance", "Sales Directed"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
@@ -72,6 +71,7 @@ public class RallyModel extends XObject {
     public-init var estimateToActualRatio = 4.53;
     public-init var actualToCostRatio = 66.5;
     public-read var rallyService:RallyService;
+    public var backlog:Backlog;
     public var releases:Release[];
     public var stages:Stage[];
     public var packageNames:String[];
@@ -87,16 +87,16 @@ public class RallyModel extends XObject {
             readOnly = login.userName == GUEST_USER;
             createService();
             def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
-            releases = [
-                Release {name: "Backlog", model: this}
-                for (r in rallyReleases) Release {release: r as com.rallydev.webservice.v1_17.domain.Release, model: this}
-            ];
+            backlog = Backlog {model: this}
+            releases = for (r in rallyReleases) Release {release: r as com.rallydev.webservice.v1_17.domain.Release, model: this}
             def now = Calendar.getInstance();
             for (r in releases) {
                 if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
                 r.containerBefore = releases[indexof r - 1];
                 r.containerAfter = releases[indexof r + 1];
             }
+            backlog.containerAfter = releases[0];
+            releases[0].containerBefore = backlog;
             stages = for (stageName in stageNames) Stage {name: stageName}
             for (s in stages) {
                 s.containerBefore = stages[indexof s - 1];
@@ -146,15 +146,26 @@ public class RallyModel extends XObject {
     }
 
     public function requestAccess():Boolean {
-        if (readOnly) {
+        if (readOnly and not warned) {
             Alert.inform("View is read only.  Changes you make will not be saved!");
+            warned = true;
         }
         return not readOnly;
     }
 
     public function refresh():Void {
         for (stage in stages) stage.stories = null;
-        for (r in releases) r.refresh();
+        for (r in [backlog, releases]) r.refresh();
+    }
+
+    public function findStage(stageName:String):Stage {
+        if (stageName == null) return null;
+        for (stage in stages) {
+            if (stage.name.equalsIgnoreCase(stageName)) {
+                return stage;
+            }
+        }
+        return null;
     }
 
     function createService():Void {

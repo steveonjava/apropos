@@ -63,11 +63,6 @@ public class AnalyzeModule extends XCustomNode {
         }
     }
 
-    def investmentPicker:XPicker = XPicker {
-        items: ["All", "Total Investment Allocation", "Strategic Investment Allocation"]
-        onIndexChange: function(ind) {rebuildChart()}
-    }
-
     var chart:PieChart on replace {
         poke(chart, 1000);
     }
@@ -84,38 +79,20 @@ public class AnalyzeModule extends XCustomNode {
     }
 
     function rebuildChart():Void {
-        def data = if (investmentPicker.selectedIndex == 0) {
-            for (name in release.packageNames) {
-                PieChart.Data {
-                    label: name
-                    value: release.getPackageTotals(name)
-                }
-            }
-        } else if (investmentPicker.selectedIndex == 1) {
-            [
-                for (name in release.packageNames where not name.contains("Investment")) {
-                    PieChart.Data {
-                        label: name
-                        value: release.getPackageTotals(name)
-                    }
-                }
-                PieChart.Data {
-                    label: "Strategic Investment"
-                    value: SequenceUtil.sum(for (name in release.packageNames where name.contains("Investment")) release.getPackageTotals(name))
-                }
-            ]
-        } else {
-            for (name in release.packageNames where name.contains("Investment")) {
-                PieChart.Data {
-                    label: name
-                    value: release.getPackageTotals(name)
-                }
+        def data = for (name in release.packageNames) {
+            PieChart.Data {
+                label: name
+                value: release.getPackageTotals(name)
             }
         }
         chart = PieChart {
+            titleFill: Color.WHITE
+            titleFont: Font.font(null, 24)
+            title: bind "Investment Allocation for {releasePicker.selectedItem}"
             pieLabelFill: Color.WHITE
             data: data
-            layoutInfo: XLayoutInfo {hgrow: ALWAYS, vgrow: ALWAYS, hfill: true, vfill: true}
+            legendVisible: true
+            layoutInfo: XLayoutInfo {hgrow: ALWAYS, vgrow: ALWAYS, vfill: true, hfill: true}
         }
     }
     
@@ -127,25 +104,13 @@ public class AnalyzeModule extends XCustomNode {
                 textFill: Color.WHITE
             }
             releasePicker,
-            Label {
-                text: "Investment Filter:"
-                textFill: Color.WHITE
-            }
-            investmentPicker
         ]
     }
 
-    def title = Text {
-        font: Font.font(null, 24)
-        fill: Color.WHITE
-        content: bind investmentPicker.selectedItem as String
-        layoutInfo: XLayoutInfo {hpos: CENTER}
-    }
-    
     override function create() {
         XVBox {
             spacing: 10
-            content: bind [pickers, title, chart]
+            content: bind [pickers, chart]
         }
     }
 

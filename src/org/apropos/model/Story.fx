@@ -54,14 +54,21 @@ public class Story extends XObject, Comparable {
     public var description:String;
     public var textDescription:String;
     public var parentName:String;
-    public var stage:String on replace {
+    public var stage:String on replace oldStage=newStage {
         if (initialized) {
             hierarchicalRequirement.setStage(stage);
             update();
         }
+        model.findStage(oldStage).removeStory(this);
+        model.findStage(newStage).addStory(this);
     }
     public var release:Release on replace {
         if (initialized) {
+            if (release.release == null and stage == "Schedule") {
+                stage = "Backlog"
+            } else if (stage == "Propose" or stage == "Backlog" and release.release != null) {
+                stage = "Schedule"
+            }
             hierarchicalRequirement.setRelease(release.release);
             update();
         }
@@ -92,7 +99,7 @@ public class Story extends XObject, Comparable {
     public var overflow:String;
 
     public function browse():Void {
-        BrowserUtil.browse("https://rally1.rallydev.com/slm/detail/ar/{hierarchicalRequirement.getObjectID()}");
+        BrowserUtil.browse("https://community.rallydev.com/slm/detail/ar/{hierarchicalRequirement.getObjectID()}");
     }
 
     function reapply():Void {
@@ -222,13 +229,10 @@ public class Story extends XObject, Comparable {
         var desc = description.toLowerCase();
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
         stage = hierarchicalRequirement.getStage();
-        if (stage == "") {
+        if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
             stage = "Propose";
         }
-        if (stage == "Propose" and sizeof model.releases[1..][r|r == release] > 0) {
-            stage = "Backlog";
-        }
-        if ((stage == "Propose" or stage == "Backlog") and release == model.currentRelease) {
+        if ((stage == "Propose" or stage == "Backlog") and hierarchicalRequirement.getRelease() != null) {
             stage = "Schedule";
         }
         if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {

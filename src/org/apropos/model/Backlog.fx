@@ -30,25 +30,10 @@ package org.apropos.model;
 /**
  * @author Stephen Chin
  */
-public abstract class StoryContainer {
+public class Backlog extends Release {
+    override var name = "Backlog";
 
-    public var name:String;
-
-    public var stories:Story[];
-
-    public bound function getVisibleStories() {stories}
-
-    public var containerBefore:StoryContainer;
-
-    public var containerAfter:StoryContainer;
-
-    public abstract function moveBefore(story:Story):Void;
-
-    public abstract function moveAfter(story:Story):Void;
-
-    public abstract function rerank():Void;
-
-    override function toString() {
-        return name;
+    override bound function getVisibleStories() {
+        return stories[s|s.stage == "Backlog"];
     }
 }

@@ -51,6 +51,7 @@ public class PortfolioModule extends XCustomNode {
             hgap: 10
             rows: bind [
                 row(XHBox {
+                    spacing: 8
                     content: [
                         Label {
                             text: "Investment Filter:"

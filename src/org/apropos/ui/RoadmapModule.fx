@@ -37,6 +37,7 @@ import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.XTableView;
 import org.jfxtras.scene.control.renderer.RowNumberRenderer;
 import org.jfxtras.scene.control.renderer.TextRenderer;
+import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
 
 /**
@@ -48,11 +49,9 @@ public class RoadmapModule extends XCustomNode {
 
     var table:XTableView;
 
-    def firstRelease = bind model.releases[0];
+    var stories:Story[] = bind model.currentRelease.stories;
 
-    var stories:Story[] = bind firstRelease.stories;
-
-    var filteredStories = bind firstRelease.stories[s|model.selectedPackage == null or s.inPackage == model.selectedPackage];
+    var filteredStories = bind model.currentRelease.stories[s|model.selectedPackage == null or s.inPackage == model.selectedPackage];
 
     var picker:XPicker = XPicker {
         items: bind ["All", model.packageNames]
@@ -70,11 +69,16 @@ public class RoadmapModule extends XCustomNode {
         XVBox {
             spacing: 10
             content: [
-                Label {
-                    text: "Investment Filter:"
-                    textFill: Color.WHITE
+                XHBox {
+                    spacing: 8
+                    content: [
+                        Label {
+                            text: "Investment Filter:"
+                            textFill: Color.WHITE
+                        }
+                        picker
+                    ]
                 }
-                picker,
                 table = XTableView {
                     rowType: Story {}.getJFXClass()
                     rows: bind filteredStories

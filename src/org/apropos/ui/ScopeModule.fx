@@ -41,7 +41,7 @@ import org.jfxtras.scene.layout.XGridLayoutInfo.*;
  */
 public class ScopeModule extends XCustomNode {
     def model = RallyModel.instance;
-    package var storyViews:StoryView[] = for (release in model.releases) StoryView {
+    package var storyViews:StoryView[] = for (release in [model.backlog, model.releases]) StoryView {
         storyViews: bind storyViews;
         storyContainer: release
     }
@@ -64,6 +64,7 @@ public class ScopeModule extends XCustomNode {
             hgap: 10
             rows: bind [
                 row(XHBox {
+                    spacing: 8
                     content: [
                         Label {
                             text: "Investment Filter:"

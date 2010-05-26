@@ -69,7 +69,7 @@ public class StoryView extends XCustomNode {
 
     public-init var storyContainer:StoryContainer;
 
-    public-read var filteredStories = bind storyContainer.stories[s|model.selectedPackage == null or s.inPackage == model.selectedPackage];
+    public-read var filteredStories = bind storyContainer.getVisibleStories()[s|model.selectedPackage == null or s.inPackage == model.selectedPackage];
 
     var filteredCount = bind sizeof filteredStories;
 
@@ -327,14 +327,17 @@ public class StoryView extends XCustomNode {
                         Text {
                             content: bind "Count: {filteredCount}"
                             fill: bind if (not limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                            layoutInfo: XLayoutInfo {hpos: LEFT}
                         }
                         Text {
                             content: bind "Total: {model.convertEstimate(filteredSum)}"
                             fill: bind if (limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                            layoutInfo: XLayoutInfo {hpos: LEFT}
                         }
                         Text {
                             content: bind if (limitByCount) "Limit: {%.0f totalLimit}" else "Limit: {model.convertEstimate(totalLimit)}"
                             fill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                            layoutInfo: XLayoutInfo {hpos: LEFT}
                         }
                     ]
                     layoutInfo: XLayoutInfo {hpos: LEFT}

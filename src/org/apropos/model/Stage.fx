@@ -36,19 +36,23 @@ public class Stage extends StoryContainer {
 
     override function moveBefore(story:Story) {
         story.stage = containerBefore.name;
-        delete story from stories;
-        insert story into containerBefore.stories;
-        containerBefore.rerank();
     }
 
     override function moveAfter(story:Story) {
         story.stage = containerAfter.name;
-        delete story from stories;
-        insert story into containerAfter.stories;
-        containerAfter.rerank();
     }
 
     override function rerank() {
         stories = Sequences.sort(stories) as Story[];
     }
+
+    public function addStory(story:Story) {
+        insert story into stories;
+        rerank();
+    }
+
+    public function removeStory(story:Story) {
+        delete story from stories;
+    }
+
 }

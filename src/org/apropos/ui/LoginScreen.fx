@@ -67,6 +67,7 @@ public class LoginScreen extends XCustomNode {
                         content: [
                             XForm {
                                 model: model.login
+                                layoutInfo: LayoutInfo {width: 250, height: 60}
                             }
                             Button {
                                 text: "Sign In"

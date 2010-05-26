@@ -128,18 +128,6 @@ public class Release extends StoryContainer {
                     if (results.length == 100) {
                         loadStories(start + 100);
                     }
-                    for (story in newStories) {
-                        var inserted = false;
-                        for (stageName in model.stageNames) {
-                            if (story.stage.equalsIgnoreCase(stageName)) {
-                                insert story into model.stages[indexof stageName].stories;
-                                inserted = true;
-                            }
-                        }
-                        if (not inserted) {
-                            println("Unknown stage \"{story.stage}\" for story \"{story.name}\"");
-                        }
-                    }
                     fixRanks();
                 }
             }

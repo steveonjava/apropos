@@ -122,11 +122,9 @@ public class AproposUI extends XCustomNode {
     }
 
     def toggleGroup = ToggleGroup {}
-    def darkTBStyle = "fill: BLACK;"
-        "focusFill: DARKGRAY;"
-        "borderFill: BLACK;"
-        "textFill: WHITE;"
-        "shadowFill: BLACK;"
+    def darkTBStyle = "-fx-color: BLACK;"
+        "-fx-background: black;"
+        "-fx-focus-color: white;"
         "fontSize: 14pt;";
 
     def buttonBar = XStack {

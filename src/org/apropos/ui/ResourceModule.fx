@@ -55,9 +55,7 @@ public class ResourceModule extends XCustomNode {
         
     def model = bind RallyModel.instance;
 
-    def firstRelease = model.releases[0];
-
-    var stories:Story[] = bind firstRelease.stories on replace {
+    var stories:Story[] = bind model.currentRelease.stories on replace {
         updateFiltered();
     }
 
@@ -66,12 +64,10 @@ public class ResourceModule extends XCustomNode {
     }
 
     function updateFiltered() {
-        filteredStories = firstRelease.stories[s|selectedPackage == null or s.inPackage == selectedPackage];
+        filteredStories = model.currentRelease.stories[s|selectedPackage == null or s.inPackage == selectedPackage];
     }
 
     var filteredStories:Story[];
-
-    var table:XTableView;
 
     var ownerTotals:Double[];
 
@@ -99,152 +95,159 @@ public class ResourceModule extends XCustomNode {
         }
     }
 
-    override function create() {
-        XHBox {
-            spacing: 20
-            content: [
-                XVBox {
-                    spacing: 10
-                    content: [
-                        Label {
-                            text: "Investment Filter:"
-                            textFill: Color.WHITE
-                        }
-                        XHBox {
-                            spacing: 8
-                            content: [
-                                picker,
-                                Button {
-                                    text: "Auto Draft"
-                                    style: RallyModel.buttonSkin
-                                    action: function() {
-                                        for (story in stories) {
-                                            story.drafted = true;
-                                            calculateOwnerTotals();
-                                            filteredStories = null;
-                                            updateFiltered();
-                                        }
-                                        model.approval = true;
-                                    }
-                                }
-                                Button {
-                                    text: "Clear"
-                                    style: RallyModel.buttonSkin
-                                    action: function() {
-                                        for (story in stories) {
-                                            story.drafted = false;
-                                            calculateOwnerTotals();
-                                            filteredStories = null;
-                                            updateFiltered();
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                        table = XTableView {
-                            rowType: Story {}.getJFXClass()
-                            rows: bind filteredStories
-                            rowHeight: 50
-                            onMouseClicked: function(e) {
-                                if (e.clickCount == 2) {
-                                    filteredStories[table.selectedRow].browse();
-                                }
-                            }
-                            columns: [
-                                XTableColumn {
-                                    displayName: "#"
-                                    prefWidth: 20
-                                    id: "rank"
-                                    renderer: RowNumberRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "ID"
-                                    prefWidth: 20
-                                    id: "id"
-                                    renderer: TextRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "Epic Name"
-                                    prefWidth: 80
-                                    id: "parentName"
-                                    renderer: TextRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "Feature Name"
-                                    prefWidth: 100
-                                    id: "name"
-                                    renderer: TextRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "Owner"
-                                    prefWidth: 100
-                                    id: "owner"
-                                    renderer: TextRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "Est"
-                                    prefWidth: 40
-                                    id: "estimateDisplay"
-                                    renderer: TextRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "AT"
-                                    prefWidth: 40
-                                    id: "acceptanceTest"
-                                    renderer: TextRenderer {}
-                                }
-                                XTableColumn {
-                                    displayName: "Drafted"
-                                    prefWidth: 40
-                                    id: "drafted"
-                                    renderer: TextRenderer {}
-                                }
-                            ]
-                        }
-                    ]
-                }
-                XGrid {
-                    hgap: 10
-                    vgap: 20
-                    rows: for (owner in model.owners) {
-                        var target:String = model.initialTargets[indexof owner];
-                        row([
-                            Text {
-                                content: model.ownerNames[indexof owner]
-                                fill: Color.WHITE
-                                font: Font.font(null, 18);
-                            }
-                            Button {
-                                text: "Draft"
-                                style: RallyModel.buttonSkin
-                                action: function() {
-                                    def story = filteredStories[table.selectedRow];
-                                    if (story.owner != owner) {
-                                        story.owner = owner;
-                                    }
-                                    story.drafted = true;
-                                    calculateOwnerTotals();
-                                    filteredStories = null;
-                                    updateFiltered();
-                                    model.approval = true;
-                                }
-                            }
-                            Text {
-                                content: bind "Total: {ownerTotals[indexof owner]}"
-                                fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.WHITE
-                                font: Font.font(null, 18);
-                            }
-                            Text {
-                                content: bind "Target:"
-                                fill: Color.WHITE
-                                font: Font.font(null, 18);
-                            }
-                            TextBox {
-                                text: bind target with inverse;
-                                font: Font.font(null, 18);
-                            }
-                        ])
+    def filters = XHBox {
+        spacing: 8
+        content: [
+            Label {
+                text: "Investment Filter:"
+                textFill: Color.WHITE
+            }
+            picker,
+            Button {
+                text: "Auto Draft"
+                style: RallyModel.buttonSkin
+                action: function() {
+                    for (story in stories) {
+                        story.drafted = true;
+                        calculateOwnerTotals();
+                        filteredStories = null;
+                        updateFiltered();
                     }
+                    model.approval = true;
+                }
+            }
+            Button {
+                text: "Clear"
+                style: RallyModel.buttonSkin
+                action: function() {
+                    for (story in stories) {
+                        story.drafted = false;
+                        calculateOwnerTotals();
+                        filteredStories = null;
+                        updateFiltered();
+                    }
+                }
+            }
+        ]
+    }
+
+
+    def owners = XGrid {
+        hgap: 10
+        vgap: 20
+        rows: for (owner in model.owners) {
+            var target:String = model.initialTargets[indexof owner];
+            row([
+                Text {
+                    content: model.ownerNames[indexof owner]
+                    fill: Color.WHITE
+                    font: Font.font(null, 18);
+                }
+                Button {
+                    text: "Draft"
+                    style: RallyModel.buttonSkin
+                    action: function() {
+                        def story = filteredStories[table.selectedRow];
+                        if (story.owner != owner) {
+                            story.owner = owner;
+                        }
+                        story.drafted = true;
+                        calculateOwnerTotals();
+                        filteredStories = null;
+                        updateFiltered();
+                        model.approval = true;
+                    }
+                }
+                Text {
+                    content: bind "Total: {ownerTotals[indexof owner]}"
+                    fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.WHITE
+                    font: Font.font(null, 18);
+                }
+                Text {
+                    content: bind "Target:"
+                    fill: Color.WHITE
+                    font: Font.font(null, 18);
+                }
+                TextBox {
+                    text: bind target with inverse;
+                    font: Font.font(null, 18);
+                }
+            ])
+        }
+    }
+
+    def table:XTableView = XTableView {
+        rowType: Story {}.getJFXClass()
+        rows: bind filteredStories
+        rowHeight: 50
+        onMouseClicked: function(e) {
+            if (e.clickCount == 2) {
+                filteredStories[table.selectedRow].browse();
+            }
+        }
+        columns: [
+            XTableColumn {
+                displayName: "#"
+                prefWidth: 20
+                id: "rank"
+                renderer: RowNumberRenderer {}
+            }
+            XTableColumn {
+                displayName: "ID"
+                prefWidth: 20
+                id: "id"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Epic Name"
+                prefWidth: 80
+                id: "parentName"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Feature Name"
+                prefWidth: 100
+                id: "name"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Owner"
+                prefWidth: 100
+                id: "owner"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Est"
+                prefWidth: 40
+                id: "estimateDisplay"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "AT"
+                prefWidth: 40
+                id: "acceptanceTest"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Drafted"
+                prefWidth: 40
+                id: "drafted"
+                renderer: TextRenderer {}
+            }
+        ]
+    }
+
+    override function create() {
+        XVBox {
+            spacing: 10
+            content: [
+                filters,
+                XHBox {
+                    spacing: 20
+                    content: [
+                        table,
+                        owners
+                    ]
                 }
             ]
         }
