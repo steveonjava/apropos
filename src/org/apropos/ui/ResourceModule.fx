@@ -47,6 +47,8 @@ import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.scene.paint.ColorUtil;
 import org.jfxtras.util.SequenceUtil;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * @author Stephen Chin
@@ -73,7 +75,7 @@ public class ResourceModule extends XCustomNode {
 
     function calculateOwnerTotals() {
         ownerTotals = for (owner in model.owners) {
-            SequenceUtil.sum(for (story in stories where story.owner == owner and story.drafted) story.estimate)
+            SequenceUtil.sum(for (story in stories where story.owner == owner.getLoginName() and story.drafted) story.estimate)
         }
     }
 
@@ -113,7 +115,6 @@ public class ResourceModule extends XCustomNode {
                         filteredStories = null;
                         updateFiltered();
                     }
-                    model.approval = true;
                 }
             }
             Button {
@@ -131,15 +132,17 @@ public class ResourceModule extends XCustomNode {
         ]
     }
 
-
     def owners = XGrid {
         hgap: 10
         vgap: 20
         rows: for (owner in model.owners) {
             var target:String = model.initialTargets[indexof owner];
             row([
+                ImageView {
+                    image: model.ownerImages[indexof owner]
+                }
                 Text {
-                    content: model.ownerNames[indexof owner]
+                    content: owner.getDisplayName();
                     fill: Color.WHITE
                     font: Font.font(null, 18);
                 }
@@ -148,14 +151,13 @@ public class ResourceModule extends XCustomNode {
                     style: RallyModel.buttonSkin
                     action: function() {
                         def story = filteredStories[table.selectedRow];
-                        if (story.owner != owner) {
-                            story.owner = owner;
+                        if (story.owner != owner.getLoginName()) {
+                            story.owner = owner.getLoginName();
                         }
                         story.drafted = true;
                         calculateOwnerTotals();
                         filteredStories = null;
                         updateFiltered();
-                        model.approval = true;
                     }
                 }
                 Text {

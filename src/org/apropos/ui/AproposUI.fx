@@ -63,8 +63,11 @@ import org.jfxtras.util.XMap;
 public class AproposUI extends XCustomNode {
     def model = RallyModel.instance;
 
+    var showKen = false;
+
     def titleBar = XHBox {
         spacing: 20
+        vpos: BOTTOM
         content: [
             XVBox {
                 content: [
@@ -84,17 +87,16 @@ public class AproposUI extends XCustomNode {
                         }
                     }
                 ]
-                layoutInfo: XLayoutInfo {vpos: BOTTOM}
+                layoutInfo: XLayoutInfo {vpos: BOTTOM, height: 70}
             }
             ImageView {
-                image: bind if (model.approval) {
-                    Image {url: "{__DIR__}approval.png"};
-                } else {
+                image: bind if (model.myImage != null and model.myImage.error == false and not showKen) model.myImage else {
                     Image {url: "{__DIR__}ken.png"};
                 }
                 onMouseClicked: function(e) {
-                    model.approval = not model.approval;
+                    showKen = not showKen;
                 }
+                layoutInfo: XLayoutInfo {vpos: BOTTOM}
             }
             CheckBox {
                 text: "Cost As Dollars"
@@ -106,7 +108,7 @@ public class AproposUI extends XCustomNode {
                 action: model.refresh
             }
         ]
-        layoutInfo: XLayoutInfo {margin: insets(16, 16, 0, 16)}
+        layoutInfo: XLayoutInfo {margin: insets(0, 16, 0, 16)}
     }
 
     def divider = ResizableRectangle {layoutInfo: XLayoutInfo {height: 3, vgrow: NEVER}, fill: Color.BLACK}

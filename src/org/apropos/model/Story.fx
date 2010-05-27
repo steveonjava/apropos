@@ -59,10 +59,16 @@ public class Story extends XObject, Comparable {
             hierarchicalRequirement.setStage(stage);
             update();
         }
+        if (stage == "Schedule" and release.release == null) {
+            release = model.currentRelease;
+        }
+        if (stage == "Backlog" and release.release != null) {
+            release = model.backlog;
+        }
         model.findStage(oldStage).removeStory(this);
         model.findStage(newStage).addStory(this);
     }
-    public var release:Release on replace {
+    public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
             if (release.release == null and stage == "Schedule") {
                 stage = "Backlog"
@@ -71,6 +77,8 @@ public class Story extends XObject, Comparable {
             }
             hierarchicalRequirement.setRelease(release.release);
             update();
+            oldRelease.removeStory(this);
+            newRelease.addStory(this);
         }
     }
     public var owner:String on replace {
@@ -111,7 +119,7 @@ public class Story extends XObject, Comparable {
         hierarchicalRequirement.setOwner(owner);
     }
 
-    function update():Void {
+    package function update():Void {
         if (not model.requestAccess()) {
             return;
         }
@@ -248,6 +256,11 @@ public class Story extends XObject, Comparable {
             loadEstimate(hierarchicalRequirement, true);
         }
         initialized = true;
+        def epic = model.rallyService.query(null, model.mainProject, false, false, "HierarchicalRequirement", "((Hierarchy = \"Epic\") and (Name = \"Archer\"))", null, true, 0, 100).getResults()[0] as HierarchicalRequirement;
+        if (parentName == null) {
+            hierarchicalRequirement.setParent(epic);
+            update();
+        }
     }
 
     function loadEstimate(parent:HierarchicalRequirement, top:Boolean):Void {

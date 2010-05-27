@@ -28,10 +28,12 @@
 package org.apropos.model;
 
 import com.rallydev.webservice.v1_17.domain.Project;
+import com.rallydev.webservice.v1_17.domain.User;
 import com.rallydev.webservice.v1_17.service.RallyService;
 import com.rallydev.webservice.v1_17.service.RallyServiceServiceLocator;
-import javafx.stage.Alert;
 import java.util.Calendar;
+import javafx.scene.image.Image;
+import javafx.stage.Alert;
 import javafx.util.Math;
 import org.apache.axis.client.Stub;
 import org.jfxtras.lang.XObject;
@@ -47,7 +49,7 @@ public def buttonSkin = "-fx-color: BLACK;"
     "-fx-focus-color: white;"
     "-fx-background: black;";
 
-def GUEST_USER = "sjc@browsecode.org";
+def GUEST_USER = "apropos@jfxtras.org";
 def GUEST_PASSWORD = "AproposFX";
 
 public def instance = RallyModel {}
@@ -56,15 +58,16 @@ public class RallyModel extends XObject {
     var warned = false;
     public var login = Login {userName: GUEST_USER, password: GUEST_PASSWORD};
     public var loggedIn = false;
-    public var approval = false;
     public var showInDollars = false;
     public-init var currentRelease:Release;
     public-init var iterations = ["Sprint 2010-04-13", "Sprint 2010-04-27", "Sprint 2010-05-11", "Sprint 2010-05-25", "Sprint 2010-06-08", "Sprint 2010-06-22"];
-    public-init var owners:String[] = ["vaan@finalfantasyxii.com", "ashe@finalfantasyxii.com", "basch@finalfantasyxii.com", "penelofinalfantasyxii.com", "balthier@finalfantasyxii.com", "fran@finalfantasyxii.com", "larsa@finalfantasyxii.com", "vossler@finalfantasyxii.com", "reddas@finalfantasyxii.com"];
-    public-init var ownerNames:String[] = ["Vaan", "Ashelia B'nargin Dalmasca", "Basche fon Ronsenburg", "Penelo", "Balthier", "Fran", "Larsa Ferrinas Solidor", "Vossler York Azelas", "Reddas"];
+    public-init var ownerNames:String[] = ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"];
+    public-init var owners:User[];
+    public-read var myUser:User;
+    public-read var myImage:Image;
+    public-read var ownerImages:Image[];
     public-init var initialTargets = ["450", "390", "180", "960", "107", "420", "320", "93"];
     public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
-    public-init var themeNames = ["Investment - App/Service Upsell", "Investment - Cloud Platform", "Investment - MFT Go to Market", "Investment - Dell Success", "Investment - Global", "Maintenance", "Sales Directed"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
@@ -86,25 +89,55 @@ public class RallyModel extends XObject {
         try {
             readOnly = login.userName == GUEST_USER;
             createService();
-            def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
-            backlog = Backlog {model: this}
-            releases = for (r in rallyReleases) Release {release: r as com.rallydev.webservice.v1_17.domain.Release, model: this}
-            def now = Calendar.getInstance();
-            for (r in releases) {
-                if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
-                r.containerBefore = releases[indexof r - 1];
-                r.containerAfter = releases[indexof r + 1];
-            }
-            backlog.containerAfter = releases[0];
-            releases[0].containerBefore = backlog;
-            stages = for (stageName in stageNames) Stage {name: stageName}
-            for (s in stages) {
-                s.containerBefore = stages[indexof s - 1];
-                s.containerAfter = stages[indexof s + 1];
-            }
+            loadReleases();
+            loadOwners();
             loggedIn = true;
         } catch (e) {
             e.printStackTrace();
+        }
+    }
+
+    function loadReleases() {
+        def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
+        backlog = Backlog {model: this}
+        releases = for (r in rallyReleases) Release {release: r as com.rallydev.webservice.v1_17.domain.Release, model: this}
+        def now = Calendar.getInstance();
+        for (r in releases) {
+            if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
+            r.containerBefore = releases[indexof r - 1];
+            r.containerAfter = releases[indexof r + 1];
+        }
+        backlog.containerAfter = releases[0];
+        releases[0].containerBefore = backlog;
+        stages = for (stageName in stageNames) Stage {name: stageName}
+        for (s in stages) {
+            s.containerBefore = stages[indexof s - 1];
+            s.containerAfter = stages[indexof s + 1];
+        }
+    }
+
+    function loadOwners() {
+        myUser = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{login.userName}\")", null, true, 0, 100).getResults()[0] as User;
+        owners = for (ownerName in ownerNames) {
+            def results = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{ownerName}\")", null, true, 0, 100).getResults();
+            if (sizeof results == 0) null else results[0] as User;
+        }
+        // hack to login for image retrieval
+        Image {url: "https://community.rallydev.com/slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
+        Image {url: "https://community.rallydev.com/slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
+        myImage = Image {
+            width: 70
+            height: 70
+            preserveRatio: true
+            url: "https://community.rallydev.com/slm/profile/viewThumbnailImage.sp?tSize=200&uid={myUser.getObjectID()}"
+        }
+        ownerImages = for (owner in owners) {
+            Image {
+                width: 70
+                height: 70
+                preserveRatio: true
+                url: "https://community.rallydev.com/slm/profile/viewThumbnailImage.sp?tSize=200&uid={owner.getObjectID()}"
+            }
         }
     }
 
@@ -117,9 +150,9 @@ public class RallyModel extends XObject {
     }
 
     public bound function getWipLimit(stageIndex:Integer):Double {
-        def multiplier = SequenceUtil.product(for (t in themeNames) {
-            if (t == selectedPackage) {
-                themeRatios[indexof t];
+        def multiplier = SequenceUtil.product(for (p in packageNames) {
+            if (p == selectedPackage) {
+                themeRatios[indexof p];
             } else {
                 1
             }
@@ -129,8 +162,8 @@ public class RallyModel extends XObject {
     }
 
     public bound function overSubLimit(stageIndex:Integer):Boolean {
-        def themesOver = for (theme in themeNames where overThemeLimit(stageIndex, indexof theme, theme)) theme;
-        return sizeof themesOver > 0;
+        def packagesOver = for (p in packageNames where overThemeLimit(stageIndex, indexof p, p)) p;
+        return sizeof packagesOver > 0;
     }
 
     bound function overThemeLimit(stageIndex:Integer, themeIndex:Integer, theme:String) {

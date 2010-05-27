@@ -58,16 +58,19 @@ public class Release extends StoryContainer {
 
     override function moveBefore(story:Story) {
         story.release = containerBefore as Release;
-        delete story from stories;
-        insert story into containerBefore.stories;
-        containerBefore.rerank();
     }
 
     override function moveAfter(story:Story) {
         story.release = containerAfter as Release;
+    }
+
+    public function addStory(story:Story) {
+        insert story into stories;
+        rerank();
+    }
+
+    public function removeStory(story:Story) {
         delete story from stories;
-        insert story into containerAfter.stories;
-        containerAfter.rerank();
     }
 
     function fixRanks() {
@@ -101,7 +104,7 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                model.rallyService.query(null, model.mainProject, false, false, "HierarchicalRequirement", "(Release = \"{release.getRef()}\")", "Rank", true, start, 100);
+                model.rallyService.query(null, model.mainProject, false, false, "HierarchicalRequirement", "((Release = \"{release.getRef()}\") and (Hierarchy = \"Feature\"))", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;
@@ -128,7 +131,7 @@ public class Release extends StoryContainer {
                     if (results.length == 100) {
                         loadStories(start + 100);
                     }
-                    fixRanks();
+//                    fixRanks();
                 }
             }
         }

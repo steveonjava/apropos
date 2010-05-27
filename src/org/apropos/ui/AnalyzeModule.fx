@@ -31,7 +31,6 @@ import org.apropos.model.RallyModel;
 import javafx.scene.control.Label;
 import javafx.scene.chart.PieChart;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import org.apropos.model.Release;
 import org.jfxtras.scene.XCustomNode;
@@ -40,7 +39,6 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
-import org.jfxtras.util.SequenceUtil;
 
 /**
  * @author Stephen Chin
@@ -63,20 +61,21 @@ public class AnalyzeModule extends XCustomNode {
         }
     }
 
-    var chart:PieChart on replace {
-        poke(chart, 1000);
-    }
+    var chart:PieChart;
+//    on replace {
+//        poke(chart, 1000);
+//    }
 
     // hack to workaround the initial chart size issue
-    function poke(chart:PieChart, count:Integer):Void {
-        FX.deferAction(function():Void {
-            chart.requestLayout();
-            (children[0] as XVBox).requestLayout();
-            if (count > 0) {
-                poke(chart, count - 1);
-            }
-        });
-    }
+//    function poke(chart:PieChart, count:Integer):Void {
+//        FX.deferAction(function():Void {
+//            chart.requestLayout();
+//            (children[0] as XVBox).requestLayout();
+//            if (count > 0) {
+//                poke(chart, count - 1);
+//            }
+//        });
+//    }
 
     function rebuildChart():Void {
         def data = for (name in release.packageNames) {
@@ -103,7 +102,7 @@ public class AnalyzeModule extends XCustomNode {
                 text: "Release Filter:"
                 textFill: Color.WHITE
             }
-            releasePicker,
+            releasePicker
         ]
     }
 
