@@ -127,11 +127,15 @@ public class Release extends StoryContainer {
                     for (story in newStories where -1 == Sequences.indexOf(newPackages, story.inPackage)) {
                         insert story.inPackage into newPackages;
                     }
+                    for (stage in model.stages) {
+                        def stageStories = newStories[s|s.stage == stage.name];
+                        insert stageStories into stage.stories;
+                    }
                     packageNames = Sequences.sort(newPackages) as String[];
                     if (results.length == 100) {
                         loadStories(start + 100);
                     }
-//                    fixRanks();
+                    fixRanks();
                 }
             }
         }

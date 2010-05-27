@@ -58,15 +58,15 @@ public class Story extends XObject, Comparable {
         if (initialized) {
             hierarchicalRequirement.setStage(stage);
             update();
+            if (stage == "Schedule" and release.release == null) {
+                release = model.currentRelease;
+            }
+            if (stage == "Backlog" and release.release != null) {
+                release = model.backlog;
+            }
+            model.findStage(oldStage).removeStory(this);
+            model.findStage(newStage).addStory(this);
         }
-        if (stage == "Schedule" and release.release == null) {
-            release = model.currentRelease;
-        }
-        if (stage == "Backlog" and release.release != null) {
-            release = model.backlog;
-        }
-        model.findStage(oldStage).removeStory(this);
-        model.findStage(newStage).addStory(this);
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
@@ -237,6 +237,17 @@ public class Story extends XObject, Comparable {
         var desc = description.toLowerCase();
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
         stage = hierarchicalRequirement.getStage();
+        def children = hierarchicalRequirement.getChildren();
+        if (children == null or children.length == 0) {
+            estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
+        } else {
+            loadEstimate(hierarchicalRequirement, true);
+        }
+        initialized = true;
+        promoteStage();
+    }
+
+    function promoteStage() {
         if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
             stage = "Propose";
         }
@@ -249,19 +260,8 @@ public class Story extends XObject, Comparable {
         if ((stage == "Develop" or stage == "Schedule") and hierarchicalRequirement.getScheduleState() == "Accepted") {
             stage = "Deploy";
         }
-        def children = hierarchicalRequirement.getChildren();
-        if (children == null or children.length == 0) {
-            estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
-        } else {
-            loadEstimate(hierarchicalRequirement, true);
-        }
-        initialized = true;
-        def epic = model.rallyService.query(null, model.mainProject, false, false, "HierarchicalRequirement", "((Hierarchy = \"Epic\") and (Name = \"Archer\"))", null, true, 0, 100).getResults()[0] as HierarchicalRequirement;
-        if (parentName == null) {
-            hierarchicalRequirement.setParent(epic);
-            update();
-        }
     }
+
 
     function loadEstimate(parent:HierarchicalRequirement, top:Boolean):Void {
         model.waiting++;
