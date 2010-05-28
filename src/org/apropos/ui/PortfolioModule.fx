@@ -9,7 +9,6 @@ package org.apropos.ui;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import org.apropos.model.RallyModel;
-import org.apropos.model.Story;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.layout.XHBox;

@@ -69,7 +69,7 @@ public class StoryView extends XCustomNode {
 
     public-init var storyContainer:StoryContainer;
 
-    public-read var filteredStories = bind storyContainer.getVisibleStories()[s|model.selectedPackage == null or s.inPackage == model.selectedPackage];
+    public-read var filteredStories = bind if (model.selectedPackage == null) storyContainer.getVisibleStories() else storyContainer.getVisibleStories()[s|s.inPackage == model.selectedPackage];
 
     var filteredCount = bind sizeof filteredStories;
 
@@ -167,7 +167,6 @@ public class StoryView extends XCustomNode {
     }
 
     override function create() {
-        def view = this;
         XVBox {
             spacing: 8
             content: [

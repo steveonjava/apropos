@@ -162,22 +162,22 @@ public class RallyModel extends XObject {
     }
 
     public bound function overSubLimit(stageIndex:Integer):Boolean {
-//        return false;
-        def packagesOver = for (p in packageNames where overThemeLimit(stageIndex, indexof p, p)) p;
-        return sizeof packagesOver > 0;
+        return false;
+//        def packagesOver = for (p in packageNames where overThemeLimit(stageIndex, indexof p, p)) p;
+//        return sizeof packagesOver > 0;
     }
 
-    bound function overThemeLimit(stageIndex:Integer, themeIndex:Integer, theme:String) {
-        def limitByCount = wipLimitByCount[stageIndex];
-        def stageLimit = wipLimits[stageIndex];
-        def stage = stages[stageIndex];
-        def themeLimit = stageLimit * themeRatios[themeIndex];
-        def filteredStories = stage.stories[s|s.inPackage == theme];
-        def filteredCount = sizeof filteredStories;
-        def filteredSize = SequenceUtil.sum(for (story in filteredStories) story.estimate);
-        def themeTotal = if (limitByCount) filteredCount else filteredSize;
-        themeTotal > themeLimit;
-    }
+//    bound function overThemeLimit(stageIndex:Integer, themeIndex:Integer, theme:String) {
+//        def limitByCount = wipLimitByCount[stageIndex];
+//        def stageLimit = wipLimits[stageIndex];
+//        def stage = stages[stageIndex];
+//        def themeLimit = stageLimit * themeRatios[themeIndex];
+//        def filteredStories = stage.stories[s|s.inPackage == theme];
+//        def filteredCount = sizeof filteredStories;
+//        def filteredSize = SequenceUtil.sum(for (story in filteredStories) story.estimate);
+//        def themeTotal = if (limitByCount) filteredCount else filteredSize;
+//        themeTotal > themeLimit;
+//    }
 
     public function requestAccess():Boolean {
         if (readOnly and not warned) {

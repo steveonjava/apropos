@@ -32,8 +32,14 @@ package org.apropos.model;
  */
 public class Backlog extends Release {
     override var name = "Backlog";
+    
+    var visibleStories:Story[];
+
+    override var stories:Story[] on replace {
+        visibleStories = for (story in stories where story.name == "Backlog") story;
+    }
 
     override bound function getVisibleStories() {
-        return stories[s|s.stage == "Backlog"];
+        return visibleStories;
     }
 }
