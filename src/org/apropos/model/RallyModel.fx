@@ -167,6 +167,7 @@ public class RallyModel extends XObject {
 //        return sizeof packagesOver > 0;
     }
 
+// causes a big performance issues - need to investigate further...
 //    bound function overThemeLimit(stageIndex:Integer, themeIndex:Integer, theme:String) {
 //        def limitByCount = wipLimitByCount[stageIndex];
 //        def stageLimit = wipLimits[stageIndex];
