@@ -29,10 +29,7 @@ package org.apropos.ui;
 
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import org.jfxtras.scene.XCustomNode;
-import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.XTableView;
 import org.jfxtras.scene.control.renderer.RowNumberRenderer;
@@ -45,25 +42,16 @@ import org.jfxtras.scene.layout.XVBox;
  */
 public class RoadmapModule extends XCustomNode {
 
-    def model = bind RallyModel.instance;
+    def model = RallyModel.instance;
 
     var table:XTableView;
 
     var stories:Story[] = bind model.currentRelease.stories;
 
-    var filteredStories = bind model.currentRelease.stories[s|model.selectedPackage == null or s.inPackage == model.selectedPackage];
+    var filteredStories = bind model.filter(model.currentRelease.stories);
 
-    var picker:XPicker = XPicker {
-        items: bind ["All", model.packageNames]
-        onIndexChange: function(index) {
-            model.selectedPackageIndex = index;
-        }
-    }
-    def selectedPackageIndex = bind model.selectedPackageIndex on replace {
-        if (picker.selectedIndex != model.selectedPackageIndex) {
-            picker.select(model.selectedPackageIndex);
-        }
-    }
+    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
+    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
 
     override function create() {
         XVBox {
@@ -71,13 +59,7 @@ public class RoadmapModule extends XCustomNode {
             content: [
                 XHBox {
                     spacing: 8
-                    content: [
-                        Label {
-                            text: "Investment Filter:"
-                            textFill: Color.WHITE
-                        }
-                        picker
-                    ]
+                    content: [epicFilter, packageFilter]
                 }
                 table = XTableView {
                     rowType: Story {}.getJFXClass()

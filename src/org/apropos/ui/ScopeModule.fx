@@ -27,11 +27,8 @@
  */
 package org.apropos.ui;
 
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import org.apropos.model.RallyModel;
 import org.jfxtras.scene.XCustomNode;
-import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XGrid;
 import org.jfxtras.scene.layout.XGridLayoutInfo.*;
@@ -46,17 +43,8 @@ public class ScopeModule extends XCustomNode {
         storyContainer: release
     }
 
-    var picker:XPicker = XPicker {
-        items: bind ["All", model.packageNames]
-        onIndexChange: function(index) {
-            model.selectedPackageIndex = index;
-        }
-    }
-    def selectedPackageIndex = bind model.selectedPackageIndex on replace {
-        if (picker.selectedIndex != model.selectedPackageIndex) {
-            picker.select(model.selectedPackageIndex);
-        }
-    }
+    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
+    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
 
     override function create() {
         XGrid {
@@ -65,13 +53,7 @@ public class ScopeModule extends XCustomNode {
             rows: bind [
                 row(XHBox {
                     spacing: 8
-                    content: [
-                        Label {
-                            text: "Investment Filter:"
-                            textFill: Color.WHITE
-                        }
-                        picker
-                    ]
+                    content: [epicFilter, packageFilter]
                 }),
                 row(storyViews[s|s.visible])
             ]

@@ -29,9 +29,11 @@ package org.apropos.ui;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextBox;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.apropos.model.RallyModel;
@@ -48,7 +50,6 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.util.SequenceUtil;
-import javafx.scene.control.TextBox;
 
 /**
  * @author Stephen Chin
@@ -69,7 +70,7 @@ public class StoryView extends XCustomNode {
 
     public-init var storyContainer:StoryContainer;
 
-    public-read var filteredStories = bind if (model.selectedPackage == null) storyContainer.getVisibleStories() else storyContainer.getVisibleStories()[s|s.inPackage == model.selectedPackage];
+    public-read var filteredStories = bind model.filter(storyContainer.getVisibleStories());
 
     var filteredCount = bind sizeof filteredStories;
 
@@ -166,8 +167,23 @@ public class StoryView extends XCustomNode {
         ]
     }
 
+    function previous() {
+        storyContainer.moveBefore(filteredStories[table.selectedRow]);
+    }
+
+    function next() {
+        storyContainer.moveAfter(filteredStories[table.selectedRow]);
+    }
+
     override function create() {
         XVBox {
+            onKeyTyped: function(e) {
+                if (e.code == KeyCode.VK_LEFT) {
+                    previous();
+                } else if (e.code == KeyCode.VK_RIGHT) {
+                    next();
+                }
+            }
             spacing: 8
             content: [
                 XHBox {
@@ -256,10 +272,7 @@ public class StoryView extends XCustomNode {
                                     url: "{__DIR__}go-previous.png"
                                 }
                             }
-                            action: function() {
-                                storyContainer.moveBefore(filteredStories[table.selectedRow]);
-                                table.selectedRow = -1;
-                            }
+                            action: previous
                             disable: bind table.selectedRow == -1 or storyContainer.containerBefore == null
                             layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                         }
@@ -310,10 +323,7 @@ public class StoryView extends XCustomNode {
                                     url: "{__DIR__}go-next.png"
                                 }
                             }
-                            action: function() {
-                                storyContainer.moveAfter(filteredStories[table.selectedRow]);
-                                table.selectedRow = -1;
-                            }
+                            action: next
                             disable: bind table.selectedRow == -1 or storyContainer.containerAfter == null
                             layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                         }

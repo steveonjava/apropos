@@ -46,12 +46,6 @@ public class Release extends StoryContainer {
 
     package var model = RallyModel.instance;
 
-    public var packageNames:String[] on replace = newPackages {
-        for (p in newPackages where -1 == Sequences.indexOf(model.packageNames, p)) {
-            insert p into model.packageNames;
-        }
-    }
-
     public function getPackageTotals(name:String):Double {
         SequenceUtil.sum(for (s in stories where s.inPackage == name) s.estimate)
     }
@@ -92,7 +86,6 @@ public class Release extends StoryContainer {
 
     public function refresh() {
         delete stories;
-        delete packageNames;
         loadStories(1);
     }
 
@@ -123,15 +116,22 @@ public class Release extends StoryContainer {
                        hierarchicalRequirement: domainObject as HierarchicalRequirement
                     }
                     insert newStories into stories;
-                    var newPackages:String[] = packageNames;
-                    for (story in newStories where -1 == Sequences.indexOf(newPackages, story.inPackage)) {
-                        insert story.inPackage into newPackages;
+                    for (story in newStories) {
+                        def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
+                        if (insertionPoint < 0) {
+                            insert story.inPackage before model.packageNames[-insertionPoint - 1];
+                        }
+                    }
+                    for (story in newStories) {
+                        def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
+                        if (insertionPoint < 0) {
+                            insert story.parentName before model.epicNames[-insertionPoint - 1];
+                        }
                     }
                     for (stage in model.stages) {
                         def stageStories = newStories[s|s.stage == stage.name];
                         insert stageStories into stage.stories;
                     }
-                    packageNames = Sequences.sort(newPackages) as String[];
                     if (results.length == 100) {
                         loadStories(start + 100);
                     }

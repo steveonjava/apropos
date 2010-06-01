@@ -53,7 +53,7 @@ public class AnalyzeModule extends XCustomNode {
 
     def release = bind releasePicker.selectedItem as Release;
 
-    def names = bind release.packageNames;
+    def names = bind model.packageNames;
 
     def parentBind = bind parent on replace {
         if (parent != null) {
@@ -62,23 +62,9 @@ public class AnalyzeModule extends XCustomNode {
     }
 
     var chart:PieChart;
-//    on replace {
-//        poke(chart, 1000);
-//    }
-
-    // hack to workaround the initial chart size issue
-//    function poke(chart:PieChart, count:Integer):Void {
-//        FX.deferAction(function():Void {
-//            chart.requestLayout();
-//            (children[0] as XVBox).requestLayout();
-//            if (count > 0) {
-//                poke(chart, count - 1);
-//            }
-//        });
-//    }
 
     function rebuildChart():Void {
-        def data = for (name in release.packageNames) {
+        def data = for (name in names) {
             PieChart.Data {
                 label: name
                 value: release.getPackageTotals(name)

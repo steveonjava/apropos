@@ -25,21 +25,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.apropos.model;
+ package org.apropos.ui;
+
+import org.jfxtras.scene.XCustomNode;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+import org.jfxtras.scene.layout.XHBox;
+import org.jfxtras.scene.control.XPicker;
 
 /**
  * @author Stephen Chin
  */
-public class Backlog extends Release {
-    override var name = "Backlog";
-    
-    var visibleStories:Story[];
+public class Filter extends XCustomNode {
+    public-init var name:String;
 
-    override var stories:Story[] on replace {
-        visibleStories = for (story in stories where story.stage == "Backlog") story;
+    public var list:String[];
+
+    public var selectedIndex:Integer on replace {
+        if (picker.selectedIndex != selectedIndex) {
+            picker.select(selectedIndex);
+        }
     }
 
-    override bound function getVisibleStories() {
-        return visibleStories;
+    var picker:XPicker = XPicker {
+        items: bind ["All", list]
+        onIndexChange: function(index) {
+            selectedIndex = index;
+        }
     }
+
+    init {
+        children = XHBox {
+            spacing: 8
+            content: [
+                Label {
+                    text: "{name} Filter:"
+                    textFill: Color.WHITE
+                }
+                picker
+            ]
+        }
+    }
+
 }

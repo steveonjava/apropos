@@ -77,6 +77,11 @@ public class RallyModel extends XObject {
     public var backlog:Backlog;
     public var releases:Release[];
     public var stages:Stage[];
+    public var epicNames:String[];
+    public var selectedEpicIndex:Integer;
+    public var selectedEpic:String = bind if (selectedEpicIndex == 0) null else {
+        epicNames[selectedEpicIndex - 1];
+    }
     public var packageNames:String[];
     public var selectedPackageIndex:Integer;
     public var selectedPackage:String = bind if (selectedPackageIndex == 0) null else {
@@ -84,6 +89,18 @@ public class RallyModel extends XObject {
     }
     public-read var mainProject:Project;
     public var waiting = 0;
+
+    bound function filtersOn() {
+        return selectedEpic != null or selectedPackage != null;
+    }
+
+    bound function selected(s:Story) {
+        (selectedPackage == null or s.inPackage == selectedPackage) and (selectedEpic == null or s.parentName == selectedEpic)
+    }
+
+    public bound function filter(stories:Story[]) {
+        if (filtersOn()) stories else stories[s|selected(s)];
+    }
 
     public function doLogin():Void {
         try {

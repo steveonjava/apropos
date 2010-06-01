@@ -64,4 +64,46 @@
     </target>
 
     <target name="-pre-compile" depends="generate-wsdl"/>
+
+    <target depends="init,deps-jar,-pre-compile" name="-do-compile">
+        <exec executable="${platform.fxhome}/bin/javafxpackager${binary.extension}" failonerror="true" logerror="true">
+            <arg value="-src"/>
+            <arg value="${src.gen_src.dir};${src.dir}"/>
+            <arg value="-workdir"/>
+            <arg file="${build.dir}"/>
+            <arg value="-d"/>
+            <arg file="${dist.dir}"/>
+            <arg value="-appname"/>
+            <arg value="${application.title}"/>
+            <arg value="-appvendor"/>
+            <arg value="${application.vendor}"/>
+            <arg value="-appwidth"/>
+            <arg value="${applet.width}"/>
+            <arg value="-appheight"/>
+            <arg value="${applet.height}"/>
+            <arg value="-appclass"/>
+            <arg value="${main.class}"/>
+            <arg line="${codebase.arg}"/>
+            <arg value="-encoding"/>
+            <arg value="${source.encoding}"/>
+            <arg value="-p"/>
+            <arg value="${javafx.profile}"/>
+            <arg value="${verbose.arg}"/>
+            <arg value="${draggable.arg}"/>
+            <arg value="${pack200.arg}"/>
+            <arg value="${sign.arg}"/>
+            <arg value="-updatecheck"/>
+            <arg value="${jnlp.update.model}"/>
+            <arg value="-cp"/>
+            <arg path="${javac.classpath}"/>
+            <arg value="-keystore"/>
+            <arg value="${jnlp.signjar.keystore}"/>
+            <arg value="-keystorePassword"/>
+            <arg value="${jnlp.signjar.storepass}"/>
+            <arg value="-keyalias"/>
+            <arg value="${jnlp.signjar.alias}"/>
+            <arg value="-keyaliasPassword"/>
+            <arg value="${jnlp.signjar.keypass}"/>
+        </exec>
+    </target>
 </project>
