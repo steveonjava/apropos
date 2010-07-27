@@ -101,12 +101,13 @@ public class Release extends StoryContainer {
                     for (error in queryResult.getErrors()) println('ERROR: {error}"');
                 } else {
                     def results = queryResult.getResults();
-                    var newStories:Story[];
-                    for (domainObject in results) {
-                        var story = domainObject  as HierarchicalRequirement;
-                        insert Story {
-                           hierarchicalRequirement: story
-                        } into newStories;
+                    def newStories = for (domainObject in results) {
+                        def hierarchicalRequirement = domainObject as HierarchicalRequirement;
+                        def ownerDisplayName = model.getOwnerDisplayName(hierarchicalRequirement.getOwner().getEmailAddress());
+                        Story {
+                           hierarchicalRequirement: hierarchicalRequirement
+                           ownerDisplayName: ownerDisplayName
+                        };
                     }
                     insert newStories into stories;
                     for (story in newStories) {

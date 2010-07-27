@@ -48,6 +48,9 @@ import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.scene.paint.ColorUtil;
 import org.jfxtras.util.SequenceUtil;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.ScrollView;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.control.Label;
 
 /**
  * @author Stephen Chin
@@ -130,16 +133,25 @@ public class ResourceModule extends XCustomNode {
                         def story = filteredStories[table.selectedRow];
                         if (story.owner != owner) {
                             story.owner = owner;
+                            story.ownerDisplayName = owner.getDisplayName();
                         }
                         story.drafted = true;
                         calculateOwnerTotals();
                     }
                 }
-                Text {
-                    content: bind "Total: {ownerTotals[indexof owner]}"
-                    fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.LIGHTSALMON, .3) else Color.WHITE
+                Label {
+                    text: bind "Total: {ownerTotals[indexof owner]}"
+                    textFill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.WHITE
                     font: Font.font(null, 18);
+                    layoutInfo: LayoutInfo {
+                      width: 100
+                    }
                 }
+//                Text {
+//                    content: bind "Total: {ownerTotals[indexof owner]}"
+//                    fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.LIGHTSALMON, .3) else Color.WHITE
+//                    font: Font.font(null, 18);
+//                }
                 Text {
                     content: bind "Target:"
                     fill: Color.WHITE
@@ -205,19 +217,13 @@ public class ResourceModule extends XCustomNode {
             XTableColumn {
                 displayName: "Owner"
                 prefWidth: 100
-                id: "ownerName"
+                id: "ownerDisplayName"
                 renderer: TextRenderer {}
             }
             XTableColumn {
                 displayName: "Est"
                 prefWidth: 40
                 id: "estimateDisplay"
-                renderer: TextRenderer {}
-            }
-            XTableColumn {
-                displayName: "AT"
-                prefWidth: 40
-                id: "acceptanceTest"
                 renderer: TextRenderer {}
             }
             XTableColumn {
@@ -238,7 +244,12 @@ public class ResourceModule extends XCustomNode {
                     spacing: 20
                     content: [
                         table,
-                        owners
+                        ScrollView {
+                            node: owners
+                            layoutInfo:LayoutInfo {
+                                width: bind owners.width + 20
+                            }
+                        }
                     ]
                 }
             ]

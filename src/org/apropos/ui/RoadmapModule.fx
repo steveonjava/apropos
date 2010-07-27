@@ -99,7 +99,8 @@ public class RoadmapModule extends XCustomNode {
                         XTableColumn {
                             displayName: "Owner"
                             prefWidth: 100
-                            id: "ownerName"
+                            //id: "owner"
+                            id: "ownerDisplayName"
                             renderer: TextRenderer {}
                         }
                         for (iteration in model.iterations) {

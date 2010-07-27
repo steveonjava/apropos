@@ -62,6 +62,7 @@ public class RallyModel extends XObject {
     var warned = false;
     public var login = Login {userName: GUEST_USER, password: GUEST_PASSWORD};
     public var loggedIn = false;
+    public-read var processingLogin:Boolean = false;
     public var showInDollars = false;
     public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
     public-init var currentRelease:Release;
@@ -117,13 +118,17 @@ public class RallyModel extends XObject {
 
     public function doLogin():Void {
         try {
+            processingLogin = true;
             readOnly = login.userName == GUEST_USER and not show;
             createService();
             loadReleases();
             loadOwners();
             loggedIn = true;
         } catch (e:AxisFault) {
+            processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
+        } finally {
+          processingLogin = false;
         }
     }
 
@@ -280,4 +285,16 @@ public class RallyModel extends XObject {
             "{estimate}";
         }
     }
+
+    public function getOwnerDisplayName(ownerEmailAddress:String):String {
+        var displayName:String;
+        for (owner in owners) {
+            if (owner.getEmailAddress() == ownerEmailAddress) {
+                displayName = owner.getDisplayName();
+                break;
+            }
+        }
+        return displayName;
+    }
+
 }

@@ -40,6 +40,8 @@ import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.scene.shape.ResizableRectangle;
 import javafx.geometry.HPos;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.Cursor;
 
 /**
  * @author Stephen Chin
@@ -77,8 +79,11 @@ public class LoginScreen extends XCustomNode {
                             }
                         ]
                     }
-                }
+                },
             ]
         }
     }
+    // Show wait cursor only in Login page, as the app has a progress indicator
+    override var cursor = bind if (model.processingLogin) Cursor.WAIT
+                                else Cursor.DEFAULT
 }

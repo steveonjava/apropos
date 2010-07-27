@@ -178,10 +178,49 @@ public class StoryView extends XCustomNode {
 
     function previous() {
         storyContainer.moveBefore(filteredStories[table.selectedRow]);
+        if ((table.selectedRow >= sizeof table.rows) and
+            (sizeof table.rows > 0)) {
+          table.selectedRow = sizeof table.rows - 1;
+        }
+        // Force table to update [DE8910]
+        // TODO: Identify a less heavy-handed approach
+        if (sizeof table.rows >= 2) {
+            if (table.selectedRow > 0) {
+                move(-1);
+                move(1);
+            }
+            else {
+                move(1);
+                move(-1);
+            }
+
+        }
+        println("table.selectedRow:{table.selectedRow}");
+        println("sizeof table.rows:{sizeof table.rows}");
     }
 
     function next() {
         storyContainer.moveAfter(filteredStories[table.selectedRow]);
+        if ((table.selectedRow >= sizeof table.rows) and
+            (sizeof table.rows > 0)) {
+          table.selectedRow = sizeof table.rows - 1;
+        }
+        // Force table to update [DE8910]
+        // TODO: Identify a less heavy-handed approach
+        if (sizeof table.rows >= 2) {
+            if (table.selectedRow > 0) {
+                move(-1);
+                move(1);
+            }
+            else {
+                move(1);
+                move(-1);
+            }
+
+        }
+
+        println("table.selectedRow:{table.selectedRow}");
+        println("sizeof table.rows:{sizeof table.rows}");
     }
 
     override function create() {
@@ -291,7 +330,9 @@ public class StoryView extends XCustomNode {
                                 }
                             }
                             action: previous
-                            disable: bind table.selectedRow == -1 or storyContainer.containerBefore == null
+                            disable: bind (table.selectedRow == -1) or
+                                          (sizeof filteredStories == 0) or
+                                          (storyContainer.containerBefore == null)
                             layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                         }
                         Button {
@@ -331,7 +372,9 @@ public class StoryView extends XCustomNode {
                             action: function() {
                                 move(1);
                             }
-                            disable: bind table.selectedRow == -1 or table.selectedRow == sizeof filteredStories - 1
+                            disable: bind (table.selectedRow == -1) or
+                                          (sizeof filteredStories == 0) or
+                                          table.selectedRow == sizeof filteredStories - 1
                             layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                         }
                         Button {
@@ -342,7 +385,9 @@ public class StoryView extends XCustomNode {
                                 }
                             }
                             action: next
-                            disable: bind table.selectedRow == -1 or storyContainer.containerAfter == null
+                            disable: bind (table.selectedRow == -1) or
+                                          (sizeof filteredStories == 0) or
+                                          (storyContainer.containerAfter == null)
                             layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                         }
                     ]

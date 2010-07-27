@@ -91,6 +91,7 @@ public class Story extends XObject, Comparable {
         }
     }
     public var ownerName:String = bind owner.getRefObjectName();
+    public var ownerDisplayName:String;
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
     public var rank:BigDecimal on replace {

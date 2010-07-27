@@ -31,7 +31,7 @@ import org.jfxtras.scene.XCustomNode;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.control.XPicker;
+import javafx.scene.control.ChoiceBox;
 
 /**
  * @author Stephen Chin
@@ -42,16 +42,16 @@ public class Filter extends XCustomNode {
     public var list:String[];
 
     public var selectedIndex:Integer on replace {
-        if (picker.selectedIndex != selectedIndex) {
-            picker.select(selectedIndex);
+        if (choice.selectedIndex != selectedIndex) {
+            choice.select(selectedIndex);
         }
     }
 
-    var picker:XPicker = XPicker {
-        items: bind ["All", list]
-        onIndexChange: function(index) {
-            selectedIndex = index;
+    var choice:ChoiceBox = ChoiceBox {
+        var selIndex = bind choice.selectedIndex on replace {
+          selectedIndex = selIndex;
         }
+        items: bind ["All", list]
     }
 
     init {
@@ -62,7 +62,7 @@ public class Filter extends XCustomNode {
                     text: "{name} Filter:"
                     textFill: Color.WHITE
                 }
-                picker
+                choice
             ]
         }
     }

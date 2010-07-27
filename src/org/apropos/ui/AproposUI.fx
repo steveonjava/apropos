@@ -124,10 +124,10 @@ public class AproposUI extends XCustomNode {
     }
 
     def toggleGroup = ToggleGroup {}
-    def darkTBStyle = "-fx-color: BLACK;"
-        "-fx-background: black;"
-        "-fx-focus-color: white;"
-        "fontSize: 14pt;";
+//    def darkTBStyle = "-fx-color: BLACK;"
+//        "-fx-background: black;"
+//        "-fx-focus-color: white;"
+//        "fontSize: 14pt;";
 
     def buttonBar = XStack {
         content: [
@@ -137,39 +137,15 @@ public class AproposUI extends XCustomNode {
             }
             XHBox {
                 spacing: 20
-                content: bind [
-                    ToggleButton {
-                        style: darkTBStyle
-                        text: "Portfolio"
-                        font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
-                        toggleGroup: toggleGroup
-                        selected: true
-                    }
-                    ToggleButton {
-                        style: darkTBStyle
-                        text: "Scope"
-                        font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
-                        toggleGroup: toggleGroup
-                    }
-                    ToggleButton {
-                        style: darkTBStyle
-                        text: "Resource"
-                        font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
-                        toggleGroup: toggleGroup
-                    }
-                    ToggleButton {
-                        style: darkTBStyle
-                        text: "Analyze"
-                        font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
-                        toggleGroup: toggleGroup
-                    }
-                    ToggleButton {
-                        style: darkTBStyle
-                        text: "Roadmap"
-                        font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
-                        toggleGroup: toggleGroup
-                    }
+                def buttonLabels = [
+                    "Portfolio",
+                    "Scope",
+                    "Resource",
+                    "Analyze",
+                    "Roadmap"
                 ]
+                content: bind for (label in buttonLabels)
+                    createMenuToggleButton(label, indexof label == 0);
                 layoutInfo: XLayoutInfo {hpos: LEFT, margin: insets(4, 16)}
             }
         ]
@@ -194,6 +170,21 @@ public class AproposUI extends XCustomNode {
             activeModule
         ]
     }
+
+    function createMenuToggleButton(text:String, selected:Boolean):ToggleButton {
+        var tbRef:ToggleButton;
+        tbRef = ToggleButton {
+            text: text
+            selected: selected
+            // Disable the button if is selected so it can't be de-selected
+            //TODO: Style this button so that it is more legible in its disabled state
+            disable: bind tbRef.selected
+            //TODO: Move font size to style sheet
+            font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
+            toggleGroup: toggleGroup
+        }
+    }
+
 
     override function create() {
         XStack {
