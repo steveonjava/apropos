@@ -27,10 +27,10 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_18.domain.Project;
-import com.rallydev.webservice.v1_18.domain.User;
-import com.rallydev.webservice.v1_18.service.RallyService;
-import com.rallydev.webservice.v1_18.service.RallyServiceServiceLocator;
+import com.rallydev.webservice.v1_19.domain.Project;
+import com.rallydev.webservice.v1_19.domain.User;
+import com.rallydev.webservice.v1_19.service.RallyService;
+import com.rallydev.webservice.v1_19.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
 import javafx.stage.Alert;
 import javafx.util.Math;
@@ -50,10 +50,11 @@ public def buttonSkin = "-fx-color: BLACK;"
     "-fx-background: black;";
 
 def community:Boolean = false;
-public def server = bind if (community) "https://community.rallydev.com/" else "https://rally1.rallydev.com/";
+def show:Boolean = true;
+public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rally1.rallydev.com/";
 
-def GUEST_USER = if (community) "apropos@jfxtras.org" else "build@inovis.com";
-def GUEST_PASSWORD = if (community) "AproposFX" else "StephenIsCool";
+def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "build@inovis.com";
+def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "StephenIsCool";
 
 public def instance = RallyModel {}
 
@@ -65,7 +66,9 @@ public class RallyModel extends XObject {
     public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
     public-init var currentRelease:Release;
     public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
-    public-init var ownerNames:String[] = if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"] else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
+    public-init var ownerNames:String[] = if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
+    else if (show) ["dave@acme.com", "paul@acme.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
+    else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myImage:Image;
@@ -96,7 +99,7 @@ public class RallyModel extends XObject {
     public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
         owners[selectedOwnerIndex - 1].getDisplayName();
     }
-    public var mainProjectName = if (community) "" else "Business Community Management";
+    public var mainProjectName = if (community) "" else if (show) "Online Store" else "Business Community Management";
     public-read var mainProject:Project;
     public var waiting = 0;
 
@@ -114,7 +117,7 @@ public class RallyModel extends XObject {
 
     public function doLogin():Void {
         try {
-            readOnly = login.userName == GUEST_USER;
+            readOnly = login.userName == GUEST_USER and not show;
             createService();
             loadReleases();
             loadOwners();
@@ -129,7 +132,7 @@ public class RallyModel extends XObject {
 //        def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
 //        def now = Calendar.getInstance();
         backlog = Backlog {model: this}
-//        releases = for (r in rallyReleases where (r as com.rallydev.webservice.v1_18.domain.Release).getReleaseDate().<<after>>(now)) Release {release: r as com.rallydev.webservice.v1_18.domain.Release, model: this}
+//        releases = for (r in rallyReleases where (r as com.rallydev.webservice.v1_19.domain.Release).getReleaseDate().<<after>>(now)) Release {release: r as com.rallydev.webservice.v1_19.domain.Release, model: this}
         releases = for (rpn in releasePlanNames) Release {model: this, name: rpn}
         for (r in releases) {
 //            if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
@@ -147,7 +150,12 @@ public class RallyModel extends XObject {
     }
 
     function loadOwners() {
-        myUser = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{login.userName}\")", null, true, 0, 100).getResults()[0] as User;
+        def myResult = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{login.userName}\")", null, true, 0, 100).getResults();
+        if (sizeof myResult > 0) {
+            myUser = myResult[0] as User;
+        } else {
+            println("Unable to get credentials for users -- please update account priveleges");
+        }
         owners = for (ownerName in ownerNames) {
             def results = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{ownerName}\")", null, true, 0, 100).getResults();
             if (sizeof results == 0) null else results[0] as User;

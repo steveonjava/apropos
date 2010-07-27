@@ -45,7 +45,7 @@
 
     -->
     <property name="generated.dir" value="gen_src"/>
-    <property name="local.wsdl" value="inovis.xml"/>
+    <property name="local.wsdl" value="show.xml"/>
 
     <target name="check-soapapi">
         <mkdir dir="${generated.dir}"/>

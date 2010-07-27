@@ -50,6 +50,7 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.util.SequenceUtil;
+import java.math.BigDecimal;
 
 /**
  * @author Stephen Chin
@@ -99,8 +100,8 @@ public class StoryView extends XCustomNode {
         }
         def away2 = filteredStories[table.selectedRow+amount+(if (amount < 0) -1 else 1)];
         def away1 = filteredStories[table.selectedRow+amount];
-        def newRank = if (away2 == null) (if (amount < 0) away1.rank / 2 else away1.rank + 100) else {
-            (away1.rank + away2.rank) / 2;
+        def newRank = if (away2 == null) (if (amount < 0) away1.rank.divide(new BigDecimal(2)) else away1.rank.add(new BigDecimal(100))) else {
+            away1.rank.add(away2.rank).divide(new BigDecimal(2));
         }
         filteredStories[table.selectedRow].rank = newRank;
         storyContainer.rerank();

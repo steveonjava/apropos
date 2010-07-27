@@ -27,11 +27,12 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_18.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_18.domain.QueryResult;
+import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
+import java.math.BigDecimal;
 
 /**
  * @author Stephen Chin
@@ -39,7 +40,7 @@ import org.jfxtras.util.SequenceUtil;
 public class Release extends StoryContainer {
 
 // todo - release fix
-//    public var release:com.rallydev.webservice.v1_18.domain.Release on replace {
+//    public var release:com.rallydev.webservice.v1_19.domain.Release on replace {
 //        if (release != null) {
 //            name = release.getName();
 //        }
@@ -68,19 +69,6 @@ public class Release extends StoryContainer {
         delete story from stories;
     }
 
-    function fixRanks() {
-        if (not model.readOnly) {
-            var lastRank:Double = 0;
-            for (story in stories) {
-                if (story.rank < lastRank + 0.9) {
-                    println("fixing story rank from {story.rank} to {lastRank + 1} for {story}");
-                    story.rank = lastRank + 1;
-                }
-                lastRank = story.rank;
-            }
-        }
-    }
-
     override function rerank() {
         stories = Sequences.sort(stories) as Story[];
     }
@@ -98,7 +86,7 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((ReleasePlan = \"{name}\") and (Hierarchy = \"Feature\"))", "Rank", true, start, 100);
+                model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((PortfolioRelease = \"{name}\") and (PortfolioHierarchy = \"Feature\"))", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;
@@ -142,7 +130,6 @@ public class Release extends StoryContainer {
                     if (results.length == 100) {
                         loadStories(start + 100);
                     }
-                    fixRanks();
                 }
             }
         }

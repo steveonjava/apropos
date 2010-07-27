@@ -30,14 +30,15 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_18.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_18.domain.QueryResult;
+import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.domain.QueryResult;
 import org.apropos.model.RallyModel;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.BrowserUtil;
 import org.jfxtras.util.SequenceUtil;
-import com.rallydev.webservice.v1_18.domain.User;
+import com.rallydev.webservice.v1_19.domain.User;
+import java.math.BigDecimal;
 
 /**
  * @author Stephen Chin
@@ -58,7 +59,7 @@ public class Story extends XObject, Comparable {
     public var parentName:String;
     public var stage:String on replace oldStage=newStage {
         if (initialized) {
-            hierarchicalRequirement.setStage(stage);
+            hierarchicalRequirement.setPortfolioKanbanState(stage);
             update();
             if (stage == "Schedule" and release instanceof Backlog) {
                 release = model.currentRelease;
@@ -77,7 +78,7 @@ public class Story extends XObject, Comparable {
             } else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
                 stage = "Schedule"
             }
-            hierarchicalRequirement.setReleasePlan(release.name);
+            hierarchicalRequirement.setPortfolioRelease(release.name);
             update();
             oldRelease.removeStory(this);
             newRelease.addStory(this);
@@ -92,10 +93,9 @@ public class Story extends XObject, Comparable {
     public var ownerName:String = bind owner.getRefObjectName();
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
-    public var rank:Double on replace {
+    public var rank:BigDecimal on replace {
         if (initialized) {
-            var rank3 = Math.floor(rank * 1000) / 1000;
-            hierarchicalRequirement.setRank(rank3);
+            hierarchicalRequirement.setRank(rank);
             update();
         }
     }
@@ -115,10 +115,9 @@ public class Story extends XObject, Comparable {
 
     function reapply():Void {
         // todo - find a cleaner way to do this
-        hierarchicalRequirement.setReleasePlan(release.name);
-        hierarchicalRequirement.setStage(stage);
-        var rank3 = Math.floor(rank * 1000) / 1000;
-        hierarchicalRequirement.setRank(rank3);
+        hierarchicalRequirement.setPortfolioRelease(release.name);
+        hierarchicalRequirement.setPortfolioKanbanState(stage);
+        hierarchicalRequirement.setRank(rank);
         hierarchicalRequirement.setOwner(owner);
     }
 
@@ -232,14 +231,14 @@ public class Story extends XObject, Comparable {
         description = hierarchicalRequirement.getDescription();
         textDescription = removeTags(description);
         parentName = hierarchicalRequirement.getParent().getRefObjectName();
-        release = model.getRelease(hierarchicalRequirement.getReleasePlan());
-        rank = if (hierarchicalRequirement.getRank() == null) 0 else hierarchicalRequirement.getRank();
+        release = model.getRelease(hierarchicalRequirement.getPortfolioRelease());
+        rank = hierarchicalRequirement.getRank();
         owner = hierarchicalRequirement.getOwner();
         inPackage = hierarchicalRequirement.get_package();
         if (inPackage == "") inPackage = "<missing package>";
         var desc = description.toLowerCase();
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
-        stage = hierarchicalRequirement.getStage();
+        stage = hierarchicalRequirement.getPortfolioKanbanState();
         def children = hierarchicalRequirement.getChildren();
         if (children == null or children.length == 0) {
             estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
