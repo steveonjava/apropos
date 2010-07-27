@@ -146,12 +146,20 @@ public class StoryView extends XCustomNode {
                 id: "name"
                 renderer: TextRenderer {}
             }
-            if (not maximized) [] else XTableColumn {
-                displayName: "Description"
-                prefWidth: 180
-                id: "textDescription"
-                renderer: TextRenderer {}
-            }
+            if (not maximized) [] else [
+                XTableColumn {
+                    displayName: "Description"
+                    prefWidth: 180
+                    id: "textDescription"
+                    renderer: TextRenderer {}
+                }
+                XTableColumn {
+                    displayName: "Owner"
+                    prefWidth: 100
+                    id: "ownerName"
+                    renderer: TextRenderer {}
+                }
+            ],
             XTableColumn {
                 displayName: "Est"
                 prefWidth: 35
@@ -200,9 +208,18 @@ public class StoryView extends XCustomNode {
                             }
                             onMousePressed: function(e) {
                                 maximized = not maximized;
+// todo - bug with visibility in javafx 1.3
+//                                for (view in storyViews) {
+//                                    if (view != this) {
+//                                        view.visible = not view.visible;
+//                                    }
+//                                }
                                 for (view in storyViews) {
                                     if (view != this) {
-                                        view.visible = not view.visible;
+                                        view.managed = not view.managed;
+                                        if (not view.managed) {
+                                            view.layoutX = 2000;
+                                        }
                                     }
                                 }
                             }

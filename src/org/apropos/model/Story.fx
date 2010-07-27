@@ -30,13 +30,14 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_17.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_17.domain.QueryResult;
+import com.rallydev.webservice.v1_18.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_18.domain.QueryResult;
 import org.apropos.model.RallyModel;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.BrowserUtil;
 import org.jfxtras.util.SequenceUtil;
+import com.rallydev.webservice.v1_18.domain.User;
 
 /**
  * @author Stephen Chin
@@ -48,6 +49,7 @@ public class Story extends XObject, Comparable {
     var dirty = false;
     var executing = false;
     public-init var hierarchicalRequirement:HierarchicalRequirement;
+    public var scheduled:Boolean = false;
     public var drafted:Boolean = false;
     public var name:String;
     public var id:String;
@@ -58,10 +60,10 @@ public class Story extends XObject, Comparable {
         if (initialized) {
             hierarchicalRequirement.setStage(stage);
             update();
-            if (stage == "Schedule" and release.release == null) {
+            if (stage == "Schedule" and release instanceof Backlog) {
                 release = model.currentRelease;
             }
-            if (stage == "Backlog" and release.release != null) {
+            if (stage == "Backlog" and not (release instanceof Backlog)) {
                 release = model.backlog;
             }
             model.findStage(oldStage).removeStory(this);
@@ -70,23 +72,24 @@ public class Story extends XObject, Comparable {
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
-            if (release.release == null and stage == "Schedule") {
+            if (release instanceof Backlog and stage == "Schedule") {
                 stage = "Backlog"
-            } else if (stage == "Propose" or stage == "Backlog" and release.release != null) {
+            } else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
                 stage = "Schedule"
             }
-            hierarchicalRequirement.setRelease(release.release);
+            hierarchicalRequirement.setReleasePlan(release.name);
             update();
             oldRelease.removeStory(this);
             newRelease.addStory(this);
         }
     }
-    public var owner:String on replace {
+    public var owner:User on replace {
         if (initialized) {
             hierarchicalRequirement.setOwner(owner);
             update();
         }
     }
+    public var ownerName:String = bind owner.getRefObjectName();
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
     public var rank:Double on replace {
@@ -107,12 +110,12 @@ public class Story extends XObject, Comparable {
     public var overflow:String;
 
     public function browse():Void {
-        BrowserUtil.browse("https://community.rallydev.com/slm/detail/ar/{hierarchicalRequirement.getObjectID()}");
+        BrowserUtil.browse("{RallyModel.server}slm/detail/ar/{hierarchicalRequirement.getObjectID()}");
     }
 
     function reapply():Void {
         // todo - find a cleaner way to do this
-        hierarchicalRequirement.setRelease(release.release);
+        hierarchicalRequirement.setReleasePlan(release.name);
         hierarchicalRequirement.setStage(stage);
         var rank3 = Math.floor(rank * 1000) / 1000;
         hierarchicalRequirement.setRank(rank3);
@@ -229,7 +232,7 @@ public class Story extends XObject, Comparable {
         description = hierarchicalRequirement.getDescription();
         textDescription = removeTags(description);
         parentName = hierarchicalRequirement.getParent().getRefObjectName();
-        release = model.getRelease(hierarchicalRequirement.getRelease().getRef());
+        release = model.getRelease(hierarchicalRequirement.getReleasePlan());
         rank = if (hierarchicalRequirement.getRank() == null) 0 else hierarchicalRequirement.getRank();
         owner = hierarchicalRequirement.getOwner();
         inPackage = hierarchicalRequirement.get_package();
@@ -251,7 +254,7 @@ public class Story extends XObject, Comparable {
         if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
             stage = "Propose";
         }
-        if ((stage == "Propose" or stage == "Backlog") and hierarchicalRequirement.getRelease() != null) {
+        if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
             stage = "Schedule";
         }
         if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
@@ -288,16 +291,22 @@ public class Story extends XObject, Comparable {
                         for (iteration in model.iterations where iteration == name) {
                             if (indexof iteration == 0) {
                                 iteration1 = maybeAppend(iteration1, child.getProject().getRefObjectName());
+                                scheduled = true;
                             } else if (indexof iteration == 1) {
                                 iteration2 = maybeAppend(iteration2, child.getProject().getRefObjectName());
+                                scheduled = true;
                             } else if (indexof iteration == 2) {
                                 iteration3 = maybeAppend(iteration3, child.getProject().getRefObjectName());
+                                scheduled = true;
                             } else if (indexof iteration == 3) {
                                 iteration4 = maybeAppend(iteration4, child.getProject().getRefObjectName());
+                                scheduled = true;
                             } else if (indexof iteration == 4) {
                                 iteration5 = maybeAppend(iteration5, child.getProject().getRefObjectName());
+                                scheduled = true;
                             } else if (indexof iteration == 5) {
                                 iteration6 = maybeAppend(iteration6, child.getProject().getRefObjectName());
+                                scheduled = true;
                             } else {
                                 overflow = child.getProject().getRefObjectName();
                             }

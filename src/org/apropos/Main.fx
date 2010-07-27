@@ -48,8 +48,7 @@ Stage {
     scene: scene = XScene {
         width: 1100
         height: 700
-        nodeMargin: null
-        stylesheets: "{__DIR__}darktheme.css"
+        stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}darktheme.css"]
         content: XStack {
             content: bind if (not model.loggedIn) LoginScreen {} else AproposUI {}
         }

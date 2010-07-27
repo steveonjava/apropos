@@ -9,9 +9,7 @@ package org.apropos.ui;
 import org.apropos.model.RallyModel;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XGrid;
-import org.jfxtras.scene.layout.XGridLayoutInfo;
-import org.jfxtras.scene.layout.XGridLayoutInfo.*;
+import org.jfxtras.scene.layout.XVBox;
 
 /**
  * @author Stephen Chin
@@ -31,18 +29,22 @@ public class PortfolioModule extends XCustomNode {
 
     def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
     def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
+    def ownerFilter = Filter {name: "Owner", list: bind for (o in model.owners) o.getDisplayName(), selectedIndex: bind model.selectedOwnerIndex with inverse}
 
     override function create() {
-        XGrid {
-            animate: true
-            hgap: 10
-            rows: bind [
-                row(XHBox {
+        XVBox {
+            spacing: 8
+            content: bind [
+                XHBox {
+                    animate: true
                     spacing: 8
-                    content: [epicFilter, packageFilter]
-                    layoutInfo: XGridLayoutInfo {hspan: 3}
-                }),
-                row(storyViews[s|s.visible])
+                    content: [epicFilter, packageFilter, ownerFilter]
+                }
+                XHBox {
+                    animate: true
+                    spacing: 10
+                    content: storyViews[s|s.visible]
+                }
             ]
         }
     }

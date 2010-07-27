@@ -27,8 +27,8 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_17.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_17.domain.QueryResult;
+import com.rallydev.webservice.v1_18.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_18.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
@@ -38,11 +38,12 @@ import org.jfxtras.util.SequenceUtil;
  */
 public class Release extends StoryContainer {
 
-    public var release:com.rallydev.webservice.v1_17.domain.Release on replace {
-        if (release != null) {
-            name = release.getName();
-        }
-    }
+// todo - release fix
+//    public var release:com.rallydev.webservice.v1_18.domain.Release on replace {
+//        if (release != null) {
+//            name = release.getName();
+//        }
+//    }
 
     package var model = RallyModel.instance;
 
@@ -97,7 +98,7 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                model.rallyService.query(null, model.mainProject, false, false, "HierarchicalRequirement", "((Release = \"{release.getRef()}\") and (Hierarchy = \"Feature\"))", "Rank", true, start, 100);
+                model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((ReleasePlan = \"{name}\") and (Hierarchy = \"Feature\"))", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;
@@ -112,8 +113,12 @@ public class Release extends StoryContainer {
                     for (error in queryResult.getErrors()) println('ERROR: {error}"');
                 } else {
                     def results = queryResult.getResults();
-                    def newStories = for (domainObject in results) Story {
-                       hierarchicalRequirement: domainObject as HierarchicalRequirement
+                    var newStories:Story[];
+                    for (domainObject in results) {
+                        var story = domainObject  as HierarchicalRequirement;
+                        insert Story {
+                           hierarchicalRequirement: story
+                        } into newStories;
                     }
                     insert newStories into stories;
                     for (story in newStories) {
@@ -132,6 +137,8 @@ public class Release extends StoryContainer {
                         def stageStories = newStories[s|s.stage == stage.name];
                         insert stageStories into stage.stories;
                     }
+                    def noStage = newStories[s|s.stage == null];
+                    insert noStage into model.stages[0].stories;
                     if (results.length == 100) {
                         loadStories(start + 100);
                     }

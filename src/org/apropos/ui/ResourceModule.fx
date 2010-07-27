@@ -30,7 +30,9 @@ package org.apropos.ui;
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -54,25 +56,17 @@ public class ResourceModule extends XCustomNode {
         
     def model = RallyModel.instance;
 
-    var stories:Story[] = bind model.currentRelease.stories on replace {
-        updateFiltered();
-    }
+    var stories:Story[] = bind model.currentRelease.stories;
 
-    var selectedPackage = bind model.selectedPackage on replace {
-        updateFiltered();
-    }
+    var selectedPackage = bind model.selectedPackage;
 
-    function updateFiltered() {
-        filteredStories = model.currentRelease.stories[s|selectedPackage == null or s.inPackage == selectedPackage];
-    }
-
-    var filteredStories:Story[];
+    public-read var filteredStories = bind model.filter(model.currentRelease.stories);
 
     var ownerTotals:Double[];
 
     function calculateOwnerTotals() {
         ownerTotals = for (owner in model.owners) {
-            SequenceUtil.sum(for (story in stories where story.owner == owner.getLoginName() and story.drafted) story.estimate)
+            SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName() and story.drafted) story.estimate)
         }
     }
 
@@ -84,22 +78,22 @@ public class ResourceModule extends XCustomNode {
 
     def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
     def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
+    def ownerFilter = Filter {name: "Owner", list: bind for (o in model.owners) o.getDisplayName(), selectedIndex: bind model.selectedOwnerIndex with inverse}
 
     def filters = XHBox {
         spacing: 8
         content: [
             epicFilter,
             packageFilter,
+            ownerFilter,
             Button {
                 text: "Auto Draft"
                 style: RallyModel.buttonSkin
                 action: function() {
                     for (story in stories) {
                         story.drafted = true;
-                        calculateOwnerTotals();
-                        filteredStories = null;
-                        updateFiltered();
                     }
+                    calculateOwnerTotals();
                 }
             }
             Button {
@@ -108,10 +102,8 @@ public class ResourceModule extends XCustomNode {
                 action: function() {
                     for (story in stories) {
                         story.drafted = false;
-                        calculateOwnerTotals();
-                        filteredStories = null;
-                        updateFiltered();
                     }
+                    calculateOwnerTotals();
                 }
             }
         ]
@@ -119,7 +111,7 @@ public class ResourceModule extends XCustomNode {
 
     def owners = XGrid {
         hgap: 10
-        vgap: 20
+        vgap: 10
         rows: for (owner in model.owners) {
             var target:String = model.initialTargets[indexof owner];
             row([
@@ -136,18 +128,16 @@ public class ResourceModule extends XCustomNode {
                     style: RallyModel.buttonSkin
                     action: function() {
                         def story = filteredStories[table.selectedRow];
-                        if (story.owner != owner.getLoginName()) {
-                            story.owner = owner.getLoginName();
+                        if (story.owner != owner) {
+                            story.owner = owner;
                         }
                         story.drafted = true;
                         calculateOwnerTotals();
-                        filteredStories = null;
-                        updateFiltered();
                     }
                 }
                 Text {
                     content: bind "Total: {ownerTotals[indexof owner]}"
-                    fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.WHITE
+                    fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.LIGHTSALMON, .3) else Color.WHITE
                     font: Font.font(null, 18);
                 }
                 Text {
@@ -158,6 +148,21 @@ public class ResourceModule extends XCustomNode {
                 TextBox {
                     text: bind target with inverse;
                     font: Font.font(null, 18);
+                }
+                VBox {
+                    def ownerStories = bind stories[s|s.owner.getRefObjectName() == owner.getRefObjectName()];
+                    content: [
+                        Text {
+                            content: "Compliance"
+                            fill: Color.WHITE
+                        }
+                        ProgressBar {
+                            progress: bind (sizeof ownerStories[s|s.acceptanceTest == "Y"] as Number) / (sizeof ownerStories)
+                        }
+                        ProgressBar {
+                            progress: bind (sizeof ownerStories[s|s.scheduled] as Number) / (sizeof ownerStories)
+                        }
+                    ]
                 }
             ])
         }
@@ -200,7 +205,7 @@ public class ResourceModule extends XCustomNode {
             XTableColumn {
                 displayName: "Owner"
                 prefWidth: 100
-                id: "owner"
+                id: "ownerName"
                 renderer: TextRenderer {}
             }
             XTableColumn {

@@ -52,6 +52,7 @@ public class RoadmapModule extends XCustomNode {
 
     def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
     def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
+    def ownerFilter = Filter {name: "Owner", list: bind for (o in model.owners) o.getDisplayName(), selectedIndex: bind model.selectedOwnerIndex with inverse}
 
     override function create() {
         XVBox {
@@ -59,7 +60,7 @@ public class RoadmapModule extends XCustomNode {
             content: [
                 XHBox {
                     spacing: 8
-                    content: [epicFilter, packageFilter]
+                    content: [epicFilter, packageFilter, ownerFilter]
                 }
                 table = XTableView {
                     rowType: Story {}.getJFXClass()
@@ -98,7 +99,7 @@ public class RoadmapModule extends XCustomNode {
                         XTableColumn {
                             displayName: "Owner"
                             prefWidth: 100
-                            id: "owner"
+                            id: "ownerName"
                             renderer: TextRenderer {}
                         }
                         for (iteration in model.iterations) {

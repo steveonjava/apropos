@@ -27,15 +27,15 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_17.domain.Project;
-import com.rallydev.webservice.v1_17.domain.User;
-import com.rallydev.webservice.v1_17.service.RallyService;
-import com.rallydev.webservice.v1_17.service.RallyServiceServiceLocator;
-import java.util.Calendar;
+import com.rallydev.webservice.v1_18.domain.Project;
+import com.rallydev.webservice.v1_18.domain.User;
+import com.rallydev.webservice.v1_18.service.RallyService;
+import com.rallydev.webservice.v1_18.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
 import javafx.stage.Alert;
 import javafx.util.Math;
 import org.apache.axis.client.Stub;
+import org.apache.axis.AxisFault;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.SequenceUtil;
 
@@ -49,8 +49,11 @@ public def buttonSkin = "-fx-color: BLACK;"
     "-fx-focus-color: white;"
     "-fx-background: black;";
 
-def GUEST_USER = "apropos@jfxtras.org";
-def GUEST_PASSWORD = "AproposFX";
+def community:Boolean = false;
+public def server = bind if (community) "https://community.rallydev.com/" else "https://rally1.rallydev.com/";
+
+def GUEST_USER = if (community) "apropos@jfxtras.org" else "build@inovis.com";
+def GUEST_PASSWORD = if (community) "AproposFX" else "StephenIsCool";
 
 public def instance = RallyModel {}
 
@@ -59,14 +62,15 @@ public class RallyModel extends XObject {
     public var login = Login {userName: GUEST_USER, password: GUEST_PASSWORD};
     public var loggedIn = false;
     public var showInDollars = false;
+    public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
     public-init var currentRelease:Release;
-    public-init var iterations = ["Sprint 2010-04-13", "Sprint 2010-04-27", "Sprint 2010-05-11", "Sprint 2010-05-25", "Sprint 2010-06-08", "Sprint 2010-06-22"];
-    public-init var ownerNames:String[] = ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"];
+    public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
+    public-init var ownerNames:String[] = if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"] else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
-    public-init var initialTargets = ["450", "390", "180", "960", "107", "420", "320", "93"];
+    public-init var initialTargets = ["396", "360", "168", "702", "150", "365", "270"];
     public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
@@ -75,6 +79,7 @@ public class RallyModel extends XObject {
     public-init var actualToCostRatio = 66.5;
     public-read var rallyService:RallyService;
     public var backlog:Backlog;
+    public-init var releaseNames = ["Internal Release 2010Q3", "Internal Release 2010Q4", "Internal Release 2011Q1", "Internal Release 2011Q2"];
     public var releases:Release[];
     public var stages:Stage[];
     public var epicNames:String[];
@@ -87,6 +92,11 @@ public class RallyModel extends XObject {
     public var selectedPackage:String = bind if (selectedPackageIndex == 0) null else {
         packageNames[selectedPackageIndex - 1];
     }
+    public var selectedOwnerIndex:Integer;
+    public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
+        owners[selectedOwnerIndex - 1].getDisplayName();
+    }
+    public var mainProjectName = if (community) "" else "Business Community Management";
     public-read var mainProject:Project;
     public var waiting = 0;
 
@@ -95,7 +105,7 @@ public class RallyModel extends XObject {
     }
 
     bound function selected(s:Story) {
-        (selectedPackage == null or s.inPackage == selectedPackage) and (selectedEpic == null or s.parentName == selectedEpic)
+        (selectedPackage == null or s.inPackage == selectedPackage) and (selectedEpic == null or s.parentName == selectedEpic) and (selectedOwner == null or s.ownerName == selectedOwner)
     }
 
     public bound function filter(stories:Story[]) {
@@ -109,21 +119,24 @@ public class RallyModel extends XObject {
             loadReleases();
             loadOwners();
             loggedIn = true;
-        } catch (e) {
-            e.printStackTrace();
+        } catch (e:AxisFault) {
+            Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
         }
     }
 
     function loadReleases() {
-        def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
+// todo - release fix
+//        def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
+//        def now = Calendar.getInstance();
         backlog = Backlog {model: this}
-        releases = for (r in rallyReleases) Release {release: r as com.rallydev.webservice.v1_17.domain.Release, model: this}
-        def now = Calendar.getInstance();
+//        releases = for (r in rallyReleases where (r as com.rallydev.webservice.v1_18.domain.Release).getReleaseDate().<<after>>(now)) Release {release: r as com.rallydev.webservice.v1_18.domain.Release, model: this}
+        releases = for (rpn in releasePlanNames) Release {model: this, name: rpn}
         for (r in releases) {
-            if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
+//            if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
             r.containerBefore = releases[indexof r - 1];
             r.containerAfter = releases[indexof r + 1];
         }
+        currentRelease = releases[0];
         backlog.containerAfter = releases[0];
         releases[0].containerBefore = backlog;
         stages = for (stageName in stageNames) Stage {name: stageName}
@@ -140,26 +153,26 @@ public class RallyModel extends XObject {
             if (sizeof results == 0) null else results[0] as User;
         }
         // hack to login for image retrieval
-        Image {url: "https://community.rallydev.com/slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
-        Image {url: "https://community.rallydev.com/slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
+        Image {url: "{server}slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
+        Image {url: "{server}slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
         myImage = Image {
             width: 70
             height: 70
             preserveRatio: true
-            url: "https://community.rallydev.com/slm/profile/viewThumbnailImage.sp?tSize=200&uid={myUser.getObjectID()}"
+            url: "{server}slm/profile/viewThumbnailImage.sp?tSize=200&uid={myUser.getObjectID()}"
         }
         ownerImages = for (owner in owners) {
             Image {
                 width: 70
                 height: 70
                 preserveRatio: true
-                url: "https://community.rallydev.com/slm/profile/viewThumbnailImage.sp?tSize=200&uid={owner.getObjectID()}"
+                url: "{server}slm/profile/viewThumbnailImage.sp?tSize=200&uid={owner.getObjectID()}"
             }
         }
     }
 
-    public function getRelease(ref:String) {
-        return releases[r|r.release.getRef() == ref][0];
+    public function getRelease(releasePlanName:String) {
+        return releases[r|r.name == releasePlanName][0];
     }
 
     public bound function limitByCount(stageIndex:Integer):Boolean {
@@ -229,7 +242,16 @@ public class RallyModel extends XObject {
 
         stub.setMaintainSession(true);
         // todo - need to create a project selector dialog
-        mainProject = rallyService.query(null, "Project", null, null, true, 0, 100).getResults()[0] as Project;
+        def projects = rallyService.query(null, "Project", null, null, true, 0, 100).getResults();
+        for (project in projects) {
+            def p = project as Project;
+            if (p.getName() == mainProjectName) {
+                mainProject = p;
+            }
+        }
+        if (mainProject == null) {
+            mainProject = projects[0] as Project;
+        }
     }
 
     public bound function convertEstimate(estimate:Double):String {
