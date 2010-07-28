@@ -95,13 +95,13 @@ public class RoadmapModule extends XCustomNode {
                             renderer: TextRenderer {}
                         }
                         XTableColumn {
-                            displayName: "Epic Name"
+                            displayName: "Theme"
                             prefWidth: 140
                             id: "parentName"
                             renderer: TextRenderer {}
                         }
                         XTableColumn {
-                            displayName: "Feature Name"
+                            displayName: "Feature"
                             prefWidth: 140
                             id: "name"
                             renderer: TextRenderer {}

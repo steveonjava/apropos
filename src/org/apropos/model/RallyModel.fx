@@ -67,9 +67,10 @@ public class RallyModel extends XObject {
     public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
     public-init var currentRelease:Release;
     public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
-    public-init var ownerNames:String[] = if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
-    else if (show) ["dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
-    else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
+    public-init var ownerNames:String[] =
+      if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
+      else if (show) ["dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
+      else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myImage:Image;
@@ -172,7 +173,7 @@ public class RallyModel extends XObject {
             println("Unable to get credentials for users -- please update account priveleges");
         }
         owners = for (ownerName in ownerNames) {
-            def results = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{ownerName}\")", null, true, 0, 100).getResults();
+            def results = rallyService.query(null, mainProject, false, false, "User", "(UserName = \"{ownerName}\")", null, true, 0, 100).getResults();
             if (sizeof results == 0) null else results[0] as User;
         }
         // hack to login for image retrieval

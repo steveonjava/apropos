@@ -95,6 +95,9 @@ public class ResourceModule extends XCustomNode {
 
     def filters = XHBox {
         spacing: 8
+//        layoutInfo: LayoutInfo {
+//          width: bind scene.width
+//        }
         content: [
             allocationFilter,
             ownerFilter,
@@ -212,13 +215,13 @@ public class ResourceModule extends XCustomNode {
                 renderer: TextRenderer {}
             }
             XTableColumn {
-                displayName: "Epic Name"
+                displayName: "Theme"
                 prefWidth: 80
                 id: "parentName"
                 renderer: TextRenderer {}
             }
             XTableColumn {
-                displayName: "Feature Name"
+                displayName: "Feature"
                 prefWidth: 100
                 id: "name"
                 renderer: TextRenderer {}

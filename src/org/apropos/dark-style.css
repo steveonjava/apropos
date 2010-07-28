@@ -33,7 +33,7 @@ ToggleButton {
 
 .scene {
   /* The default font for all content, it in inherited by all nodes */
-  /*-fx-font: 14pt "Amble-Condensed";*/
+  -fx-font: 12pt "Arial";
   -fx-toggle-button-focus-color: white;
 
 /*
@@ -81,9 +81,23 @@ ToggleButton {
 
 /*******************************************************************************
  *                                                                             *
- * CSS Styles for the Button control                                      *
+ * CSS Styles for the Label control                                            *
  *                                                                             *
  ******************************************************************************/
+
+.label {
+  -fx-text-overrun: clip;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the Label control                                            *
+ *                                                                             *
+ ******************************************************************************/
+
+.button {
+  -fx-text-overrun: clip;
+}
 
 /*******************************************************************************
  *                                                                             *

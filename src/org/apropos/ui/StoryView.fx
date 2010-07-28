@@ -135,14 +135,14 @@ public class StoryView extends XCustomNode {
             ],
             if (narrowColumns and not maximized) [] else [
                 XTableColumn {
-                    displayName: "Epic Name"
+                    displayName: "Theme"
                     prefWidth: 80
                     id: "parentName"
                     renderer: TextRenderer {}
                 }
             ],
             XTableColumn {
-                displayName: "Feature Name"
+                displayName: "Feature"
                 prefWidth: 90
                 id: "name"
                 renderer: TextRenderer {}
@@ -165,12 +165,6 @@ public class StoryView extends XCustomNode {
                 displayName: "Est"
                 prefWidth: 35
                 id: "estimateDisplay"
-                renderer: TextRenderer {}
-            }
-            if (narrowColumns and not maximized) [] else XTableColumn {
-                displayName: "AT"
-                prefWidth: 25
-                id: "acceptanceTest"
                 renderer: TextRenderer {}
             }
         ]
