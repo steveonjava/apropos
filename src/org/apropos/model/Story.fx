@@ -57,6 +57,7 @@ public class Story extends XObject, Comparable {
     public var description:String;
     public var textDescription:String;
     public var parentName:String;
+    public var portfolioAllocation:String;
     public var stage:String on replace oldStage=newStage {
         if (initialized) {
             hierarchicalRequirement.setPortfolioKanbanState(stage);
@@ -232,6 +233,7 @@ public class Story extends XObject, Comparable {
         description = hierarchicalRequirement.getDescription();
         textDescription = removeTags(description);
         parentName = hierarchicalRequirement.getParent().getRefObjectName();
+        portfolioAllocation = hierarchicalRequirement.getPortfolioAllocation();
         release = model.getRelease(hierarchicalRequirement.getPortfolioRelease());
         rank = hierarchicalRequirement.getRank();
         owner = hierarchicalRequirement.getOwner();

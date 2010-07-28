@@ -42,9 +42,19 @@ public class ScopeModule extends XCustomNode {
         storyContainer: release
     }
 
-    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
-    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
-    def ownerFilter = Filter {name: "Owner", list: bind for (o in model.owners) o.getDisplayName(), selectedIndex: bind model.selectedOwnerIndex with inverse}
+//    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
+//    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
+
+    def allocationFilter = Filter {
+        name: "Investment Allocation"
+        list: bind model.allocationNames
+        selectedIndex: bind model.selectedAllocationIndex with inverse
+    };
+    def ownerFilter = Filter {
+        name: "Owner"
+        list: bind for (o in model.owners) o.getDisplayName()
+        selectedIndex: bind model.selectedOwnerIndex with inverse
+    };
 
     override function create() {
         XVBox {
@@ -53,7 +63,7 @@ public class ScopeModule extends XCustomNode {
                 XHBox {
                     animate: true
                     spacing: 8
-                    content: [epicFilter, packageFilter, ownerFilter]
+                    content: [allocationFilter, ownerFilter]
                 }
                 XHBox {
                     animate: true

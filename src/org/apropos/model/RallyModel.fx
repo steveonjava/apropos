@@ -68,7 +68,7 @@ public class RallyModel extends XObject {
     public-init var currentRelease:Release;
     public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
     public-init var ownerNames:String[] = if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
-    else if (show) ["dave@acme.com", "paul@acme.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
+    else if (show) ["dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
     else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
     public-init var owners:User[];
     public-read var myUser:User;
@@ -86,11 +86,19 @@ public class RallyModel extends XObject {
     public-init var releaseNames = ["Internal Release 2010Q3", "Internal Release 2010Q4", "Internal Release 2011Q1", "Internal Release 2011Q2"];
     public var releases:Release[];
     public var stages:Stage[];
+
     public var epicNames:String[];
-    public var selectedEpicIndex:Integer;
-    public var selectedEpic:String = bind if (selectedEpicIndex == 0) null else {
-        epicNames[selectedEpicIndex - 1];
+//    public var selectedEpicIndex:Integer;
+//    public var selectedEpic:String = bind if (selectedEpicIndex == 0) null else {
+//        epicNames[selectedEpicIndex - 1];
+//    }
+
+    public var allocationNames:String[];
+    public var selectedAllocationIndex:Integer;
+    public var selectedAllocation:String = bind if (selectedAllocationIndex == 0) null else {
+        allocationNames[selectedAllocationIndex - 1];
     }
+
     public var packageNames:String[];
     public var selectedPackageIndex:Integer;
     public var selectedPackage:String = bind if (selectedPackageIndex == 0) null else {
@@ -105,11 +113,13 @@ public class RallyModel extends XObject {
     public var waiting = 0;
 
     bound function filtersOn() {
-        return selectedEpic != null or selectedPackage != null;
+        return selectedAllocation != null;
+//        return selectedEpic != null or selectedPackage != null;
     }
 
     bound function selected(s:Story) {
-        (selectedPackage == null or s.inPackage == selectedPackage) and (selectedEpic == null or s.parentName == selectedEpic) and (selectedOwner == null or s.ownerName == selectedOwner)
+        (selectedAllocation == null or s.portfolioAllocation == selectedAllocation) and
+        (selectedOwner == null or s.ownerName == selectedOwner)
     }
 
     public bound function filter(stories:Story[]) {
@@ -155,7 +165,7 @@ public class RallyModel extends XObject {
     }
 
     function loadOwners() {
-        def myResult = rallyService.query(null, mainProject, false, false, "User", "(LoginName = \"{login.userName}\")", null, true, 0, 100).getResults();
+        def myResult = rallyService.query(null, mainProject, false, false, "User", "(UserName = \"{login.userName}\")", null, true, 0, 100).getResults();
         if (sizeof myResult > 0) {
             myUser = myResult[0] as User;
         } else {

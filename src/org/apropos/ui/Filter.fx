@@ -59,7 +59,7 @@ public class Filter extends XCustomNode {
             spacing: 8
             content: [
                 Label {
-                    text: "{name} Filter:"
+                    text: "{name}:"
                     textFill: Color.WHITE
                 }
                 choice

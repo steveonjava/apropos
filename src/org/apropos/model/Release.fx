@@ -122,6 +122,14 @@ public class Release extends StoryContainer {
                             insert story.parentName before model.epicNames[-insertionPoint - 1];
                         }
                     }
+                    for (story in newStories) {
+                        if (story.portfolioAllocation.trim() != "") {
+                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.portfolioAllocation);
+                            if (insertionPoint < 0) {
+                                insert story.portfolioAllocation before model.allocationNames[-insertionPoint - 1];
+                            }
+                        }
+                    }
                     for (stage in model.stages) {
                         def stageStories = newStories[s|s.stage == stage.name];
                         insert stageStories into stage.stories;
