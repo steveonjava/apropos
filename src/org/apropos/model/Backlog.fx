@@ -36,7 +36,8 @@ public class Backlog extends Release {
     var visibleStories:Story[];
 
     override var stories:Story[] on replace {
-        visibleStories = for (story in stories where story.stage == "Backlog") story;
+//        visibleStories = for (story in stories where story.stage == "Backlog") story;
+        visibleStories = for (story in stories where story.stage == "") story;
     }
 
     override bound function getVisibleStories() {

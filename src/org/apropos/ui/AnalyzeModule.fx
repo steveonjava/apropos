@@ -34,11 +34,11 @@ import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import org.apropos.model.Release;
 import org.jfxtras.scene.XCustomNode;
-import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
+import javafx.scene.control.ChoiceBox;
 
 /**
  * @author Stephen Chin
@@ -46,14 +46,25 @@ import org.jfxtras.scene.layout.XVBox;
 public class AnalyzeModule extends XCustomNode {
     def model = RallyModel.instance;
 
-    def releasePicker:XPicker = XPicker {
+    def releaseChoice:ChoiceBox = ChoiceBox {
         items: bind model.releases
-        onIndexChange: function(ind) {rebuildChart()}
+        var selIndex = bind releaseChoice.selectedIndex on replace {
+          if (selIndex >= 0) {
+            rebuildChart();
+          }
+        }
     }
 
-    def release = bind releasePicker.selectedItem as Release;
+    def release = bind releaseChoice.selectedItem as Release;
 
-    def names = bind model.packageNames;
+//    def releaseChoice:XPicker = XPicker {
+//        items: bind model.releases
+//        onIndexChange: function(ind) {rebuildChart()}
+//    }
+//
+//    def release = bind releaseChoice.selectedItem as Release;
+
+    def names = bind model.allocationNames;
 
     def parentBind = bind parent on replace {
         if (parent != null) {
@@ -67,13 +78,14 @@ public class AnalyzeModule extends XCustomNode {
         def data = for (name in names) {
             PieChart.Data {
                 label: name
-                value: release.getPackageTotals(name)
+                //value: release.getPackageTotals(name)
+                value: release.getAllocationTotals(name)
             }
         }
         chart = PieChart {
             titleFill: Color.WHITE
             titleFont: Font.font(null, 24)
-            title: bind "Investment Allocation for {releasePicker.selectedItem}"
+            title: bind "Investment Allocation for {releaseChoice.selectedItem}"
             pieLabelFill: Color.WHITE
             data: data
             legendVisible: true
@@ -85,10 +97,10 @@ public class AnalyzeModule extends XCustomNode {
         spacing: 8
         content: [
             Label {
-                text: "Release Filter:"
+                text: "Release:"
                 textFill: Color.WHITE
             }
-            releasePicker
+            releaseChoice
         ]
     }
 

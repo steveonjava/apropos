@@ -48,10 +48,13 @@ public class Release extends StoryContainer {
 
     package var model = RallyModel.instance;
 
-    public function getPackageTotals(name:String):Double {
-        SequenceUtil.sum(for (s in stories where s.inPackage == name) s.estimate)
-    }
+//    public function getPackageTotals(name:String):Double {
+//        SequenceUtil.sum(for (s in stories where s.inPackage == name) s.estimate)
+//    }
 
+    public function getAllocationTotals(name:String):Double {
+        SequenceUtil.sum(for (s in stories where s.portfolioAllocation == name) s.estimate)
+    }
     override function moveBefore(story:Story) {
         story.release = containerBefore as Release;
     }

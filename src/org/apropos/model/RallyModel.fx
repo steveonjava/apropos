@@ -76,7 +76,7 @@ public class RallyModel extends XObject {
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     public-init var initialTargets = ["396", "360", "168", "702", "150", "365", "270"];
-    public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
+    public-init var stageNames = ["Proposed", "Backlogged", "Scheduled", "In Process", "Deployed", "Enabled", "Adopted", "Validated"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
@@ -100,11 +100,13 @@ public class RallyModel extends XObject {
         allocationNames[selectedAllocationIndex - 1];
     }
 
+    //TODO: Remove the concept of packages, in favor of Portfolio Allocations
     public var packageNames:String[];
     public var selectedPackageIndex:Integer;
     public var selectedPackage:String = bind if (selectedPackageIndex == 0) null else {
         packageNames[selectedPackageIndex - 1];
     }
+
     public var selectedOwnerIndex:Integer;
     public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
         owners[selectedOwnerIndex - 1].getDisplayName();
