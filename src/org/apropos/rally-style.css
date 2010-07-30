@@ -99,26 +99,16 @@
 
 /*******************************************************************************
  *                                                                             *
- * CSS Styles for the ToggleButton control                                     *
+ * CSS Styles for the ToggleButton control (being used as tabs                 *
  *                                                                             *
  ******************************************************************************/
-
-/*
-    fill: BLACK;
-    focusFill: DARKGRAY;
-    borderFill: BLACK;
-    textFill: WHITE;
-    shadowFill: BLACK;
-    fontSize: 14pt;
-
- */
  
 .toggle-button {
     -fx-padding: 3 10 2 10;
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-radius: 5, 5, 4, 3;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color: transparent, transparent, transparent, #3f84a4;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-text-fill: -fx-light-text-color;
     -fx-vpos: CENTER;
     -fx-graphic-vpos: CENTER;
 }
@@ -136,33 +126,40 @@
 */
 
 .toggle-button:focused {
-    -fx-background-color: -fx-toggle-button-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-insets: -1.4, 0, 1, 2;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-background-color:
+        transparent,
+        transparent,
+        transparent,
+        #3f84a4;
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-background-insets: 0;
 }
 
 .toggle-button:selected {
-    -fx-text-fill: -fx-light-text-color;
+    -fx-text-fill: -fx-dark-text-color;
     -fx-background-color:
-        -fx-shadow-highlight-color,
-        linear (0%,0%) to (0%,100%) stops (0%, derive(-fx-color,-90%)) (100%, derive(-fx-color,-60%)),
-        linear (0%,0%) to (0%,100%) stops (0%, derive(-fx-color,-60%)) (50%, derive(-fx-color,-35%)) (98%, derive(-fx-color,-30%)) (100%, derive(-fx-color,-50%)),
-        linear (0%,0%) to (100%,0%) stops (0%, rgba(0,0,0,0.3)) (10%, rgba(0,0,0,0)) (90%, rgba(0,0,0,0)) (100%, rgba(0,0,0,0.3));
-    -fx-background-insets: 0 0 -1 0, 0, 1, 1;
+        transparent,
+        transparent,
+        transparent,
+        #b5d8eb;
+    -fx-background-insets: 0, 0, 0, 0;
 }
 
 .toggle-button:selected:focused {
+    -fx-text-fill: -fx-light-text-color;
     -fx-background-color:
-        -fx-toggle-button-focus-color,
-        linear (0%,0%) to (0%,100%) stops (0%, derive(-fx-color,-90%)) (100%, derive(-fx-color,-60%)),
-        linear (0%,0%) to (0%,100%) stops (0%, derive(-fx-color,-60%)) (50%, derive(-fx-color,-35%)) (98%, derive(-fx-color,-30%)) (100%, derive(-fx-color,-50%)),
-        linear (0%,0%) to (100%,0%) stops (0%, rgba(0,0,0,0.3)) (10%, rgba(0,0,0,0)) (90%, rgba(0,0,0,0)) (100%, rgba(0,0,0,0.3));
-    -fx-background-insets: -1.4, 0, 1, 1;
+        transparent,
+        transparent,
+        transparent,
+        #b5d8eb;
+    -fx-background-insets: 0, 0, 0, 0;
 }
 
 
 
 .toggle-button:disabled {
-    -fx-opacity: 0.9;
+    -fx-opacity: 1.0;
 }
 
 

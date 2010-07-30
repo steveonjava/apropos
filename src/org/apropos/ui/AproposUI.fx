@@ -66,14 +66,21 @@ public class AproposUI extends XCustomNode {
     def buttonBar = XStack {
         content: [
             XHBox {
-                spacing: 20
+                spacing: 5
                 def buttonLabels = [
                     "Portfolio",
-                    "Scope",
-                    "Resource",
+                    "Roadmap",
+                    "Plan",
                     "Analyze",
-                    "Roadmap"
+                    "Schedule"
                 ]
+//                def buttonLabels = [
+//                    "Portfolio",
+//                    "Scope",
+//                    "Resource",
+//                    "Analyze",
+//                    "Roadmap"
+//                ]
                 content: bind for (label in buttonLabels)
                     createMenuToggleButton(label, indexof label == 0);
                 layoutInfo: XLayoutInfo {
@@ -102,7 +109,7 @@ public class AproposUI extends XCustomNode {
                             vpos: VPos.TOP
                             hpos: HPos.LEFT
                             hgrow: Priority.NEVER
-                            vgrow: Priority.NEVER
+                            vgrow: Priority.ALWAYS
                         }
                     },
                     buttonBar
@@ -140,10 +147,10 @@ public class AproposUI extends XCustomNode {
     def modules = XMap {
         entries: [
             XMap.Entry {key: "Portfolio", value: PortfolioModule {}}
-            XMap.Entry {key: "Scope", value: ScopeModule {}}
-            XMap.Entry {key: "Resource", value: ResourceModule {}}
+            XMap.Entry {key: "Roadmap", value: ScopeModule {}}
+            XMap.Entry {key: "Plan", value: ResourceModule {}}
             XMap.Entry {key: "Analyze", value: AnalyzeModule {}}
-            XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
+            XMap.Entry {key: "Schedule", value: RoadmapModule {}}
         ]
     }
     var activeModule = bind modules.boundGet((toggleGroup.selectedToggle as ToggleButton).text) as Node;
@@ -168,7 +175,7 @@ public class AproposUI extends XCustomNode {
             //TODO: Style this button so that it is more legible in its disabled state
             disable: bind tbRef.selected
             //TODO: Move font size to style sheet
-            font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
+            //font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
             toggleGroup: toggleGroup
         }
     }
