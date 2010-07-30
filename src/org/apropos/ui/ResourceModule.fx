@@ -33,8 +33,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.Font;
 import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.XTableView;
 import org.jfxtras.scene.control.renderer.RowNumberRenderer;
@@ -45,10 +43,11 @@ import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.scene.paint.ColorUtil;
 import org.jfxtras.util.SequenceUtil;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollView;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.Label;
+import javafx.scene.Group;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Stephen Chin
@@ -91,16 +90,22 @@ public class ResourceModule extends AbstractModulePage {
         selectedIndex: bind model.selectedOwnerIndex with inverse
     };
 
-    def filters = XHBox {
+//    def filters = XHBox {
+//        spacing: 8
+////        layoutInfo: LayoutInfo {
+////          width: bind scene.width
+////        }
+//        content: [
+//            allocationFilter,
+//            ownerFilter
+//        ]
+//    }
+
+    def buttons = XHBox {
         spacing: 8
-//        layoutInfo: LayoutInfo {
-//          width: bind scene.width
-//        }
         content: [
-            allocationFilter,
-            ownerFilter,
             Button {
-                text: "Auto Draft"
+                text: "Auto Assign Features to Owners"
                 action: function() {
                     for (story in stories) {
                         story.drafted = true;
@@ -109,7 +114,7 @@ public class ResourceModule extends AbstractModulePage {
                 }
             }
             Button {
-                text: "Clear"
+                text: "Clear Assignments"
                 action: function() {
                     for (story in stories) {
                         story.drafted = false;
@@ -118,24 +123,81 @@ public class ResourceModule extends AbstractModulePage {
                 }
             }
         ]
+    };
+
+    def ownersHeader:XGrid = XGrid {
+        hgap: 10
+        vgap: 10
+        rows:
+            row([
+                Label {
+                    text: "Owner";
+                    layoutInfo: LayoutInfo {
+                        width: 130
+                    }
+                },
+                Label {
+                    text: "Assigned";
+                    layoutInfo: LayoutInfo {
+                        width: 80
+                    }
+                },
+                Label {
+                    text: "Target";
+                    layoutInfo: LayoutInfo {
+                        width: 80
+                    }
+                }
+            ])
     }
 
-    def owners = XGrid {
+
+    def owners:XGrid = XGrid {
         hgap: 10
         vgap: 10
         rows: for (owner in model.owners) {
             var target:String = model.initialTargets[indexof owner];
             row([
-                ImageView {
-                    image: model.ownerImages[indexof owner]
+//                ImageView {
+//                    image: model.ownerImages[indexof owner]
+//                }
+//                Rectangle {
+//                    styleClass: "owner-row-background"
+//                    width: bind owners.width
+//                    height: 50
+//                },
+                Label {
+                    styleClass: "empasized-text"
+                    text: owner.getDisplayName();
+                    layoutInfo: LayoutInfo {
+                        width: 160
+                    }
+                },
+                Label {
+                    text: bind "{ownerTotals[indexof owner]}"
+                    textFill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.BLACK
+                    layoutInfo: LayoutInfo {
+                        width: 80
+                    }
                 }
-                Text {
-                    content: owner.getDisplayName();
-                    fill: Color.WHITE
-                    font: Font.font(null, 18);
+                TextBox {
+                    text: bind target with inverse
+                    columns: 5
+
                 }
+                VBox {
+                    def ownerStories = bind stories[s|s.owner.getRefObjectName() == owner.getRefObjectName()];
+                    content: [
+                        ProgressBar {
+                            progress: bind (sizeof ownerStories[s|s.acceptanceTest == "Y"] as Number) / (sizeof ownerStories)
+                        }
+                        ProgressBar {
+                            progress: bind (sizeof ownerStories[s|s.scheduled] as Number) / (sizeof ownerStories)
+                        }
+                    ]
+                },
                 Button {
-                    text: "Draft"
+                    text: "Take Selected Feature"
                     action: function() {
                         def story = filteredStories[table.selectedRow];
                         if (story.owner != owner) {
@@ -145,43 +207,6 @@ public class ResourceModule extends AbstractModulePage {
                         story.drafted = true;
                         calculateOwnerTotals();
                     }
-                }
-                Label {
-                    text: bind "Total: {ownerTotals[indexof owner]}"
-                    textFill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.WHITE
-                    font: Font.font(null, 18);
-                    layoutInfo: LayoutInfo {
-                      width: 100
-                    }
-                }
-//                Text {
-//                    content: bind "Total: {ownerTotals[indexof owner]}"
-//                    fill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.LIGHTSALMON, .3) else Color.WHITE
-//                    font: Font.font(null, 18);
-//                }
-                Text {
-                    content: bind "Target:"
-                    fill: Color.WHITE
-                    font: Font.font(null, 18);
-                }
-                TextBox {
-                    text: bind target with inverse;
-                    font: Font.font(null, 18);
-                }
-                VBox {
-                    def ownerStories = bind stories[s|s.owner.getRefObjectName() == owner.getRefObjectName()];
-                    content: [
-                        Text {
-                            content: "Compliance"
-                            fill: Color.WHITE
-                        }
-                        ProgressBar {
-                            progress: bind (sizeof ownerStories[s|s.acceptanceTest == "Y"] as Number) / (sizeof ownerStories)
-                        }
-                        ProgressBar {
-                            progress: bind (sizeof ownerStories[s|s.scheduled] as Number) / (sizeof ownerStories)
-                        }
-                    ]
                 }
             ])
         }
@@ -234,7 +259,7 @@ public class ResourceModule extends AbstractModulePage {
                 renderer: TextRenderer {}
             }
             XTableColumn {
-                displayName: "Drafted"
+                displayName: "Assigned"
                 prefWidth: 40
                 id: "drafted"
                 renderer: TextRenderer {}
@@ -250,14 +275,30 @@ public class ResourceModule extends AbstractModulePage {
             ]
             rightNodes: CostSelectionNode {}
         };
-        pageContent = XVBox {
-            spacing: 10
+        pageContent = XHBox {
+            spacing: 20
             content: [
-                filters,
-                XHBox {
-                    spacing: 20
+                table,
+                XVBox {
+                    spacing: 15
                     content: [
-                        table,
+                        buttons,
+                        Group {
+                            content: [
+                                Rectangle {
+                                    styleClass: "owners-header-background"
+                                    width: bind owners.width + 10
+                                    height: bind ownersHeader.height + 10
+                                },
+                                Group {
+                                    layoutX: 5
+                                    layoutY: 5
+                                    content: [
+                                        ownersHeader
+                                    ]
+                                }
+                             ]
+                        },
                         ScrollView {
                             node: owners
                             layoutInfo:LayoutInfo {
