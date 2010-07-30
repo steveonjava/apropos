@@ -105,10 +105,10 @@
  ******************************************************************************/
 
 .button {
-    -fx-padding: 3 10 2 10;
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, #3f84a4;
-    -fx-background-radius: 3, 3, 2, 1;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 5 10 4 10;
+    -fx-background-color: transparent, transparent, transparent, #3f84a4;
+    -fx-background-radius: 3, 3, 2, 2;
+    -fx-background-insets: -1 -1 -2 -1, 0, 1, 1;
     -fx-text-fill: -fx-light-text-color;
     -fx-vpos: CENTER;
     -fx-graphic-vpos: CENTER;
@@ -124,9 +124,9 @@
 }
 
 .button:focused {
-    -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, #3f84a4;
-    -fx-background-radius: 5.4, 4, 3, 2;
-    -fx-background-insets: -1.4, 0, 1, 2;
+    -fx-background-color: #b5d8eb, transparent, transparent, #3f84a4;
+    -fx-background-radius: 3, 3, 2, 2;
+    -fx-background-insets: -1 -1 -2 -1, 0, 1, 1;
 }
 
 .button:strong {
@@ -265,7 +265,7 @@
 
 .scroll-view {
     -fx-padding: 1;
-    -fx-background-color: -fx-box-border, b5d8eb;
+    -fx-background-color: transparent, #e0e0e0;
     -fx-background-insets: 0, 1;
     -fx-hbar-policy: never;
     -fx-vbar-policy: always;
@@ -305,6 +305,28 @@
 
 /*******************************************************************************
  *                                                                             *
+ * CSS Styles for the Plan module                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+/*
+.owner-row-background {
+  -fx-fill: #b5d8eb;
+}
+*/
+
+.owners-header-background {
+  -fx-fill: #ffffff;
+}
+
+/*
+.resource-assignment-target {
+    -fx-columns: 5;
+}
+*/
+
+/*******************************************************************************
+ *                                                                             *
  * ID-specific styles                                       *
  *                                                                             *
  ******************************************************************************/
@@ -314,6 +336,17 @@
     -fx-text-fill: -fx-light-text-color;
     -fx-font-size: 38;
     /*-fx-font-weight: bold;*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Miscellaneous styles TODO: Keep this sparse, and organized, by creating     *
+ * additional categories                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.empasized-text {
+    -fx-font-weight: bold;
 }
 
 
