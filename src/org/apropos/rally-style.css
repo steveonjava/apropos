@@ -1,34 +1,6 @@
 /* 
-  dark-style.css -
-  A dark style sheet for Apropos.  This replaces darktheme.css and any
-  styles defined in JavaFX code.
-  This is the contents of the old darktheme.css:
-Button {
-    fill: BLACK;
-    focusFill: DARKGRAY;
-    borderFill: BLACK;
-    textFill: WHITE;
-    shadowFill: BLACK;
-}
-
-ToggleButton {
-    fill: BLACK;
-    focusFill: DARKGRAY;
-    borderFill: BLACK;
-    textFill: WHITE;
-    shadowFill: BLACK;
-    fontSize: 14pt;
-}
-  TODO: Make this conform more closely to the former Apropos style represented
-  above, and by the ToggleButton-related snippet below (removed from
-  AproposUI.fx)
-
-  def darkTBStyle = "-fx-color: BLACK;"
-      "-fx-background: black;"
-      "-fx-focus-color: white;"
-      "fontSize: 14pt;";
-
-  This style sheet was substituted because if conforms to JavaFX 1.3 CSS
+  rally-style.css -
+  A Rally-branded style sheet for Apropos.
 */
 
 .scene {
@@ -36,15 +8,15 @@ ToggleButton {
   -fx-font: 12pt "Arial";
   -fx-toggle-button-focus-color: white;
 
+  -fx-light-text-color: white;
+  -fx-dark-text-color: black;
 /*
   -fx-accent: #114fd9;
   -fx-base: #3f3f3f;
   -fx-background: #040404;
   -fx-control-inner-background: white;
   -fx-focus-color: #31BAED;
-  -fx-dark-text-color: black;
   -fx-mid-text-color: #292929;
-  -fx-light-text-color: white;
   -fx-color: -fx-base;
   -fx-hover-base: ladder -fx-base stops (20%,derive(-fx-base,20%)) (35%,derive(-fx-base,30%)) (50%,derive(-fx-base,40%));
   -fx-pressed-base: derive(-fx-base,-20%);
@@ -74,8 +46,26 @@ ToggleButton {
 
 /* Color for the Rectangle (specific to this application) that fills the Scene */
 .background {
-  -fx-fill: blue;
+  -fx-fill: #085478;
 }
+
+/* Color for the Rectangle (specific to this application) that fills a page's content area */
+.page-content-background {
+  -fx-fill: #e0e0e0;
+  -fx-padding: 10 15 10 15
+}
+
+/* Color for the Rectangle in a StoryView header area */
+.story-view-header {
+  -fx-fill: #b5d8eb;
+}
+
+/* Color for the Rectangle in a StoryView header area */
+.story-view-box {
+  -fx-fill: #ffffff;
+  -fx-stroke: #c6c6c6;
+}
+
 
 /*******************************************************************************
  *                                                                             *
@@ -89,13 +79,23 @@ ToggleButton {
 
 /*******************************************************************************
  *                                                                             *
- * CSS Styles for the Label control                                            *
+ * CSS Styles for the Button control                                            *
  *                                                                             *
  ******************************************************************************/
 
 .button {
   -fx-text-overrun: clip;
 }
+
+.image-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent, transparent, transparent, transparent;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+}
+
 
 /*******************************************************************************
  *                                                                             *
@@ -224,5 +224,49 @@ ToggleButton {
     -fx-vbar-policy: always;
 }
 
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the PageToolBar custom node                                            *
+ *                                                                             *
+ ******************************************************************************/
+.page-toolbar {
+    -fx-fill: #b5d8eb;
+}
+
+.page-toolbar-text {
+    -fx-text-fill: -fx-dark-text-color;
+}
+
+.cost-selection {
+    -fx-text: "Show Estimate as Dollars";
+    /*-fx-text-fill: -fx-dark-text-color;*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the PageFooter custom node                                            *
+ *                                                                             *
+ ******************************************************************************/
+.page-footer {
+    -fx-fill: #085478;
+}
+.copyright-notice {
+    -fx-text: "©2003-2010 Rally Software Development Corp.";
+    -fx-text-fill: -fx-light-text-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ID-specific styles                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+#app-header-title {
+    -fx-text: "Roadmap Planning Tool";
+    -fx-text-fill: -fx-light-text-color;
+    -fx-font-size: 38;
+    /*-fx-font-weight: bold;*/
+}
 
 

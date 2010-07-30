@@ -25,46 +25,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- package org.apropos.ui;
+package org.apropos.ui;
 
 import org.jfxtras.scene.XCustomNode;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.control.ChoiceBox;
+import org.jfxtras.scene.layout.XLayoutInfo;
+import org.apropos.model.RallyModel;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 
 /**
- * @author Stephen Chin
+ * @author Jim Weaver
  */
-public class Filter extends XCustomNode {
-    public-init var name:String;
+public class CostSelectionNode extends XCustomNode {
 
-    public var list:String[];
-
-    public var selectedIndex:Integer on replace {
-        if (choice.selectedIndex != selectedIndex) {
-            choice.select(selectedIndex);
-        }
-    }
-
-    var choice:ChoiceBox = ChoiceBox {
-        var selIndex = bind choice.selectedIndex on replace {
-          selectedIndex = selIndex;
-        }
-        items: bind ["All", list]
-    }
+    def model = RallyModel.instance;
 
     init {
         children = XHBox {
-            spacing: 8
+            spacing: 8 //TODO: Put in style sheet
             content: [
-                Label {
-                    styleClass: "page-toolbar-text"
-                    text: "{name}:"
+                CheckBox {
+                    //styleClass: "cost-selection" //TODO: put back in after styling checkboxes
+                    text: "Show Estimate as Dollars"
+                    selected: bind model.showInDollars with inverse
+                    //layoutInfo: XLayoutInfo {hpos: XLayoutInfo.RIGHT, hgrow: XLayoutInfo.ALWAYS}
                 }
-                choice
+                Button {
+                    text: "Refresh"
+                    action: model.refresh
+                }
             ]
-        }
+        };
     }
-
 }

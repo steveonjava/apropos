@@ -51,6 +51,8 @@ import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.util.SequenceUtil;
 import java.math.BigDecimal;
+import javafx.scene.shape.Rectangle;
+import javafx.geometry.Insets;
 
 /**
  * @author Stephen Chin
@@ -218,198 +220,244 @@ public class StoryView extends XCustomNode {
     }
 
     override function create() {
+        var viewHeader:XHBox;
+        var viewDetail:XVBox;
         XVBox {
-            onKeyTyped: function(e) {
-                if (e.code == KeyCode.VK_LEFT) {
-                    previous();
-                } else if (e.code == KeyCode.VK_RIGHT) {
-                    next();
-                }
-            }
             spacing: 8
             content: [
-                XHBox {
-                    var imageView:ImageView;
-                    content: [
-                        Label {
-                            text: bind storyContainer.name
-                            textFill: Color.WHITE
+                viewDetail = XVBox {
+                    onKeyTyped: function(e) {
+                        if (e.code == KeyCode.VK_LEFT) {
+                            previous();
+                        } else if (e.code == KeyCode.VK_RIGHT) {
+                            next();
                         }
-                        imageView = ImageView {
-                            effect: bind if (imageView.hover) DropShadow {color: Color.WHITE} else null
-                            image: Image {
-                                url: "{__DIR__}maximize.png"
-                            }
-                            onMousePressed: function(e) {
-                                maximized = not maximized;
-// todo - bug with visibility in javafx 1.3
-//                                for (view in storyViews) {
-//                                    if (view != this) {
-//                                        view.visible = not view.visible;
-//                                    }
-//                                }
-                                for (view in storyViews) {
-                                    if (view != this) {
-                                        view.managed = not view.managed;
-                                        if (not view.managed) {
-                                            view.layoutX = 2000;
+                    }
+                    //spacing: 8
+                    content: [
+                        Rectangle {
+                            managed: false
+                            styleClass: "story-view-box"
+                            width: bind viewDetail.width
+                            height: bind viewDetail.height
+                        },
+                        viewHeader = XHBox {
+                            def maximizeImage:Image = Image {
+                                url: "{__DIR__}images/maxamize-b5d8eb.png"
+                            };
+                            def minimizeImage:Image = Image {
+                                url: "{__DIR__}images/minimize-b5d8eb.png"
+                            };
+                            var imageView:ImageView;
+                            content: [
+                                Rectangle {
+                                    styleClass: "story-view-header"
+                                    managed: false
+                                    width: bind viewHeader.width
+                                    height: bind viewHeader.height
+                                },
+                                Label {
+                                    text: bind storyContainer.name
+                                    layoutInfo: XLayoutInfo {
+                                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                    }
+                                    //textFill: Color.WHITE
+                                }
+                                //TODO: Change to ToggleButton or Button?
+                                imageView = ImageView {
+                                    effect: bind if (imageView.hover) DropShadow {color: Color.WHITE} else null
+                                    image: bind if (maximized) minimizeImage
+                                                else maximizeImage
+                                    onMousePressed: function(e) {
+                                        maximized = not maximized;
+        // todo - bug with visibility in javafx 1.3
+        //                                for (view in storyViews) {
+        //                                    if (view != this) {
+        //                                        view.visible = not view.visible;
+        //                                    }
+        //                                }
+                                        for (view in storyViews) {
+                                            if (view != this) {
+                                                view.managed = not view.managed;
+                                                if (not view.managed) {
+                                                    view.layoutX = 2000;
+                                                }
+                                            }
                                         }
                                     }
+                                    layoutInfo: XLayoutInfo {
+                                        hgrow: ALWAYS
+                                        hpos: RIGHT
+                                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                    }
+                                }
+                            ]
+                        },
+                        XHBox {
+                            //spacing: 5
+                            var text:String;
+                            var error = false;
+                            def search = function() {
+                                var match = -1;
+                                for (story in filteredStories where indexof story > table.selectedRow) {
+                                    if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
+                                        match = indexof story;
+                                        break;
+                                    }
+                                }
+                                if (match == -1) for (story in filteredStories) {
+                                    if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
+                                        match = indexof story;
+                                        break;
+                                    }
+                                }
+                                if (match != -1) {
+                                    table.selectedRow = match;
+                                    table.scrollToSelected();
+                                    table.requestFocus();
+                                } else {
+                                    error = true;
                                 }
                             }
-                            layoutInfo: XLayoutInfo {hgrow: ALWAYS, hpos: RIGHT}
-                        }
-                    ]
-                }
-                XHBox {
-                    spacing: 5
-                    var text:String;
-                    var error = false;
-                    def search = function() {
-                        var match = -1;
-                        for (story in filteredStories where indexof story > table.selectedRow) {
-                            if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
-                                match = indexof story;
-                                break;
-                            }
-                        }
-                        if (match == -1) for (story in filteredStories) {
-                            if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
-                                match = indexof story;
-                                break;
-                            }
-                        }
-                        if (match != -1) {
-                            table.selectedRow = match;
-                            table.scrollToSelected();
-                            table.requestFocus();
-                        } else {
-                            error = true;
-                        }
-                    }
-                    content: [
-                        TextBox {
-                            style: bind if (error) "background-fill: red; text-fill: white" else ""
-                            text: bind text with inverse
-                            action: search
-                            onKeyPressed: function(e) {error = false}
-                            onMousePressed: function(e) {error = false}
-                        }
-                        Button {
-                            style: RallyModel.buttonSkin
-                            text: "Search"
-                            action: search
-                        }
-                    ]
-                }
-                table = XTableView {
-                    rowType: Story {}.getJFXClass()
-                    rows: bind filteredStories
-                    rowHeight: 50
-                    onMouseClicked: function(e) {
-                        if (e.clickCount == 2) {
-                            filteredStories[table.selectedRow].browse();
-                        }
-                    }
-                    columns: createColumns()
-                }
-                XHBox {
-                    spacing: 4
-                    content: [
-                        Button {
-                            style: RallyModel.buttonSkin
-                            graphic: ImageView {
-                                image: Image {
-                                    url: "{__DIR__}go-previous.png"
+                            content: [
+                                TextBox {
+                                    //TODO: Use a styleClass instead
+                                    style: bind if (error) "background-fill: red; text-fill: white" else ""
+                                    text: bind text with inverse
+                                    action: search
+                                    onKeyPressed: function(e) {error = false}
+                                    onMousePressed: function(e) {error = false}
+                                    layoutInfo: XLayoutInfo {
+                                        margin: Insets {top: 3, right: 3, bottom: 3, left: 3}
+                                    }
                                 }
-                            }
-                            action: previous
-                            disable: bind (table.selectedRow == -1) or
-                                          (sizeof filteredStories == 0) or
-                                          (storyContainer.containerBefore == null)
-                            layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
-                        }
-                        Button {
-                            style: RallyModel.buttonSkin
-                            graphic: ImageView {
-                                image: Image {
-                                    url: "{__DIR__}go-up.png"
+                                Button {
+                                    styleClass: "image-button"
+                                    graphic: ImageView {
+                                        image: Image {
+                                            url: "{__DIR__}images/search-btn-ffffff.png"
+                                        }
+                                    }
+                                    action: search
+                                    layoutInfo: XLayoutInfo {
+                                        margin: Insets {top: 3, right: 3, bottom: 3, left: 0}
+                                    }
                                 }
-                            }
+                            ]
+                        },
+                        table = XTableView {
+                            rowType: Story {}.getJFXClass()
+                            rows: bind filteredStories
+                            rowHeight: 50
                             onMouseClicked: function(e) {
-                                if (e.altDown) {
-                                    move(-100000);
-                                } else if (e.controlDown) {
-                                    move(-10);
+                                if (e.clickCount == 2) {
+                                    filteredStories[table.selectedRow].browse();
                                 }
                             }
-                            action: function() {
-                                move(-1);
-                            }
-                            disable: bind table.selectedRow == -1 or table.selectedRow == 0
-                            layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
-                        }
-                        Button {
-                            style: RallyModel.buttonSkin
-                            graphic: ImageView {
-                                image: Image {
-                                    url: "{__DIR__}go-down.png"
-                                }
-                            }
-                            onMouseClicked: function(e) {
-                                if (e.altDown) {
-                                    move(100000);
-                                } else if (e.controlDown) {
-                                    move(10);
-                                }
-                            }
-                            action: function() {
-                                move(1);
-                            }
-                            disable: bind (table.selectedRow == -1) or
-                                          (sizeof filteredStories == 0) or
-                                          table.selectedRow == sizeof filteredStories - 1
-                            layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
-                        }
-                        Button {
-                            style: RallyModel.buttonSkin
-                            graphic: ImageView {
-                                image: Image {
-                                    url: "{__DIR__}go-next.png"
-                                }
-                            }
-                            action: next
-                            disable: bind (table.selectedRow == -1) or
-                                          (sizeof filteredStories == 0) or
-                                          (storyContainer.containerAfter == null)
-                            layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
+                            columns: createColumns()
                         }
                     ]
-                    layoutInfo: XLayoutInfo {hpos: CENTER}
-                }
+                },
                 XVBox {
-                    spacing: 3
                     content: [
-                        Text {
-                            content: bind "Count: {filteredCount}"
-                            fill: bind if (not limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-                            layoutInfo: XLayoutInfo {hpos: LEFT}
-                        }
-                        Text {
-                            content: bind "Total: {model.convertEstimate(filteredSum)}"
-                            fill: bind if (limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-                            layoutInfo: XLayoutInfo {hpos: LEFT}
-                        }
-                        Text {
-                            content: bind if (limitByCount) "Limit: {%.0f totalLimit}" else "Limit: {model.convertEstimate(totalLimit)}"
-                            fill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                        XHBox {
+                            spacing: 4
+                            content: [
+                                Button {
+                                    styleClass: "image-button"
+                                    graphic: ImageView {
+                                        image: Image {
+                                            url: "{__DIR__}images/left-ffffff.png"
+                                        }
+                                    }
+                                    action: previous
+                                    disable: bind (table.selectedRow == -1) or
+                                                  (sizeof filteredStories == 0) or
+                                                  (storyContainer.containerBefore == null)
+                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
+                                }
+                                Button {
+                                    styleClass: "image-button"
+                                    graphic: ImageView {
+                                        image: Image {
+                                            url: "{__DIR__}images/up-ffffff.png"
+                                        }
+                                    }
+                                    onMouseClicked: function(e) {
+                                        if (e.altDown) {
+                                            move(-100000);
+                                        } else if (e.controlDown) {
+                                            move(-10);
+                                        }
+                                    }
+                                    action: function() {
+                                        move(-1);
+                                    }
+                                    disable: bind table.selectedRow == -1 or table.selectedRow == 0
+                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
+                                }
+                                Button {
+                                    styleClass: "image-button"
+                                    graphic: ImageView {
+                                        image: Image {
+                                            url: "{__DIR__}images/down-ffffff.png"
+                                        }
+                                    }
+                                    onMouseClicked: function(e) {
+                                        if (e.altDown) {
+                                            move(100000);
+                                        } else if (e.controlDown) {
+                                            move(10);
+                                        }
+                                    }
+                                    action: function() {
+                                        move(1);
+                                    }
+                                    disable: bind (table.selectedRow == -1) or
+                                                  (sizeof filteredStories == 0) or
+                                                  table.selectedRow == sizeof filteredStories - 1
+                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
+                                }
+                                Button {
+                                    styleClass: "image-button"
+                                    graphic: ImageView {
+                                        image: Image {
+                                            url: "{__DIR__}images/right-ffffff.png"
+                                        }
+                                    }
+                                    action: next
+                                    disable: bind (table.selectedRow == -1) or
+                                                  (sizeof filteredStories == 0) or
+                                                  (storyContainer.containerAfter == null)
+                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
+                                }
+                            ]
+                            //TODO: Center horizonally in the width of the table above it
+                        },
+                        XVBox {
+                            spacing: 3
+                            content: [
+                                Text {
+                                    content: bind "Count: {filteredCount}"
+                                    fill: bind if (not limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                                    layoutInfo: XLayoutInfo {hpos: LEFT}
+                                }
+                                Text {
+                                    content: bind "Total: {model.convertEstimate(filteredSum)}"
+                                    fill: bind if (limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                                    layoutInfo: XLayoutInfo {hpos: LEFT}
+                                }
+                                Text {
+                                    content: bind if (limitByCount) "Limit: {%.0f totalLimit}" else "Limit: {model.convertEstimate(totalLimit)}"
+                                    fill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+                                    layoutInfo: XLayoutInfo {hpos: LEFT}
+                                }
+                            ]
                             layoutInfo: XLayoutInfo {hpos: LEFT}
                         }
                     ]
-                    layoutInfo: XLayoutInfo {hpos: LEFT}
                 }
             ]
         }
     }
-
 }

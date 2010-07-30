@@ -35,8 +35,8 @@ import org.jfxtras.scene.layout.XVBox;
 /**
  * @author Stephen Chin
  */
-public class ScopeModule extends XCustomNode {
-    def model = RallyModel.instance;
+public class ScopeModule extends AbstractModulePage {
+    //def model = RallyModel.instance;
     package var storyViews:StoryView[] = for (release in [model.backlog, model.releases]) StoryView {
         storyViews: bind storyViews;
         storyContainer: release
@@ -56,21 +56,36 @@ public class ScopeModule extends XCustomNode {
         selectedIndex: bind model.selectedOwnerIndex with inverse
     };
 
-    override function create() {
-        XVBox {
-            spacing: 8
-            content: bind [
-                XHBox {
-                    animate: true
-                    spacing: 8
-                    content: [allocationFilter, ownerFilter]
-                }
-                XHBox {
-                    animate: true
-                    spacing: 10
-                    content: storyViews[s|s.visible]
-                }
+    init {
+        pageToolBar = PageToolBar {
+            leftNodes: [
+                allocationFilter,
+                ownerFilter
             ]
+            rightNodes: CostSelectionNode {}
+        };
+        pageContent = XHBox {
+            animate: true
+            spacing: 10
+            content: storyViews[s|s.visible]
         }
     }
+
+//    override function create() {
+//        XVBox {
+//            spacing: 8
+//            content: bind [
+//                XHBox {
+//                    animate: true
+//                    spacing: 8
+//                    content: [allocationFilter, ownerFilter]
+//                }
+//                XHBox {
+//                    animate: true
+//                    spacing: 10
+//                    content: storyViews[s|s.visible]
+//                }
+//            ]
+//        }
+//    }
 }

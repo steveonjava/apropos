@@ -45,9 +45,9 @@ import org.jfxtras.util.SequenceUtil;
  */
 public var readOnly:Boolean;
 
-public def buttonSkin = "-fx-color: BLACK;"
-    "-fx-focus-color: white;"
-    "-fx-background: black;";
+//public def buttonSkin = "-fx-color: BLACK;"
+//    "-fx-focus-color: white;"
+//    "-fx-background: black;";
 
 def community:Boolean = false;
 def show:Boolean = true;
@@ -133,9 +133,14 @@ public class RallyModel extends XObject {
         try {
             processingLogin = true;
             readOnly = login.userName == GUEST_USER and not show;
+
+            //TODO: Put back in!
+            ///*
             createService();
             loadReleases();
             loadOwners();
+            //*/
+
             loggedIn = true;
         } catch (e:AxisFault) {
             processingLogin = false;

@@ -43,8 +43,8 @@ import javafx.scene.control.ChoiceBox;
 /**
  * @author Stephen Chin
  */
-public class AnalyzeModule extends XCustomNode {
-    def model = RallyModel.instance;
+public class AnalyzeModule extends AbstractModulePage {
+    //def model = RallyModel.instance;
 
     def releaseChoice:ChoiceBox = ChoiceBox {
         items: bind model.releases
@@ -104,11 +104,21 @@ public class AnalyzeModule extends XCustomNode {
         ]
     }
 
-    override function create() {
-        XVBox {
-            spacing: 10
-            content: bind [pickers, chart]
-        }
+    init {
+        pageToolBar = PageToolBar {
+            leftNodes: pickers
+            rightNodes: CostSelectionNode {}
+        };
+        pageContent = XVBox {
+            content: bind chart
+        };
     }
+
+//    override function create() {
+//        XVBox {
+//            spacing: 10
+//            content: bind [pickers, chart]
+//        }
+//    }
 
 }

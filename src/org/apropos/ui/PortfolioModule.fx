@@ -10,12 +10,15 @@ import org.apropos.model.RallyModel;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import org.jfxtras.scene.layout.XLayoutInfo;
 
 /**
  * @author Stephen Chin
  */
-public class PortfolioModule extends XCustomNode {
-    def model = RallyModel.instance;
+public class PortfolioModule extends AbstractModulePage {
+    //def model = RallyModel.instance;
 
     public var selectedView:StoryView;
     package var storyViews:StoryView[] = for (stage in model.stages) StoryView {
@@ -41,22 +44,40 @@ public class PortfolioModule extends XCustomNode {
         selectedIndex: bind model.selectedOwnerIndex with inverse
     };
 
-    override function create() {
-        XVBox {
-            spacing: 8
-            content: bind [
-                XHBox {
-                    animate: true
-                    spacing: 8
-                    //content: [epicFilter, packageFilter, ownerFilter]
-                    content: [allocationFilter, ownerFilter]
-                }
-                XHBox {
-                    animate: true
-                    spacing: 10
-                    content: storyViews[s|s.visible]
-                }
+    init {
+        pageToolBar = PageToolBar {
+            leftNodes: [
+                allocationFilter,
+                ownerFilter
             ]
+            rightNodes: CostSelectionNode {}
+        };
+        pageContent = XHBox {
+            animate: true
+            spacing: 10
+            content: storyViews[s|s.visible]
         }
     }
+
+
+
+//    override function create() {
+//        XVBox {
+//            spacing: 8
+//            content: bind [
+////                PageToolBar {
+////                    leftNodes: [
+////                        allocationFilter,
+////                        ownerFilter
+////                    ]
+////                    rightNodes: CostSelectionNode {}
+////                },
+//                XHBox {
+//                    animate: true
+//                    spacing: 10
+//                    content: storyViews[s|s.visible]
+//                }
+//            ]
+//        }
+//    }
 }

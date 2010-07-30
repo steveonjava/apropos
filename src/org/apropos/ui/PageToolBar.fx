@@ -25,46 +25,64 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- package org.apropos.ui;
+package org.apropos.ui;
 
 import org.jfxtras.scene.XCustomNode;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.Node;
+import javafx.geometry.Insets;
+import org.jfxtras.scene.layout.XLayoutInfo;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Priority;
 
 /**
- * @author Stephen Chin
+ * @author Jim Weaver
  */
-public class Filter extends XCustomNode {
-    public-init var name:String;
+public class PageToolBar extends XCustomNode {
 
-    public var list:String[];
-
-    public var selectedIndex:Integer on replace {
-        if (choice.selectedIndex != selectedIndex) {
-            choice.select(selectedIndex);
-        }
-    }
-
-    var choice:ChoiceBox = ChoiceBox {
-        var selIndex = bind choice.selectedIndex on replace {
-          selectedIndex = selIndex;
-        }
-        items: bind ["All", list]
-    }
+    public-init var leftNodes: Node[];
+    public-init var rightNodes: Node[];
 
     init {
-        children = XHBox {
+        var container: XHBox = XHBox {
             spacing: 8
             content: [
-                Label {
-                    styleClass: "page-toolbar-text"
-                    text: "{name}:"
+                Rectangle {
+                    managed: false
+                    width: bind container.width
+                    height: bind container.height
+                    styleClass: "page-toolbar"
                 }
-                choice
+                XHBox {
+                    spacing: 8 //TODO: Put in style sheet
+                    content: leftNodes
+                    layoutInfo: XLayoutInfo {
+                        //vpos: VPos.TOP
+                        hgrow: Priority.ALWAYS
+                        margin: Insets { //TODO: Put in style sheet
+                            top: 10
+                            bottom: 10
+                            left: 10
+                            right: 10
+                        }
+                    }
+                },
+                XHBox {
+                    spacing: 8 //TODO: Put in style sheet
+                    content: rightNodes
+                    layoutInfo: XLayoutInfo {
+                        //vpos: VPos.TOP
+                        margin: Insets { //TODO: Put in style sheet
+                            top: 10
+                            bottom: 10
+                            left: 10
+                            right: 10
+                        }
+                    }
+                }
             ]
-        }
+        };
+        children = container;
     }
 
 }

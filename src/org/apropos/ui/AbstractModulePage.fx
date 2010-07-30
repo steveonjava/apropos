@@ -25,46 +25,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- package org.apropos.ui;
+package org.apropos.ui;
 
+import org.apropos.model.RallyModel;
+import javafx.scene.Node;
 import org.jfxtras.scene.XCustomNode;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.control.ChoiceBox;
+import org.jfxtras.scene.layout.XStack;
+import org.jfxtras.scene.layout.XVBox;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Stack;
 
 /**
  * @author Stephen Chin
  */
-public class Filter extends XCustomNode {
-    public-init var name:String;
+public abstract class AbstractModulePage extends XCustomNode {
+    protected def model = RallyModel.instance;
 
-    public var list:String[];
 
-    public var selectedIndex:Integer on replace {
-        if (choice.selectedIndex != selectedIndex) {
-            choice.select(selectedIndex);
-        }
-    }
+    public var pageToolBar:PageToolBar = PageToolBar {leftNodes: Button{text:"Hello"}};
+    public var pageContent:Node;
+    public var pageFooter:PageFooter = PageFooter{};
 
-    var choice:ChoiceBox = ChoiceBox {
-        var selIndex = bind choice.selectedIndex on replace {
-          selectedIndex = selIndex;
-        }
-        items: bind ["All", list]
-    }
 
-    init {
-        children = XHBox {
-            spacing: 8
+    override function create() {
+        XStack {
             content: [
-                Label {
-                    styleClass: "page-toolbar-text"
-                    text: "{name}:"
+                XVBox {
+                    content: [
+                        pageToolBar,
+                        Stack { //TODO: Try XStack and see if CSS padding still works
+                            content: pageContent
+                            styleClass: "page-content-background" //TODO: Change to "page-content"?
+                        },
+                        pageFooter
+                    ]
                 }
-                choice
+                // todo - it is kind of annoying, but progress indicators don't play nice with layouts...
+//                ProgressIndicator {
+//                    layoutY: 84
+//                    layoutX: bind scene.width - 44
+//                    visible: bind model.waiting > 0
+//                }
             ]
         }
     }
-
 }

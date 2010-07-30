@@ -53,15 +53,15 @@ public class LoginScreen extends XCustomNode {
     override function create() {
         XStack {
             content: [
-                ResizableRectangle {
-                    fill: Color.BLACK
-                }
-                XImageView {
-                    preserveRatio: true
-                    image: Image {
-                        url: "{__DIR__}GoldenGateBridge_BakerBeach_MC.jpg"
-                    }
-                }
+//                ResizableRectangle {
+//                    fill: Color.BLACK
+//                }
+//                XImageView {
+//                    preserveRatio: true
+//                    image: Image {
+//                        url: "{__DIR__}GoldenGateBridge_BakerBeach_MC.jpg"
+//                    }
+//                }
                 XPane {
                     title: "Login"
                     contentNode: XVBox {

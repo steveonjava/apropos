@@ -40,11 +40,11 @@ import org.jfxtras.scene.layout.XVBox;
 /**
  * @author Stephen Chin
  */
-public class RoadmapModule extends XCustomNode {
+public class RoadmapModule extends AbstractModulePage {
 
-    def model = RallyModel.instance;
+    //def model = RallyModel.instance;
 
-    var table:XTableView;
+    //var table:XTableView;
 
     var stories:Story[] = bind model.currentRelease.stories;
 
@@ -64,73 +64,144 @@ public class RoadmapModule extends XCustomNode {
         selectedIndex: bind model.selectedOwnerIndex with inverse
     };
 
-    override function create() {
-        XVBox {
-            spacing: 10
-            content: [
-                XHBox {
-                    spacing: 8
-                    content: [allocationFilter, ownerFilter]
-                }
-                table = XTableView {
-                    rowType: Story {}.getJFXClass()
-                    rows: bind filteredStories
-                    rowHeight: 50
-                    onMouseClicked: function(e) {
-                        if (e.clickCount == 2) {
-                            filteredStories[table.selectedRow].browse();
-                        }
-                    }
-                    columns: [
-                        XTableColumn {
-                            displayName: "#"
-                            prefWidth: 20
-                            id: "rank"
-                            renderer: RowNumberRenderer {}
-                        }
-                        XTableColumn {
-                            displayName: "ID"
-                            prefWidth: 20
-                            id: "id"
-                            renderer: TextRenderer {}
-                        }
-                        XTableColumn {
-                            displayName: "Theme"
-                            prefWidth: 140
-                            id: "parentName"
-                            renderer: TextRenderer {}
-                        }
-                        XTableColumn {
-                            displayName: "Feature"
-                            prefWidth: 140
-                            id: "name"
-                            renderer: TextRenderer {}
-                        }
-                        XTableColumn {
-                            displayName: "Owner"
-                            prefWidth: 100
-                            //id: "owner"
-                            id: "ownerDisplayName"
-                            renderer: TextRenderer {}
-                        }
-                        for (iteration in model.iterations) {
-                            XTableColumn {
-                                displayName: iteration
-                                prefWidth: 100
-                                id: "iteration{indexof iteration + 1}"
-                                renderer: TextRenderer {}
-                            }
-                        }
-                        XTableColumn {
-                            displayName: "Overflow"
-                            prefWidth: 100
-                            id: "overflow"
-                            renderer: TextRenderer {}
-                        }
-                    ]
-                }
-            ]
+    def table:XTableView = XTableView {
+        rowType: Story {}.getJFXClass()
+        rows: bind filteredStories
+        rowHeight: 50
+        onMouseClicked: function(e) {
+            if (e.clickCount == 2) {
+                filteredStories[table.selectedRow].browse();
+            }
         }
+        columns: [
+            XTableColumn {
+                displayName: "#"
+                prefWidth: 20
+                id: "rank"
+                renderer: RowNumberRenderer {}
+            }
+            XTableColumn {
+                displayName: "ID"
+                prefWidth: 20
+                id: "id"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Theme"
+                prefWidth: 140
+                id: "parentName"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Feature"
+                prefWidth: 140
+                id: "name"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Owner"
+                prefWidth: 100
+                //id: "owner"
+                id: "ownerDisplayName"
+                renderer: TextRenderer {}
+            }
+            for (iteration in model.iterations) {
+                XTableColumn {
+                    displayName: iteration
+                    prefWidth: 100
+                    id: "iteration{indexof iteration + 1}"
+                    renderer: TextRenderer {}
+                }
+            }
+            XTableColumn {
+                displayName: "Overflow"
+                prefWidth: 100
+                id: "overflow"
+                renderer: TextRenderer {}
+            }
+        ]
     }
+
+
+    init {
+        pageToolBar = PageToolBar {
+            leftNodes: [
+                allocationFilter,
+                ownerFilter
+            ]
+            rightNodes: CostSelectionNode {}
+        };
+        pageContent = table;
+    }
+
+
+//    override function create() {
+//        XVBox {
+//            spacing: 10
+//            content: [
+//                XHBox {
+//                    spacing: 8
+//                    content: [allocationFilter, ownerFilter]
+//                }
+////                table = XTableView {
+////                    rowType: Story {}.getJFXClass()
+////                    rows: bind filteredStories
+////                    rowHeight: 50
+////                    onMouseClicked: function(e) {
+////                        if (e.clickCount == 2) {
+////                            filteredStories[table.selectedRow].browse();
+////                        }
+////                    }
+////                    columns: [
+////                        XTableColumn {
+////                            displayName: "#"
+////                            prefWidth: 20
+////                            id: "rank"
+////                            renderer: RowNumberRenderer {}
+////                        }
+////                        XTableColumn {
+////                            displayName: "ID"
+////                            prefWidth: 20
+////                            id: "id"
+////                            renderer: TextRenderer {}
+////                        }
+////                        XTableColumn {
+////                            displayName: "Theme"
+////                            prefWidth: 140
+////                            id: "parentName"
+////                            renderer: TextRenderer {}
+////                        }
+////                        XTableColumn {
+////                            displayName: "Feature"
+////                            prefWidth: 140
+////                            id: "name"
+////                            renderer: TextRenderer {}
+////                        }
+////                        XTableColumn {
+////                            displayName: "Owner"
+////                            prefWidth: 100
+////                            //id: "owner"
+////                            id: "ownerDisplayName"
+////                            renderer: TextRenderer {}
+////                        }
+////                        for (iteration in model.iterations) {
+////                            XTableColumn {
+////                                displayName: iteration
+////                                prefWidth: 100
+////                                id: "iteration{indexof iteration + 1}"
+////                                renderer: TextRenderer {}
+////                            }
+////                        }
+////                        XTableColumn {
+////                            displayName: "Overflow"
+////                            prefWidth: 100
+////                            id: "overflow"
+////                            renderer: TextRenderer {}
+////                        }
+////                    ]
+////                }
+//            ]
+//        }
+//    }
 
 }

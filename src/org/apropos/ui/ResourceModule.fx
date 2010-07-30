@@ -55,9 +55,9 @@ import javafx.scene.control.Label;
 /**
  * @author Stephen Chin
  */
-public class ResourceModule extends XCustomNode {
+public class ResourceModule extends AbstractModulePage {
         
-    def model = RallyModel.instance;
+    //def model = RallyModel.instance;
 
     var stories:Story[] = bind model.currentRelease.stories;
 
@@ -103,7 +103,6 @@ public class ResourceModule extends XCustomNode {
             ownerFilter,
             Button {
                 text: "Auto Draft"
-                style: RallyModel.buttonSkin
                 action: function() {
                     for (story in stories) {
                         story.drafted = true;
@@ -113,7 +112,6 @@ public class ResourceModule extends XCustomNode {
             }
             Button {
                 text: "Clear"
-                style: RallyModel.buttonSkin
                 action: function() {
                     for (story in stories) {
                         story.drafted = false;
@@ -140,7 +138,6 @@ public class ResourceModule extends XCustomNode {
                 }
                 Button {
                     text: "Draft"
-                    style: RallyModel.buttonSkin
                     action: function() {
                         def story = filteredStories[table.selectedRow];
                         if (story.owner != owner) {
@@ -247,8 +244,15 @@ public class ResourceModule extends XCustomNode {
         ]
     }
 
-    override function create() {
-        XVBox {
+    init {
+        pageToolBar = PageToolBar {
+            leftNodes: [
+                allocationFilter,
+                ownerFilter
+            ]
+            rightNodes: CostSelectionNode {}
+        };
+        pageContent = XVBox {
             spacing: 10
             content: [
                 filters,
@@ -267,4 +271,25 @@ public class ResourceModule extends XCustomNode {
             ]
         }
     }
+
+//    override function create() {
+//        XVBox {
+//            spacing: 10
+//            content: [
+//                filters,
+//                XHBox {
+//                    spacing: 20
+//                    content: [
+//                        table,
+//                        ScrollView {
+//                            node: owners
+//                            layoutInfo:LayoutInfo {
+//                                width: bind owners.width + 20
+//                            }
+//                        }
+//                    ]
+//                }
+//            ]
+//        }
+//    }
 }

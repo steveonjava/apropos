@@ -34,18 +34,11 @@ import org.apropos.ui.PortfolioModule;
 import org.apropos.ui.RoadmapModule;
 import org.apropos.ui.ResourceModule;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.text.TextBoundsType;
-import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.jfxtras.scene.XCustomNode;
@@ -54,8 +47,14 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XStack;
 import org.jfxtras.scene.layout.XVBox;
-import org.jfxtras.scene.shape.ResizableRectangle;
 import org.jfxtras.util.XMap;
+import javafx.scene.control.Label;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.layout.Priority;
+import javafx.geometry.HPos;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Button;
 
 /**
  * @author Stephen Chin
@@ -63,78 +62,9 @@ import org.jfxtras.util.XMap;
 public class AproposUI extends XCustomNode {
     def model = RallyModel.instance;
 
-    var showKen = false;
-
-    def titleBar = XHBox {
-        spacing: 20
-        vpos: BOTTOM
-        content: [
-            XVBox {
-                content: [
-                    Text {
-                        boundsType: TextBoundsType.VISUAL
-                        content: "APROPOS"
-                        font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 46)
-                    }
-                    Text {
-                        boundsType: TextBoundsType.VISUAL
-                        content: "Agile Project Portfolio Scheduler"
-                        font: Font {
-                            name: "Eras Demi ITC"
-                            embolden: true
-                            letterSpacing: -20
-                            size: 14
-                        }
-                    }
-                ]
-                layoutInfo: XLayoutInfo {vpos: BOTTOM, height: 70}
-            }
-            ImageView {
-                image: bind if (model.myImage != null and model.myImage.error == false and not showKen) model.myImage else {
-                    Image {url: "{__DIR__}ken.png"};
-                }
-                onMouseClicked: function(e) {
-                    showKen = not showKen;
-                }
-                layoutInfo: XLayoutInfo {vpos: BOTTOM}
-            }
-            CheckBox {
-                text: "Cost As Dollars"
-                selected: bind model.showInDollars with inverse
-                layoutInfo: XLayoutInfo {hpos: RIGHT, hgrow: ALWAYS}
-            }
-            Button {
-                text: "Refresh"
-                action: model.refresh
-            }
-        ]
-        layoutInfo: XLayoutInfo {margin: insets(0, 16, 0, 16)}
-    }
-
-    def divider = ResizableRectangle {layoutInfo: XLayoutInfo {height: 3, vgrow: NEVER}, fill: Color.BLACK}
-
-    def backgroundGradient = LinearGradient {
-        proportional: false
-        endX: 0
-        endY: 15
-        stops: [
-            Stop {offset: 0, color: Color.rgb(200, 200, 200)}
-            Stop {offset: 1, color: Color.rgb(41, 41, 41)}
-        ]
-    }
-
     def toggleGroup = ToggleGroup {}
-//    def darkTBStyle = "-fx-color: BLACK;"
-//        "-fx-background: black;"
-//        "-fx-focus-color: white;"
-//        "fontSize: 14pt;";
-
     def buttonBar = XStack {
         content: [
-            ResizableRectangle {
-                fill: backgroundGradient
-                layoutInfo: XLayoutInfo {height: 35, vgrow: NEVER}
-            }
             XHBox {
                 spacing: 20
                 def buttonLabels = [
@@ -146,28 +76,86 @@ public class AproposUI extends XCustomNode {
                 ]
                 content: bind for (label in buttonLabels)
                     createMenuToggleButton(label, indexof label == 0);
-                layoutInfo: XLayoutInfo {hpos: LEFT, margin: insets(4, 16)}
+                layoutInfo: XLayoutInfo {
+                    vpos: VPos.BOTTOM
+                    hpos: HPos.LEFT
+                    hgrow: Priority.NEVER
+                    vgrow: Priority.NEVER
+                }
+                //layoutInfo: XLayoutInfo {hpos: LEFT, margin: insets(4, 16)}
             }
         ]
+        layoutInfo: XLayoutInfo {
+            vpos: VPos.BOTTOM
+            //hgrow: Priority.ALWAYS
+        }
     }
+
+    def titleBar = XHBox {
+        vpos: TOP
+        content: [
+            XVBox {
+                content: [
+                    Label {
+                        id: "app-header-title"
+                        layoutInfo: XLayoutInfo {
+                            vpos: VPos.TOP
+                            hpos: HPos.LEFT
+                            hgrow: Priority.NEVER
+                            vgrow: Priority.NEVER
+                        }
+                    },
+                    buttonBar
+                ]
+                layoutInfo: XLayoutInfo {
+                    //vpos: VPos.TOP
+                    hgrow: Priority.ALWAYS
+                    margin: Insets {
+                        top: 10
+                        left: 10
+                    }
+                }
+            },
+            ImageView {
+                image: Image {
+                    url: "{__DIR__}images/sticky-graphic-header-clipped.png";
+                }
+                layoutInfo: XLayoutInfo {vpos: TOP}
+            },
+            ImageView {
+                image: Image {
+                    url: "{__DIR__}images/rally-logo-header.png";
+                }
+                layoutInfo: XLayoutInfo {vpos: TOP}
+            },
+        ]
+    };
+
+    def pageToolBar = PageToolBar {
+        leftNodes: Button {text: "Hello"}
+        rightNodes: Button {text: "Hello"}
+    };
+
 
     def modules = XMap {
         entries: [
-            XMap.Entry {key: "Portfolio", value: PortfolioModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
-            XMap.Entry {key: "Scope", value: ScopeModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
-            XMap.Entry {key: "Resource", value: ResourceModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
-            XMap.Entry {key: "Analyze", value: AnalyzeModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
-            XMap.Entry {key: "Roadmap", value: RoadmapModule {layoutInfo: XLayoutInfo {margin: insets(16)}}}
+            XMap.Entry {key: "Portfolio", value: PortfolioModule {}}
+            XMap.Entry {key: "Scope", value: ScopeModule {}}
+            XMap.Entry {key: "Resource", value: ResourceModule {}}
+            XMap.Entry {key: "Analyze", value: AnalyzeModule {}}
+            XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
         ]
     }
     var activeModule = bind modules.boundGet((toggleGroup.selectedToggle as ToggleButton).text) as Node;
 
-    def content = XStack {
+    def content:XStack = XStack {
         content: bind [
-            ResizableRectangle {
-                fill: Color.rgb(41, 41, 41)
-            }
-            activeModule
+          Rectangle {
+            width: bind content.width
+            height: bind content.height
+            styleClass: "page-content-background"
+          },
+          activeModule
         ]
     }
 
@@ -192,9 +180,10 @@ public class AproposUI extends XCustomNode {
                 XVBox {
                     content: [
                         titleBar,
-                        divider,
-                        buttonBar,
-                        content
+                        //buttonBar,
+                        //pageToolBar,
+                        content,
+                        //PageFooter {}
                     ]
                 }
                 // todo - it is kind of annoying, but progress indicators don't play nice with layouts...

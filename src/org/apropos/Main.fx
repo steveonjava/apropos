@@ -34,6 +34,7 @@ import org.apropos.ui.AproposUI;
 import org.apropos.ui.LoginScreen;
 import org.jfxtras.scene.XScene;
 import org.jfxtras.scene.layout.XStack;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Stephen Chin
@@ -46,11 +47,20 @@ Stage {
     title: "Apropos"
     icons: Image {url: "{__DIR__}ui/ken.png"}
     scene: scene = XScene {
-        width: 1100
+        width: 1200
         height: 700
-        stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}dark-style.css"]
+        stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}rally-style.css"]
         content: XStack {
-            content: bind if (not model.loggedIn) LoginScreen {} else AproposUI {}
+            styleClass: "background"
+            content: bind [
+                Rectangle {
+                    styleClass: "background"
+                    width: bind scene.width
+                    height: bind scene.height
+                    //fill: Color.web("#b5d8eb");
+                },
+                if (not model.loggedIn) LoginScreen {} else AproposUI {}
+            ]
         }
     }
 }

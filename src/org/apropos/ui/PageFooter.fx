@@ -25,46 +25,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- package org.apropos.ui;
+package org.apropos.ui;
 
 import org.jfxtras.scene.XCustomNode;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.Node;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Label;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Priority;
+import org.jfxtras.scene.layout.XLayoutInfo;
 
 /**
- * @author Stephen Chin
+ * @author Jim Weaver
  */
-public class Filter extends XCustomNode {
-    public-init var name:String;
+public class PageFooter extends XCustomNode {
 
-    public var list:String[];
-
-    public var selectedIndex:Integer on replace {
-        if (choice.selectedIndex != selectedIndex) {
-            choice.select(selectedIndex);
-        }
-    }
-
-    var choice:ChoiceBox = ChoiceBox {
-        var selIndex = bind choice.selectedIndex on replace {
-          selectedIndex = selIndex;
-        }
-        items: bind ["All", list]
-    }
+    public-init var leftNodes: Node[];
+    public-init var rightNodes: Node[];
 
     init {
-        children = XHBox {
+        var container: XHBox = XHBox {
             spacing: 8
             content: [
-                Label {
-                    styleClass: "page-toolbar-text"
-                    text: "{name}:"
+                Rectangle {
+                    managed: false
+                    width: bind container.width
+                    height: bind container.height
+                    styleClass: "page-footer"
                 }
-                choice
+                Label {
+                    styleClass: "copyright-notice"
+                    layoutInfo: XLayoutInfo {
+                        margin: Insets { //TODO: Put in style sheet
+                            top: 4
+                            bottom: 4
+                            left: 4
+                            right: 4
+                        }
+                    }
+                }
             ]
-        }
+        };
+        children = container;
     }
 
 }
