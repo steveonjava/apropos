@@ -44,10 +44,12 @@ def model = RallyModel.instance;
 
 var scene:XScene;
 Stage {
-    title: "Apropos"
+    title: "Roadmap Planning Tool"
     icons: Image {url: "{__DIR__}ui/ken.png"}
     scene: scene = XScene {
-        width: 1200
+        // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
+        // 1280 x 800 for MacBook Air
+        width: 1280
         height: 700
         stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}rally-style.css"]
         content: XStack {

@@ -35,7 +35,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
 import org.apropos.model.StoryContainer;
@@ -53,6 +52,8 @@ import org.jfxtras.util.SequenceUtil;
 import java.math.BigDecimal;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import org.jfxtras.scene.layout.XStack;
+import javafx.scene.layout.Priority;
 
 /**
  * @author Stephen Chin
@@ -222,6 +223,7 @@ public class StoryView extends XCustomNode {
     override function create() {
         var viewHeader:XHBox;
         var viewDetail:XVBox;
+        var viewSummary:XHBox;
         XVBox {
             spacing: 8
             content: [
@@ -257,6 +259,7 @@ public class StoryView extends XCustomNode {
                                     height: bind viewHeader.height
                                 },
                                 Label {
+                                    styleClass: "story-view-header-title"
                                     text: bind storyContainer.name
                                     layoutInfo: XLayoutInfo {
                                         margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
@@ -359,6 +362,7 @@ public class StoryView extends XCustomNode {
                     ]
                 },
                 XVBox {
+                    spacing: 4
                     content: [
                         XHBox {
                             spacing: 4
@@ -434,27 +438,128 @@ public class StoryView extends XCustomNode {
                             ]
                             //TODO: Center horizonally in the width of the table above it
                         },
-                        XVBox {
-                            spacing: 3
-                            content: [
-                                Text {
-                                    content: bind "Count: {filteredCount}"
-                                    fill: bind if (not limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-                                    layoutInfo: XLayoutInfo {hpos: LEFT}
-                                }
-                                Text {
-                                    content: bind "Total: {model.convertEstimate(filteredSum)}"
-                                    fill: bind if (limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-                                    layoutInfo: XLayoutInfo {hpos: LEFT}
-                                }
-                                Text {
-                                    content: bind if (limitByCount) "Limit: {%.0f totalLimit}" else "Limit: {model.convertEstimate(totalLimit)}"
-                                    fill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-                                    layoutInfo: XLayoutInfo {hpos: LEFT}
-                                }
+                        //TODO: Use XGrid, and/or some way less verbose technique
+                        viewSummary = XHBox {
+                             content: [
+                                Rectangle {
+                                    managed: false
+                                    styleClass: "story-view-summary-box"
+                                    width: bind viewSummary.width
+                                    height: bind viewSummary.height
+                                },
+                                XVBox {
+                                    content: [
+                                        Rectangle {
+                                            managed: false
+                                            layoutX: 3
+                                            layoutY: 3
+                                            styleClass: "story-view-summary-header"
+                                            width: bind viewSummary.width / 3 - 6
+                                            height: bind viewSummary.height / 2 - 2
+                                        },
+                                        Label {
+                                            styleClass: "story-view-summary-text"
+                                            text: "Count"
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                        },
+                                        Label {
+                                            styleClass: "story-view-summary-text"
+                                            text: bind "{filteredCount}"
+                                            textFill: bind if (not limitByCount) Color.BLACK else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.BLACK
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                        }
+                                    ]
+                                    layoutInfo: XLayoutInfo {
+                                        hgrow: Priority.SOMETIMES
+                                    }
+                                },
+                                XVBox {
+                                    content: [
+                                        Rectangle {
+                                            managed: false
+                                            layoutX: 3
+                                            layoutY: 3
+                                            styleClass: "story-view-summary-header"
+                                            width: bind viewSummary.width / 3 - 6
+                                            height: bind viewSummary.height / 2 - 2
+                                        },
+                                        Label {
+                                            styleClass: "story-view-summary-text"
+                                            text: "Total"
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                         },
+                                        Label {
+                                            styleClass: "story-view-summary-text"
+                                            text: bind "{model.convertEstimate(filteredSum)}"
+                                            textFill: bind if (limitByCount) Color.BLACK else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.BLACK
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                       }
+                                    ]
+                                    layoutInfo: XLayoutInfo {
+                                        hgrow: Priority.SOMETIMES
+                                    }
+                                },
+                                XVBox {
+                                    content: [
+                                        Rectangle {
+                                            managed: false
+                                            layoutX: 3
+                                            layoutY: 3
+                                            styleClass: "story-view-summary-header"
+                                            width: bind viewSummary.width / 3 - 6
+                                            height: bind viewSummary.height / 2 - 2
+                                        },
+                                        Label {
+                                            styleClass: "story-view-summary-text"
+                                            text: "Limit"
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                        },
+                                        Label {
+                                            styleClass: "story-view-summary-text"
+                                            text: bind if (limitByCount) "{%.0f totalLimit}" else "{model.convertEstimate(totalLimit)}"
+                                            textFill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.BLACK
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                        }
+                                    ]
+                                    layoutInfo: XLayoutInfo {
+                                        hgrow: Priority.SOMETIMES
+                                    }
+                               }
                             ]
-                            layoutInfo: XLayoutInfo {hpos: LEFT}
-                        }
+                        },
+//                        XVBox {
+//                            spacing: 3
+//                            content: [
+//                                Text {
+//                                    content: bind "Count: {filteredCount}"
+//                                    fill: bind if (not limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+//                                    layoutInfo: XLayoutInfo {hpos: LEFT}
+//                                }
+//                                Text {
+//                                    content: bind "Total: {model.convertEstimate(filteredSum)}"
+//                                    fill: bind if (limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+//                                    layoutInfo: XLayoutInfo {hpos: LEFT}
+//                                }
+//                                Text {
+//                                    content: bind if (limitByCount) "Limit: {%.0f totalLimit}" else "Limit: {model.convertEstimate(totalLimit)}"
+//                                    fill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
+//                                    layoutInfo: XLayoutInfo {hpos: LEFT}
+//                                }
+//                            ]
+//                            layoutInfo: XLayoutInfo {hpos: LEFT}
+//                        }
                     ]
                 }
             ]

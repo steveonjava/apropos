@@ -60,12 +60,33 @@
   -fx-fill: #b5d8eb;
 }
 
-/* Color for the Rectangle in a StoryView header area */
+.story-view-header-title {
+  -fx-font-weight: bold;
+}
+
+/* Styling for the Rectangle in a StoryView detail area */
 .story-view-box {
   -fx-fill: #ffffff;
   -fx-stroke: #c6c6c6;
 }
 
+/* Styling for the Rectangle in a StoryView summary area */
+.story-view-summary-box {
+  -fx-fill: #ffffff;
+  -fx-stroke: #c6c6c6;
+}
+
+/* Styling for the header Rectangle in a StoryView summary area */
+.story-view-summary-header {
+  -fx-fill: #f1f1f1;
+  /*-fx-fill: #e0e0e0;*/
+  -fx-stroke: #ffffff;
+}
+
+.story-view-summary-text {
+  /*-fx-fill: #f1f1f1;*/
+  -fx-font-size: 10pt;
+}
 
 /*******************************************************************************
  *                                                                             *
@@ -84,7 +105,36 @@
  ******************************************************************************/
 
 .button {
-  -fx-text-overrun: clip;
+    -fx-padding: 3 10 2 10;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, #3f84a4;
+    -fx-background-radius: 3, 3, 2, 1;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+    -fx-text-overrun: clip;
+}
+
+.button:hover {
+    -fx-color: -fx-hover-base;
+}
+
+.button:armed {
+    -fx-color: -fx-pressed-base;
+}
+
+.button:focused {
+    -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, #3f84a4;
+    -fx-background-radius: 5.4, 4, 3, 2;
+    -fx-background-insets: -1.4, 0, 1, 2;
+}
+
+.button:strong {
+    -fx-base: -fx-accent
+}
+
+.button:disabled {
+    -fx-opacity: .4;
 }
 
 .image-button {
@@ -215,7 +265,7 @@
 
 .scroll-view {
     -fx-padding: 1;
-    -fx-background-color: -fx-box-border, black;
+    -fx-background-color: -fx-box-border, b5d8eb;
     -fx-background-insets: 0, 1;
     -fx-hbar-policy: never;
     -fx-vbar-policy: always;

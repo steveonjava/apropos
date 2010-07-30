@@ -66,7 +66,8 @@ public class RallyModel extends XObject {
     public var showInDollars = false;
     public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
     public-init var currentRelease:Release;
-    public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
+    public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
+    //public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
     public-init var ownerNames:String[] =
       if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
       else if (show) ["dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]

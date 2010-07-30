@@ -73,7 +73,7 @@ public class LoginScreen extends XCustomNode {
                                 layoutInfo: LayoutInfo {width: 250, height: 60}
                             }
                             Button {
-                                text: "Sign In"
+                                text: "Login"
                                 action: model.doLogin
                                 layoutInfo: LayoutInfo {hpos: HPos.RIGHT}
                             }

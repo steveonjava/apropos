@@ -27,7 +27,6 @@
  */
 package org.apropos.ui;
 
-import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
@@ -36,7 +35,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
-import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.XTableView;
 import org.jfxtras.scene.control.renderer.RowNumberRenderer;
