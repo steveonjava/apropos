@@ -43,6 +43,8 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
+public def APROPOS_VERSION = "0.8.1";
+
 public var readOnly:Boolean;
 
 //public def buttonSkin = "-fx-color: BLACK;"

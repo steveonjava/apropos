@@ -27,34 +27,28 @@
  */
 package org.apropos.ui;
 
-import org.apropos.model.RallyModel;
-import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XVBox;
 
 /**
  * @author Stephen Chin
  */
 public class ScopeModule extends AbstractModulePage {
-    //def model = RallyModel.instance;
     package var storyViews:StoryView[] = for (release in [model.backlog, model.releases]) StoryView {
         storyViews: bind storyViews;
         storyContainer: release
     }
 
-//    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
-//    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
-
     def allocationFilter = Filter {
         name: "Investment Allocation"
         list: bind model.allocationNames
         selectedIndex: bind model.selectedAllocationIndex with inverse
-    };
+    }
+
     def ownerFilter = Filter {
         name: "Owner"
         list: bind for (o in model.owners) o.getDisplayName()
         selectedIndex: bind model.selectedOwnerIndex with inverse
-    };
+    }
 
     init {
         pageToolBar = PageToolBar {
@@ -63,29 +57,11 @@ public class ScopeModule extends AbstractModulePage {
                 ownerFilter
             ]
             rightNodes: CostSelectionNode {}
-        };
+        }
         pageContent = XHBox {
             animate: true
             spacing: 10
             content: storyViews[s|s.visible]
         }
     }
-
-//    override function create() {
-//        XVBox {
-//            spacing: 8
-//            content: bind [
-//                XHBox {
-//                    animate: true
-//                    spacing: 8
-//                    content: [allocationFilter, ownerFilter]
-//                }
-//                XHBox {
-//                    animate: true
-//                    spacing: 10
-//                    content: storyViews[s|s.visible]
-//                }
-//            ]
-//        }
-//    }
 }

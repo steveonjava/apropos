@@ -27,24 +27,21 @@
  */
 package org.apropos.ui;
 
-import org.apropos.model.RallyModel;
-import javafx.scene.control.Label;
 import javafx.scene.chart.PieChart;
-import javafx.scene.text.Font;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import org.apropos.model.Release;
-import org.jfxtras.scene.XCustomNode;
+import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
-import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XVBox;
-import javafx.scene.control.ChoiceBox;
 
 /**
  * @author Stephen Chin
  */
 public class AnalyzeModule extends AbstractModulePage {
-    //def model = RallyModel.instance;
 
     def releaseChoice:ChoiceBox = ChoiceBox {
         items: bind model.releases
@@ -56,13 +53,6 @@ public class AnalyzeModule extends AbstractModulePage {
     }
 
     def release = bind releaseChoice.selectedItem as Release;
-
-//    def releaseChoice:XPicker = XPicker {
-//        items: bind model.releases
-//        onIndexChange: function(ind) {rebuildChart()}
-//    }
-//
-//    def release = bind releaseChoice.selectedItem as Release;
 
     def names = bind model.allocationNames;
 
@@ -78,15 +68,12 @@ public class AnalyzeModule extends AbstractModulePage {
         def data = for (name in names) {
             PieChart.Data {
                 label: name
-                //value: release.getPackageTotals(name)
                 value: release.getAllocationTotals(name)
             }
         }
         chart = PieChart {
-            titleFill: Color.WHITE
             titleFont: Font.font(null, 24)
             title: bind "Investment Allocation for {releaseChoice.selectedItem}"
-            pieLabelFill: Color.WHITE
             data: data
             legendVisible: true
             layoutInfo: XLayoutInfo {hgrow: ALWAYS, vgrow: ALWAYS, vfill: true, hfill: true}
@@ -98,7 +85,6 @@ public class AnalyzeModule extends AbstractModulePage {
         content: [
             Label {
                 text: "Release:"
-                textFill: Color.WHITE
             }
             releaseChoice
         ]
@@ -108,17 +94,9 @@ public class AnalyzeModule extends AbstractModulePage {
         pageToolBar = PageToolBar {
             leftNodes: pickers
             rightNodes: CostSelectionNode {}
-        };
+        }
         pageContent = XVBox {
             content: bind chart
-        };
+        }
     }
-
-//    override function create() {
-//        XVBox {
-//            spacing: 10
-//            content: bind [pickers, chart]
-//        }
-//    }
-
 }

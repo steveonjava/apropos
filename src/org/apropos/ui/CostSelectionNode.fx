@@ -29,7 +29,6 @@ package org.apropos.ui;
 
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XLayoutInfo;
 import org.apropos.model.RallyModel;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -56,6 +55,6 @@ public class CostSelectionNode extends XCustomNode {
                     action: model.refresh
                 }
             ]
-        };
+        }
     }
 }

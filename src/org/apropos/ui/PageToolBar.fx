@@ -43,6 +43,8 @@ public class PageToolBar extends XCustomNode {
     public-init var leftNodes: Node[];
     public-init var rightNodes: Node[];
 
+    override function getVFill() {false}
+    
     init {
         var container: XHBox = XHBox {
             spacing: 8

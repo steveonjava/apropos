@@ -302,6 +302,9 @@
     -fx-text: "©2003-2010 Rally Software Development Corp.";
     -fx-text-fill: -fx-light-text-color;
 }
+.apropos-version {
+    -fx-text-fill: -fx-light-text-color;
+}
 
 /*******************************************************************************
  *                                                                             *

@@ -27,13 +27,15 @@
  */
 package org.apropos.ui;
 
-import org.apropos.model.RallyModel;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Stack;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
+import org.apropos.model.RallyModel;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XStack;
 import org.jfxtras.scene.layout.XVBox;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Stack;
 
 /**
  * @author Stephen Chin
@@ -46,7 +48,6 @@ public abstract class AbstractModulePage extends XCustomNode {
     public var pageContent:Node;
     public var pageFooter:PageFooter = PageFooter{};
 
-
     override function create() {
         XStack {
             content: [
@@ -55,17 +56,12 @@ public abstract class AbstractModulePage extends XCustomNode {
                         pageToolBar,
                         Stack { //TODO: Try XStack and see if CSS padding still works
                             content: pageContent
-                            styleClass: "page-content-background" //TODO: Change to "page-content"?
-                        },
+                            styleClass: "page-content-background" //todo: figure out why changing this name to "page-content" breaks the background color
+                            layoutInfo: LayoutInfo {vgrow: Priority.ALWAYS}
+                        }
                         pageFooter
                     ]
                 }
-                // todo - it is kind of annoying, but progress indicators don't play nice with layouts...
-//                ProgressIndicator {
-//                    layoutY: 84
-//                    layoutX: bind scene.width - 44
-//                    visible: bind model.waiting > 0
-//                }
             ]
         }
     }

@@ -27,6 +27,8 @@
  */
 package org.apropos.ui;
 
+import java.math.BigDecimal;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextBox;
@@ -34,7 +36,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
 import org.apropos.model.StoryContainer;
@@ -49,11 +53,6 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.util.SequenceUtil;
-import java.math.BigDecimal;
-import javafx.scene.shape.Rectangle;
-import javafx.geometry.Insets;
-import org.jfxtras.scene.layout.XStack;
-import javafx.scene.layout.Priority;
 
 /**
  * @author Stephen Chin
@@ -235,14 +234,13 @@ public class StoryView extends XCustomNode {
                             next();
                         }
                     }
-                    //spacing: 8
                     content: [
                         Rectangle {
                             managed: false
                             styleClass: "story-view-box"
                             width: bind viewDetail.width
                             height: bind viewDetail.height
-                        },
+                        }
                         viewHeader = XHBox {
                             def maximizeImage:Image = Image {
                                 url: "{__DIR__}images/maxamize-b5d8eb.png"
@@ -257,14 +255,13 @@ public class StoryView extends XCustomNode {
                                     managed: false
                                     width: bind viewHeader.width
                                     height: bind viewHeader.height
-                                },
+                                }
                                 Label {
                                     styleClass: "story-view-header-title"
                                     text: bind storyContainer.name
                                     layoutInfo: XLayoutInfo {
                                         margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                     }
-                                    //textFill: Color.WHITE
                                 }
                                 //TODO: Change to ToggleButton or Button?
                                 imageView = ImageView {
@@ -295,7 +292,7 @@ public class StoryView extends XCustomNode {
                                     }
                                 }
                             ]
-                        },
+                        }
                         XHBox {
                             //spacing: 5
                             var text:String;
@@ -347,7 +344,7 @@ public class StoryView extends XCustomNode {
                                     }
                                 }
                             ]
-                        },
+                        }
                         table = XTableView {
                             rowType: Story {}.getJFXClass()
                             rows: bind filteredStories
@@ -378,7 +375,6 @@ public class StoryView extends XCustomNode {
                                     disable: bind (table.selectedRow == -1) or
                                                   (sizeof filteredStories == 0) or
                                                   (storyContainer.containerBefore == null)
-                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                                 }
                                 Button {
                                     styleClass: "image-button"
@@ -398,7 +394,6 @@ public class StoryView extends XCustomNode {
                                         move(-1);
                                     }
                                     disable: bind table.selectedRow == -1 or table.selectedRow == 0
-                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                                 }
                                 Button {
                                     styleClass: "image-button"
@@ -420,7 +415,6 @@ public class StoryView extends XCustomNode {
                                     disable: bind (table.selectedRow == -1) or
                                                   (sizeof filteredStories == 0) or
                                                   table.selectedRow == sizeof filteredStories - 1
-                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                                 }
                                 Button {
                                     styleClass: "image-button"
@@ -433,11 +427,10 @@ public class StoryView extends XCustomNode {
                                     disable: bind (table.selectedRow == -1) or
                                                   (sizeof filteredStories == 0) or
                                                   (storyContainer.containerAfter == null)
-                                    //layoutInfo: XLayoutInfo {minWidth: 25, hshrink: SOMETIMES}
                                 }
                             ]
                             //TODO: Center horizonally in the width of the table above it
-                        },
+                        }
                         //TODO: Use XGrid, and/or some way less verbose technique
                         viewSummary = XHBox {
                              content: [
@@ -446,7 +439,7 @@ public class StoryView extends XCustomNode {
                                     styleClass: "story-view-summary-box"
                                     width: bind viewSummary.width
                                     height: bind viewSummary.height
-                                },
+                                }
                                 XVBox {
                                     content: [
                                         Rectangle {
@@ -456,14 +449,14 @@ public class StoryView extends XCustomNode {
                                             styleClass: "story-view-summary-header"
                                             width: bind viewSummary.width / 3 - 6
                                             height: bind viewSummary.height / 2 - 2
-                                        },
+                                        }
                                         Label {
                                             styleClass: "story-view-summary-text"
                                             text: "Count"
                                             layoutInfo: XLayoutInfo {
                                                 margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                             }
-                                        },
+                                        }
                                         Label {
                                             styleClass: "story-view-summary-text"
                                             text: bind "{filteredCount}"
@@ -476,7 +469,7 @@ public class StoryView extends XCustomNode {
                                     layoutInfo: XLayoutInfo {
                                         hgrow: Priority.SOMETIMES
                                     }
-                                },
+                                }
                                 XVBox {
                                     content: [
                                         Rectangle {
@@ -486,14 +479,14 @@ public class StoryView extends XCustomNode {
                                             styleClass: "story-view-summary-header"
                                             width: bind viewSummary.width / 3 - 6
                                             height: bind viewSummary.height / 2 - 2
-                                        },
+                                        }
                                         Label {
                                             styleClass: "story-view-summary-text"
                                             text: "Total"
                                             layoutInfo: XLayoutInfo {
                                                 margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                             }
-                                         },
+                                         }
                                         Label {
                                             styleClass: "story-view-summary-text"
                                             text: bind "{model.convertEstimate(filteredSum)}"
@@ -506,7 +499,7 @@ public class StoryView extends XCustomNode {
                                     layoutInfo: XLayoutInfo {
                                         hgrow: Priority.SOMETIMES
                                     }
-                                },
+                                }
                                 XVBox {
                                     content: [
                                         Rectangle {
@@ -516,14 +509,14 @@ public class StoryView extends XCustomNode {
                                             styleClass: "story-view-summary-header"
                                             width: bind viewSummary.width / 3 - 6
                                             height: bind viewSummary.height / 2 - 2
-                                        },
+                                        }
                                         Label {
                                             styleClass: "story-view-summary-text"
                                             text: "Limit"
                                             layoutInfo: XLayoutInfo {
                                                 margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                             }
-                                        },
+                                        }
                                         Label {
                                             styleClass: "story-view-summary-text"
                                             text: bind if (limitByCount) "{%.0f totalLimit}" else "{model.convertEstimate(totalLimit)}"
@@ -538,28 +531,7 @@ public class StoryView extends XCustomNode {
                                     }
                                }
                             ]
-                        },
-//                        XVBox {
-//                            spacing: 3
-//                            content: [
-//                                Text {
-//                                    content: bind "Count: {filteredCount}"
-//                                    fill: bind if (not limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-//                                    layoutInfo: XLayoutInfo {hpos: LEFT}
-//                                }
-//                                Text {
-//                                    content: bind "Total: {model.convertEstimate(filteredSum)}"
-//                                    fill: bind if (limitByCount) Color.WHITE else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-//                                    layoutInfo: XLayoutInfo {hpos: LEFT}
-//                                }
-//                                Text {
-//                                    content: bind if (limitByCount) "Limit: {%.0f totalLimit}" else "Limit: {model.convertEstimate(totalLimit)}"
-//                                    fill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.WHITE
-//                                    layoutInfo: XLayoutInfo {hpos: LEFT}
-//                                }
-//                            ]
-//                            layoutInfo: XLayoutInfo {hpos: LEFT}
-//                        }
+                        }
                     ]
                 }
             ]

@@ -39,8 +39,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XLayoutInfo;
@@ -54,7 +52,6 @@ import javafx.geometry.VPos;
 import javafx.scene.layout.Priority;
 import javafx.geometry.HPos;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.control.Button;
 
 /**
  * @author Stephen Chin
@@ -74,13 +71,6 @@ public class AproposUI extends XCustomNode {
                     "Analyze",
                     "Schedule"
                 ]
-//                def buttonLabels = [
-//                    "Portfolio",
-//                    "Scope",
-//                    "Resource",
-//                    "Analyze",
-//                    "Roadmap"
-//                ]
                 content: bind for (label in buttonLabels)
                     createMenuToggleButton(label, indexof label == 0);
                 layoutInfo: XLayoutInfo {
@@ -89,12 +79,10 @@ public class AproposUI extends XCustomNode {
                     hgrow: Priority.NEVER
                     vgrow: Priority.NEVER
                 }
-                //layoutInfo: XLayoutInfo {hpos: LEFT, margin: insets(4, 16)}
             }
         ]
         layoutInfo: XLayoutInfo {
             vpos: VPos.BOTTOM
-            //hgrow: Priority.ALWAYS
         }
     }
 
@@ -111,38 +99,31 @@ public class AproposUI extends XCustomNode {
                             hgrow: Priority.NEVER
                             vgrow: Priority.ALWAYS
                         }
-                    },
+                    }
                     buttonBar
                 ]
                 layoutInfo: XLayoutInfo {
-                    //vpos: VPos.TOP
                     hgrow: Priority.ALWAYS
                     margin: Insets {
                         top: 10
                         left: 10
                     }
                 }
-            },
+            }
             ImageView {
                 image: Image {
                     url: "{__DIR__}images/sticky-graphic-header-clipped.png";
                 }
                 layoutInfo: XLayoutInfo {vpos: TOP}
-            },
+            }
             ImageView {
                 image: Image {
                     url: "{__DIR__}images/rally-logo-header.png";
                 }
                 layoutInfo: XLayoutInfo {vpos: TOP}
-            },
+            }
         ]
     };
-
-    def pageToolBar = PageToolBar {
-        leftNodes: Button {text: "Hello"}
-        rightNodes: Button {text: "Hello"}
-    };
-
 
     def modules = XMap {
         entries: [
@@ -161,7 +142,7 @@ public class AproposUI extends XCustomNode {
             width: bind content.width
             height: bind content.height
             styleClass: "page-content-background"
-          },
+          }
           activeModule
         ]
     }
@@ -174,8 +155,6 @@ public class AproposUI extends XCustomNode {
             // Disable the button if is selected so it can't be de-selected
             //TODO: Style this button so that it is more legible in its disabled state
             disable: bind tbRef.selected
-            //TODO: Move font size to style sheet
-            //font: Font.font("Eras Demi ITC", FontWeight.REGULAR, 14)
             toggleGroup: toggleGroup
         }
     }
@@ -185,13 +164,7 @@ public class AproposUI extends XCustomNode {
         XStack {
             content: [
                 XVBox {
-                    content: [
-                        titleBar,
-                        //buttonBar,
-                        //pageToolBar,
-                        content,
-                        //PageFooter {}
-                    ]
+                    content: [titleBar, content]
                 }
                 // todo - it is kind of annoying, but progress indicators don't play nice with layouts...
                 ProgressIndicator {

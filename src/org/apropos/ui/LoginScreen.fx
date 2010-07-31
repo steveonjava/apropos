@@ -27,21 +27,17 @@
  */
 package org.apropos.ui;
 
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.LayoutInfo;
 import org.apropos.model.RallyModel;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.control.XPane;
 import org.jfxtras.scene.form.XForm;
-import org.jfxtras.scene.image.XImageView;
 import org.jfxtras.scene.layout.XStack;
 import org.jfxtras.scene.layout.XVBox;
-import org.jfxtras.scene.shape.ResizableRectangle;
-import javafx.geometry.HPos;
-import javafx.scene.layout.LayoutInfo;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.Cursor;
 
 /**
  * @author Stephen Chin
@@ -53,15 +49,6 @@ public class LoginScreen extends XCustomNode {
     override function create() {
         XStack {
             content: [
-//                ResizableRectangle {
-//                    fill: Color.BLACK
-//                }
-//                XImageView {
-//                    preserveRatio: true
-//                    image: Image {
-//                        url: "{__DIR__}GoldenGateBridge_BakerBeach_MC.jpg"
-//                    }
-//                }
                 XPane {
                     title: "Login"
                     contentNode: XVBox {
@@ -79,7 +66,8 @@ public class LoginScreen extends XCustomNode {
                             }
                         ]
                     }
-                },
+                }
+                PageFooter {layoutInfo: LayoutInfo {vpos: VPos.BOTTOM}}
             ]
         }
     }

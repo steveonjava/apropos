@@ -27,14 +27,15 @@
  */
 package org.apropos.ui;
 
-import org.jfxtras.scene.XCustomNode;
-import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.Node;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.control.Label;
 import javafx.geometry.Insets;
-import javafx.scene.layout.Priority;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.shape.Rectangle;
+import org.apropos.model.RallyModel;
+import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XLayoutInfo;
+import org.jfxtras.scene.layout.XHBox;
+import org.jfxtras.scene.layout.XSpacer;
 
 /**
  * @author Jim Weaver
@@ -43,6 +44,8 @@ public class PageFooter extends XCustomNode {
 
     public-init var leftNodes: Node[];
     public-init var rightNodes: Node[];
+
+    override function getVFill() {false}
 
     init {
         var container: XHBox = XHBox {
@@ -64,6 +67,11 @@ public class PageFooter extends XCustomNode {
                             right: 4
                         }
                     }
+                }
+                XSpacer {}
+                Label {
+                    styleClass: "apropos-version"
+                    text: "Version {RallyModel.APROPOS_VERSION}"
                 }
             ]
         };

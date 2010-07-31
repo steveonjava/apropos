@@ -27,42 +27,32 @@
  */
 package org.apropos.ui;
 
-import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
-import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.XTableView;
 import org.jfxtras.scene.control.renderer.RowNumberRenderer;
 import org.jfxtras.scene.control.renderer.TextRenderer;
-import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XVBox;
 
 /**
  * @author Stephen Chin
  */
 public class RoadmapModule extends AbstractModulePage {
 
-    //def model = RallyModel.instance;
-
-    //var table:XTableView;
-
     var stories:Story[] = bind model.currentRelease.stories;
 
     var filteredStories = bind model.filter(model.currentRelease.stories);
-
-//    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
-//    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
 
     def allocationFilter = Filter {
         name: "Investment Allocation"
         list: bind model.allocationNames
         selectedIndex: bind model.selectedAllocationIndex with inverse
-    };
+    }
+
     def ownerFilter = Filter {
         name: "Owner"
         list: bind for (o in model.owners) o.getDisplayName()
         selectedIndex: bind model.selectedOwnerIndex with inverse
-    };
+    }
 
     def table:XTableView = XTableView {
         rowType: Story {}.getJFXClass()
@@ -101,7 +91,6 @@ public class RoadmapModule extends AbstractModulePage {
             XTableColumn {
                 displayName: "Owner"
                 prefWidth: 100
-                //id: "owner"
                 id: "ownerDisplayName"
                 renderer: TextRenderer {}
             }
@@ -133,75 +122,4 @@ public class RoadmapModule extends AbstractModulePage {
         };
         pageContent = table;
     }
-
-
-//    override function create() {
-//        XVBox {
-//            spacing: 10
-//            content: [
-//                XHBox {
-//                    spacing: 8
-//                    content: [allocationFilter, ownerFilter]
-//                }
-////                table = XTableView {
-////                    rowType: Story {}.getJFXClass()
-////                    rows: bind filteredStories
-////                    rowHeight: 50
-////                    onMouseClicked: function(e) {
-////                        if (e.clickCount == 2) {
-////                            filteredStories[table.selectedRow].browse();
-////                        }
-////                    }
-////                    columns: [
-////                        XTableColumn {
-////                            displayName: "#"
-////                            prefWidth: 20
-////                            id: "rank"
-////                            renderer: RowNumberRenderer {}
-////                        }
-////                        XTableColumn {
-////                            displayName: "ID"
-////                            prefWidth: 20
-////                            id: "id"
-////                            renderer: TextRenderer {}
-////                        }
-////                        XTableColumn {
-////                            displayName: "Theme"
-////                            prefWidth: 140
-////                            id: "parentName"
-////                            renderer: TextRenderer {}
-////                        }
-////                        XTableColumn {
-////                            displayName: "Feature"
-////                            prefWidth: 140
-////                            id: "name"
-////                            renderer: TextRenderer {}
-////                        }
-////                        XTableColumn {
-////                            displayName: "Owner"
-////                            prefWidth: 100
-////                            //id: "owner"
-////                            id: "ownerDisplayName"
-////                            renderer: TextRenderer {}
-////                        }
-////                        for (iteration in model.iterations) {
-////                            XTableColumn {
-////                                displayName: iteration
-////                                prefWidth: 100
-////                                id: "iteration{indexof iteration + 1}"
-////                                renderer: TextRenderer {}
-////                            }
-////                        }
-////                        XTableColumn {
-////                            displayName: "Overflow"
-////                            prefWidth: 100
-////                            id: "overflow"
-////                            renderer: TextRenderer {}
-////                        }
-////                    ]
-////                }
-//            ]
-//        }
-//    }
-
 }
