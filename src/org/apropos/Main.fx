@@ -59,7 +59,6 @@ Stage {
                     styleClass: "background"
                     width: bind scene.width
                     height: bind scene.height
-                    //fill: Color.web("#b5d8eb");
                 },
                 if (not model.loggedIn) LoginScreen {} else AproposUI {}
             ]

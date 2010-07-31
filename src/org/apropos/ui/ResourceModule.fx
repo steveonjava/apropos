@@ -53,9 +53,6 @@ import javafx.scene.shape.Rectangle;
  * @author Stephen Chin
  */
 public class ResourceModule extends AbstractModulePage {
-        
-    //def model = RallyModel.instance;
-
     var stories:Story[] = bind model.currentRelease.stories;
 
     var selectedPackage = bind model.selectedPackage;
@@ -76,9 +73,6 @@ public class ResourceModule extends AbstractModulePage {
         }
     }
 
-//    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
-//    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
-
     def allocationFilter = Filter {
         name: "Investment Allocation"
         list: bind model.allocationNames
@@ -89,17 +83,6 @@ public class ResourceModule extends AbstractModulePage {
         list: bind for (o in model.owners) o.getDisplayName()
         selectedIndex: bind model.selectedOwnerIndex with inverse
     };
-
-//    def filters = XHBox {
-//        spacing: 8
-////        layoutInfo: LayoutInfo {
-////          width: bind scene.width
-////        }
-//        content: [
-//            allocationFilter,
-//            ownerFilter
-//        ]
-//    }
 
     def buttons = XHBox {
         spacing: 8
@@ -158,14 +141,6 @@ public class ResourceModule extends AbstractModulePage {
         rows: for (owner in model.owners) {
             var target:String = model.initialTargets[indexof owner];
             row([
-//                ImageView {
-//                    image: model.ownerImages[indexof owner]
-//                }
-//                Rectangle {
-//                    styleClass: "owner-row-background"
-//                    width: bind owners.width
-//                    height: 50
-//                },
                 Label {
                     styleClass: "empasized-text"
                     text: owner.getDisplayName(); 
@@ -310,25 +285,4 @@ public class ResourceModule extends AbstractModulePage {
             ]
         }
     }
-
-//    override function create() {
-//        XVBox {
-//            spacing: 10
-//            content: [
-//                filters,
-//                XHBox {
-//                    spacing: 20
-//                    content: [
-//                        table,
-//                        ScrollView {
-//                            node: owners
-//                            layoutInfo:LayoutInfo {
-//                                width: bind owners.width + 20
-//                            }
-//                        }
-//                    ]
-//                }
-//            ]
-//        }
-//    }
 }

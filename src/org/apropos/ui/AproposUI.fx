@@ -153,7 +153,6 @@ public class AproposUI extends XCustomNode {
             text: text
             selected: selected
             // Disable the button if is selected so it can't be de-selected
-            //TODO: Style this button so that it is more legible in its disabled state
             disable: bind tbRef.selected
             toggleGroup: toggleGroup
         }

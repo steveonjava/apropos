@@ -59,7 +59,6 @@ public class PageToolBar extends XCustomNode {
                     spacing: 8 //TODO: Put in style sheet
                     content: leftNodes
                     layoutInfo: XLayoutInfo {
-                        //vpos: VPos.TOP
                         hgrow: Priority.ALWAYS
                         margin: Insets { //TODO: Put in style sheet
                             top: 10
@@ -73,7 +72,6 @@ public class PageToolBar extends XCustomNode {
                     spacing: 8 //TODO: Put in style sheet
                     content: rightNodes
                     layoutInfo: XLayoutInfo {
-                        //vpos: VPos.TOP
                         margin: Insets { //TODO: Put in style sheet
                             top: 10
                             bottom: 10

@@ -185,8 +185,6 @@ public class StoryView extends XCustomNode {
             }
 
         }
-        println("table.selectedRow:{table.selectedRow}");
-        println("sizeof table.rows:{sizeof table.rows}");
     }
 
     function next() {
@@ -208,9 +206,6 @@ public class StoryView extends XCustomNode {
             }
 
         }
-
-        println("table.selectedRow:{table.selectedRow}");
-        println("sizeof table.rows:{sizeof table.rows}");
     }
 
     override function create() {
@@ -288,7 +283,6 @@ public class StoryView extends XCustomNode {
                             ]
                         }
                         XHBox {
-                            //spacing: 5
                             var text:String;
                             var error = false;
                             def search = function() {

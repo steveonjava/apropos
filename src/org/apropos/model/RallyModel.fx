@@ -43,13 +43,9 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.1";
+public def APROPOS_VERSION = "0.8.2";
 
 public var readOnly:Boolean;
-
-//public def buttonSkin = "-fx-color: BLACK;"
-//    "-fx-focus-color: white;"
-//    "-fx-background: black;";
 
 def community:Boolean = false;
 def show:Boolean = true;
@@ -69,7 +65,6 @@ public class RallyModel extends XObject {
     public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
-    //public-init var iterations = ["Sprint 2010-07-20", "Sprint 2010-08-03", "Sprint 2010-08-17", "Sprint 2010-08-31", "Sprint 2010-09-14", "Sprint 2010-09-28"];
     public-init var ownerNames:String[] =
       if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
       else if (show) ["dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
@@ -92,10 +87,6 @@ public class RallyModel extends XObject {
     public var stages:Stage[];
 
     public var epicNames:String[];
-//    public var selectedEpicIndex:Integer;
-//    public var selectedEpic:String = bind if (selectedEpicIndex == 0) null else {
-//        epicNames[selectedEpicIndex - 1];
-//    }
 
     public var allocationNames:String[];
     public var selectedAllocationIndex:Integer;
@@ -120,7 +111,6 @@ public class RallyModel extends XObject {
 
     bound function filtersOn() {
         return selectedAllocation != null;
-//        return selectedEpic != null or selectedPackage != null;
     }
 
     bound function selected(s:Story) {
@@ -137,12 +127,9 @@ public class RallyModel extends XObject {
             processingLogin = true;
             readOnly = login.userName == GUEST_USER and not show;
 
-            //TODO: Put back in!
-            ///*
             createService();
             loadReleases();
             loadOwners();
-            //*/
 
             loggedIn = true;
         } catch (e:AxisFault) {

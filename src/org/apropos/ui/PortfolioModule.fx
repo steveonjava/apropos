@@ -18,8 +18,6 @@ import org.jfxtras.scene.layout.XLayoutInfo;
  * @author Stephen Chin
  */
 public class PortfolioModule extends AbstractModulePage {
-    //def model = RallyModel.instance;
-
     public var selectedView:StoryView;
     package var storyViews:StoryView[] = for (stage in model.stages) StoryView {
         narrowColumns: true
@@ -30,9 +28,6 @@ public class PortfolioModule extends AbstractModulePage {
         storyContainer: stage
     }
 
-//    def epicFilter = Filter {name: "Epic", list: bind model.epicNames, selectedIndex: bind model.selectedEpicIndex with inverse}
-//    def packageFilter = Filter {name: "Package", list: bind model.packageNames, selectedIndex: bind model.selectedPackageIndex with inverse}
-    
     def allocationFilter = Filter {
         name: "Investment Allocation" 
         list: bind model.allocationNames
@@ -58,26 +53,4 @@ public class PortfolioModule extends AbstractModulePage {
             content: storyViews[s|s.visible]
         }
     }
-
-
-
-//    override function create() {
-//        XVBox {
-//            spacing: 8
-//            content: bind [
-////                PageToolBar {
-////                    leftNodes: [
-////                        allocationFilter,
-////                        ownerFilter
-////                    ]
-////                    rightNodes: CostSelectionNode {}
-////                },
-//                XHBox {
-//                    animate: true
-//                    spacing: 10
-//                    content: storyViews[s|s.visible]
-//                }
-//            ]
-//        }
-//    }
 }

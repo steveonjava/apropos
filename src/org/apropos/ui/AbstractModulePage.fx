@@ -38,7 +38,7 @@ import org.jfxtras.scene.layout.XStack;
 import org.jfxtras.scene.layout.XVBox;
 
 /**
- * @author Stephen Chin
+ * @author Jim Weaver
  */
 public abstract class AbstractModulePage extends XCustomNode {
     protected def model = RallyModel.instance;

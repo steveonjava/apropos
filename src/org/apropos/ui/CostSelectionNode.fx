@@ -48,7 +48,6 @@ public class CostSelectionNode extends XCustomNode {
                     //styleClass: "cost-selection" //TODO: put back in after styling checkboxes
                     text: "Show Estimate as Dollars"
                     selected: bind model.showInDollars with inverse
-                    //layoutInfo: XLayoutInfo {hpos: XLayoutInfo.RIGHT, hgrow: XLayoutInfo.ALWAYS}
                 }
                 Button {
                     text: "Refresh"
