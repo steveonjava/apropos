@@ -128,12 +128,6 @@ public class StoryView extends XCustomNode {
                     id: "id"
                     renderer: TextRenderer {}
                 }
-                XTableColumn {
-                    displayName: "Rank"
-                    prefWidth: 20
-                    id: "rank"
-                    renderer: TextRenderer {}
-                }
             ],
             if (narrowColumns and not maximized) [] else [
                 XTableColumn {
