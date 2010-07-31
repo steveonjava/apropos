@@ -27,16 +27,20 @@
  */
 package org.apropos.ui;
 
-import org.jfxtras.scene.layout.XHBox;
+import org.apropos.model.Story;
+import org.jfxtras.scene.control.XTableColumn;
+import org.jfxtras.scene.control.XTableView;
+import org.jfxtras.scene.control.renderer.RowNumberRenderer;
+import org.jfxtras.scene.control.renderer.TextRenderer;
 
 /**
  * @author Stephen Chin
  */
-public class ScopeModule extends AbstractModulePage {
-    package var storyViews:StoryView[] = for (release in [model.backlog, model.releases]) StoryView {
-        storyViews: bind storyViews;
-        storyContainer: release
-    }
+public class ScheduleModule extends AbstractModulePage {
+
+    var stories:Story[] = bind model.currentRelease.stories;
+
+    var filteredStories = bind model.filter(model.currentRelease.stories);
 
     def allocationFilter = Filter {
         name: "Investment Allocation"
@@ -50,6 +54,64 @@ public class ScopeModule extends AbstractModulePage {
         selectedIndex: bind model.selectedOwnerIndex with inverse
     }
 
+    def table:XTableView = XTableView {
+        rowType: Story {}.getJFXClass()
+        rows: bind filteredStories
+        rowHeight: 50
+        onMouseClicked: function(e) {
+            if (e.clickCount == 2) {
+                filteredStories[table.selectedRow].browse();
+            }
+        }
+        columns: [
+            XTableColumn {
+                displayName: "#"
+                prefWidth: 20
+                id: "rank"
+                renderer: RowNumberRenderer {}
+            }
+            XTableColumn {
+                displayName: "ID"
+                prefWidth: 20
+                id: "id"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Theme"
+                prefWidth: 140
+                id: "parentName"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Feature"
+                prefWidth: 140
+                id: "name"
+                renderer: TextRenderer {}
+            }
+            XTableColumn {
+                displayName: "Owner"
+                prefWidth: 100
+                id: "ownerDisplayName"
+                renderer: TextRenderer {}
+            }
+            for (iteration in model.iterations) {
+                XTableColumn {
+                    displayName: iteration
+                    prefWidth: 100
+                    id: "iteration{indexof iteration + 1}"
+                    renderer: TextRenderer {}
+                }
+            }
+            XTableColumn {
+                displayName: "Overflow"
+                prefWidth: 100
+                id: "overflow"
+                renderer: TextRenderer {}
+            }
+        ]
+    }
+
+
     init {
         pageToolBar = PageToolBar {
             leftNodes: [
@@ -57,11 +119,7 @@ public class ScopeModule extends AbstractModulePage {
                 ownerFilter
             ]
             rightNodes: CostSelectionNode {}
-        }
-        pageContent = XHBox {
-            animate: true
-            spacing: 10
-            content: storyViews[s|s.visible]
-        }
+        };
+        pageContent = table;
     }
 }

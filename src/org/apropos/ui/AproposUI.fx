@@ -29,10 +29,10 @@ package org.apropos.ui;
 
 import org.apropos.model.RallyModel;
 import org.apropos.ui.AnalyzeModule;
-import org.apropos.ui.ScopeModule;
-import org.apropos.ui.PortfolioModule;
 import org.apropos.ui.RoadmapModule;
-import org.apropos.ui.ResourceModule;
+import org.apropos.ui.PortfolioModule;
+import org.apropos.ui.ScheduleModule;
+import org.apropos.ui.PlanModule;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ToggleButton;
@@ -128,10 +128,10 @@ public class AproposUI extends XCustomNode {
     def modules = XMap {
         entries: [
             XMap.Entry {key: "Portfolio", value: PortfolioModule {}}
-            XMap.Entry {key: "Roadmap", value: ScopeModule {}}
-            XMap.Entry {key: "Plan", value: ResourceModule {}}
+            XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
+            XMap.Entry {key: "Plan", value: PlanModule {}}
             XMap.Entry {key: "Analyze", value: AnalyzeModule {}}
-            XMap.Entry {key: "Schedule", value: RoadmapModule {}}
+            XMap.Entry {key: "Schedule", value: ScheduleModule {}}
         ]
     }
     var activeModule = bind modules.boundGet((toggleGroup.selectedToggle as ToggleButton).text) as Node;

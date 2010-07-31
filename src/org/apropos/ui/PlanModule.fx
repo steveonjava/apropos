@@ -52,7 +52,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Stephen Chin
  */
-public class ResourceModule extends AbstractModulePage {
+public class PlanModule extends AbstractModulePage {
     var stories:Story[] = bind model.currentRelease.stories;
 
     var selectedPackage = bind model.selectedPackage;
