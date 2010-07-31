@@ -168,7 +168,7 @@ public class ResourceModule extends AbstractModulePage {
 //                },
                 Label {
                     styleClass: "empasized-text"
-                    text: owner.getDisplayName();
+                    text: owner.getDisplayName(); 
                     layoutInfo: LayoutInfo {
                         width: 160
                     }
