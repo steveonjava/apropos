@@ -67,7 +67,7 @@ public class Filter extends XCustomNode {
         layoutInfo: XLayoutInfo {
 //            hfill: true
 //            maxWidth: 4000
-            width: 200
+            width: 160
         }
         items: bind ["All", list]
         onIndexChange: function(index) {

@@ -7,9 +7,11 @@
   /* The default font for all content, it in inherited by all nodes */
   -fx-font: 12pt "Arial";
   -fx-toggle-button-focus-color: white;
+  -fx-selection-bar: #b5d8eb;
 
   -fx-light-text-color: white;
   -fx-dark-text-color: black;
+
 /*
   -fx-accent: #114fd9;
   -fx-base: #3f3f3f;

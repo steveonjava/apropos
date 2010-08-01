@@ -28,31 +28,57 @@
 package org.apropos.ui;
 
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import org.apropos.model.Release;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
+import org.jfxtras.scene.control.XPicker;
+import org.apropos.model.Release;
 
 /**
  * @author Stephen Chin
  */
 public class AnalyzeModule extends AbstractModulePage {
 
-    def releaseChoice:ChoiceBox = ChoiceBox {
-        items: bind model.releases
-        var selIndex = bind releaseChoice.selectedIndex on replace {
-          if (selIndex >= 0) {
-            rebuildChart();
-          }
+//    def releaseChoice:ChoiceBox = ChoiceBox {
+//        items: bind model.releases
+//        var selIndex = bind releaseChoice.selectedIndex on replace {
+//          if (selIndex >= 0) {
+//            rebuildChart();
+//          }
+//        }
+//    }
+//
+//    def release = bind releaseChoice.selectedItem as Release;
+
+    def release = bind releaseChoice.selectedItem as Release;
+
+    public var selectedIndex:Integer = -1 on replace {
+        if (releaseChoice.selectedIndex != selectedIndex) {
+            releaseChoice.select(selectedIndex);
+        }
+        if (selectedIndex >= 0) {
+          rebuildChart();
         }
     }
 
-    def release = bind releaseChoice.selectedItem as Release;
+    var releaseChoice:XPicker = XPicker {
+        firstLetter: true
+        promptText: "Please choose ..."
+        //id: "JFXtras Shapes"
+        layoutInfo: XLayoutInfo {
+//            hfill: true
+//            maxWidth: 4000
+            width: 160
+        }
+        items: bind model.releases
+        onIndexChange: function(index) {
+            selectedIndex = index;
+        }
+    };
+
 
     def names = bind model.allocationNames;
 
@@ -98,5 +124,6 @@ public class AnalyzeModule extends AbstractModulePage {
         pageContent = XVBox {
             content: bind chart
         }
+        releaseChoice.select(0);
     }
 }
