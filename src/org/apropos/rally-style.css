@@ -5,7 +5,7 @@
 
 .scene {
   /* The default font for all content, it in inherited by all nodes */
-  -fx-font: 12pt "Arial";
+  -fx-font: 11pt "Arial";
   -fx-toggle-button-focus-color: white;
   -fx-selection-bar: #b5d8eb;
 
@@ -156,6 +156,8 @@
  ******************************************************************************/
  
 .toggle-button {
+    -fx-font-size: 13pt;
+    -fx-font-weight: bold;
     -fx-padding: 3 10 2 10;
     -fx-background-color: transparent, transparent, transparent, #3f84a4;
     -fx-background-radius: 0;

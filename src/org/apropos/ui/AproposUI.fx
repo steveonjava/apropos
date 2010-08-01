@@ -168,7 +168,7 @@ public class AproposUI extends XCustomNode {
                 }
                 // todo - it is kind of annoying, but progress indicators don't play nice with layouts...
                 ProgressIndicator {
-                    layoutY: 44
+                    layoutY: 35
                     layoutX: bind scene.width - 44
                     visible: bind model.waiting > 0
                 }
