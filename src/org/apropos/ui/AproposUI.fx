@@ -139,6 +139,7 @@ public class AproposUI extends XCustomNode {
     def content:XStack = XStack {
         content: bind [
           Rectangle {
+            managed: false
             width: bind content.width
             height: bind content.height
             styleClass: "page-content-background"
@@ -167,7 +168,7 @@ public class AproposUI extends XCustomNode {
                 }
                 // todo - it is kind of annoying, but progress indicators don't play nice with layouts...
                 ProgressIndicator {
-                    layoutY: 84
+                    layoutY: 44
                     layoutX: bind scene.width - 44
                     visible: bind model.waiting > 0
                 }

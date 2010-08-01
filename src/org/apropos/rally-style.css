@@ -330,6 +330,50 @@
 
 /*******************************************************************************
  *                                                                             *
+ * CSS Styles for the XPicker control                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+
+#picker-button {
+    -fx-padding: 5 10 4 10;
+    -fx-background-color: transparent, -fx-outer-border, -fx-inner-border, white;
+    -fx-background-radius: 3, 3, 2, 2;
+    -fx-background-insets: -1 -1 -2 -1, 0, 1, 1;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+    -fx-text-overrun: clip;
+}
+
+#picker-listview {
+    -fx-padding: 1;
+    -fx-background-color: -fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0,1;
+}
+
+#picker-listview:focused {
+    -fx-padding: 1;
+    -fx-background-color: -fx-focus-color,-fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1;
+    -fx-background-radius: -1.4, 0, 0;
+}
+
+/* TODO this is a workaround for RT-7512 css style ".list-view > * > *.scroll-bar:vertical" not matching */
+#picker-listview *.scroll-bar:vertical{
+    -fx-background-insets: 0, 0 0 0 1;
+    -fx-padding: -1 -1 -1 0;
+}
+
+/* TODO this is a workaround for RT-7512 css style ".list-view > * > *.scroll-bar:horizontal" not matching */
+#picker-listview *.scroll-bar:horizontal{
+    -fx-background-insets: 0, 1 0 0 0;
+    -fx-padding: 0 0 -1 -1;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
  * ID-specific styles                                       *
  *                                                                             *
  ******************************************************************************/

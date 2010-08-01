@@ -29,9 +29,9 @@
 
 import org.jfxtras.scene.XCustomNode;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
+import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.control.ChoiceBox;
+import org.jfxtras.scene.layout.XLayoutInfo;
 
 /**
  * @author Stephen Chin
@@ -41,18 +41,39 @@ public class Filter extends XCustomNode {
 
     public var list:String[];
 
-    public var selectedIndex:Integer on replace {
+//    public var selectedIndex:Integer on replace {
+//        if (choice.selectedIndex != selectedIndex) {
+//            choice.select(selectedIndex);
+//        }
+//    }
+//
+//    var choice:ChoiceBox = ChoiceBox {
+//        var selIndex = bind choice.selectedIndex on replace {
+//          selectedIndex = selIndex;
+//        }
+//        items: bind ["All", list]
+//    }
+
+    public var selectedIndex:Integer = 0 on replace {
         if (choice.selectedIndex != selectedIndex) {
             choice.select(selectedIndex);
         }
     }
 
-    var choice:ChoiceBox = ChoiceBox {
-        var selIndex = bind choice.selectedIndex on replace {
-          selectedIndex = selIndex;
+    var choice:XPicker = XPicker {
+        firstLetter: true
+        promptText: "Please choose ..."
+        //id: "JFXtras Shapes"
+        layoutInfo: XLayoutInfo {
+//            hfill: true
+//            maxWidth: 4000
+            width: 200
         }
         items: bind ["All", list]
-    }
+        onIndexChange: function(index) {
+            selectedIndex = index;
+        }
+    };
 
     init {
         children = XHBox {
@@ -65,6 +86,7 @@ public class Filter extends XCustomNode {
                 choice
             ]
         }
+        choice.select(0);
     }
 
 }
