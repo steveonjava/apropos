@@ -32,7 +32,16 @@ package org.apropos.model;
  */
 public abstract class StoryContainer {
 
-    public var name:String;
+    public var name:String on replace {
+        if (name != "Backlog") {
+            portfolioRelease = name;
+        }
+        else {
+            portfolioRelease = "";
+        }
+    };
+
+    public var portfolioRelease:String;
 
     public var stories:Story[];
 

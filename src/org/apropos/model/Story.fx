@@ -62,10 +62,10 @@ public class Story extends XObject, Comparable {
         if (initialized) {
             hierarchicalRequirement.setPortfolioKanbanState(stage);
             update();
-            if (stage == "Schedule" and release instanceof Backlog) {
+            if (stage == "Scheduled" and release instanceof Backlog) {
                 release = model.currentRelease;
             }
-            if (stage == "Backlog" and not (release instanceof Backlog)) {
+            if (stage == "Backlogged" and not (release instanceof Backlog)) {
                 release = model.backlog;
             }
             model.findStage(oldStage).removeStory(this);
@@ -74,10 +74,10 @@ public class Story extends XObject, Comparable {
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
-            if (release instanceof Backlog and stage == "Schedule") {
-                stage = "Backlog"
-            } else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
-                stage = "Schedule"
+            if (release instanceof Backlog and stage == "Scheduled") {
+                stage = "Backlogged"
+            } else if ((stage == "Propose" or stage == "Backlogged") and not (release instanceof Backlog)) {
+                stage = "Scheduled"
             }
             hierarchicalRequirement.setPortfolioRelease(release.name);
             update();
@@ -254,17 +254,18 @@ public class Story extends XObject, Comparable {
 
     function promoteStage() {
         if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
-            stage = "Propose";
+            stage = "Proposed";
         }
-        if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
-            stage = "Schedule";
+        if ((stage == "Proposed" or stage == "Backlogged") and not (release instanceof Backlog)) {
+            stage = "Scheduled";
         }
-        if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
-            stage = "Develop";
-        }
-        if ((stage == "Develop" or stage == "Schedule") and hierarchicalRequirement.getScheduleState() == "Accepted") {
-            stage = "Deploy";
-        }
+        //TODO: There is no Portfolio Kanban stage "Develop", so put back in when alternative is found
+//        if (stage == "Scheduled" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
+//            stage = "Develop";
+//        }
+//        if ((stage == "Develop" or stage == "Scheduled") and hierarchicalRequirement.getScheduleState() == "Accepted") {
+//            stage = "Deployed";
+//        }
     }
 
 
