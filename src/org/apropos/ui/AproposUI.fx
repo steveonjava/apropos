@@ -91,15 +91,28 @@ public class AproposUI extends XCustomNode {
         content: [
             XVBox {
                 content: [
-                    Label {
-                        id: "app-header-title"
-                        layoutInfo: XLayoutInfo {
-                            vpos: VPos.TOP
-                            hpos: HPos.LEFT
-                            hgrow: Priority.NEVER
-                            vgrow: Priority.ALWAYS
-                        }
+                    XHBox {
+                        nodeVPos: VPos.TOP
+                        spacing: 5
+                        content: [
+                            Label {
+                                id: "app-header-title"
+                                layoutInfo: XLayoutInfo {
+                                    vpos: VPos.TOP
+                                    hpos: HPos.LEFT
+                                    hgrow: Priority.NEVER
+                                    vgrow: Priority.ALWAYS
+                                }
+                            },
+                            ImageView {
+                                image: Image {
+                                    url: "{__DIR__}images/preview-80x35.png";
+                                }
+                                layoutInfo: XLayoutInfo {vpos: TOP}
+                            }
+                        ]
                     }
+
                     buttonBar
                 ]
                 layoutInfo: XLayoutInfo {
