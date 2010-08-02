@@ -44,7 +44,7 @@ def model = RallyModel.instance;
 
 var scene:XScene;
 Stage {
-    title: "Roadmap Planning Tool"
+    title: "Roadmap Planner"
     icons: Image {url: "{__DIR__}ui/ken.png"}
     scene: scene = XScene {
         // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
