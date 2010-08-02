@@ -383,7 +383,7 @@
  ******************************************************************************/
 
 #app-header-title {
-    -fx-text: "Roadmap Planning Tool";
+    -fx-text: "Roadmap Planner";
     -fx-text-fill: -fx-light-text-color;
     -fx-font-size: 38;
     /*-fx-font-weight: bold;*/
