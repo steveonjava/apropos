@@ -1,0 +1,403 @@
+/* 
+  rally-style.css -
+  A Rally-branded style sheet for Apropos.
+*/
+
+.scene {
+  /* The default font for all content, it in inherited by all nodes */
+  -fx-font: 11pt "Arial";
+  -fx-toggle-button-focus-color: white;
+  -fx-selection-bar: #b5d8eb;
+
+  -fx-light-text-color: white;
+  -fx-dark-text-color: black;
+
+/*
+  -fx-accent: #114fd9;
+  -fx-base: #3f3f3f;
+  -fx-background: #040404;
+  -fx-control-inner-background: white;
+  -fx-focus-color: #31BAED;
+  -fx-mid-text-color: #292929;
+  -fx-color: -fx-base;
+  -fx-hover-base: ladder -fx-base stops (20%,derive(-fx-base,20%)) (35%,derive(-fx-base,30%)) (50%,derive(-fx-base,40%));
+  -fx-pressed-base: derive(-fx-base,-20%);
+  -fx-box-border: #000000;
+  -fx-text-box-border: ladder -fx-background stops (0.1,black) (0.3,derive(-fx-background,-15%));
+  -fx-shadow-highlight-color:#3B3B3B;
+  -fx-outer-border: #000000;
+  -fx-inner-border: linear (0%, 0%) to (0%, 100%) stops (0%, #7A7A7A) (100%, #525252);
+  -fx-body-color: linear (0%, 0%) to (0%, 100%) stops (0%, #7A7A7A) (100%, #3F3F3F);
+  -fx-text-base-color: #EFEFEF;
+  -fx-text-background-color: ladder -fx-background stops (30%,-fx-light-text-color) (31%,-fx-dark-text-color) (59%,-fx-dark-text-color) (60%,-fx-mid-text-color);
+  -fx-text-inner-color: ladder -fx-control-inner-background stops (30%,-fx-light-text-color) (31%,-fx-dark-text-color) (59%,-fx-dark-text-color) (60%,-fx-mid-text-color);
+  -fx-mark-color: -fx-text-base-color;
+  -fx-mark-highlight-color: black;//ladder -fx-color stops (0.6,derive(-fx-color,80%)) (0.7,white);
+  -fx-selection-bar: linear (0%,0%) to (0%,100%) stops (0%, #31baed) (100%, #0b64b5);
+  -fx-selection-bar-text: ladder -fx-background stops (50%,-fx-light-text-color) (51%,-fx-mid-text-color);
+  -fx-text-fill: -fx-text-background-color;
+*/
+  /* These are needed for Popup */
+/*
+  -fx-background-color: inherit;
+  -fx-background-radius: inherit;
+  -fx-background-insets: inherit;
+  -fx-padding: inherit;
+*/
+}
+
+/* Color for the Rectangle (specific to this application) that fills the Scene */
+.background {
+  -fx-fill: #085478;
+}
+
+/* Color for the Rectangle (specific to this application) that fills a page's content area */
+.page-content-background {
+  -fx-fill: #e0e0e0;
+  -fx-padding: 10 15 10 15
+}
+
+/* Color for the Rectangle in a StoryView header area */
+.story-view-header {
+  -fx-fill: #b5d8eb;
+}
+
+.story-view-header-title {
+  -fx-font-weight: bold;
+}
+
+/* Styling for the Rectangle in a StoryView detail area */
+.story-view-box {
+  -fx-fill: #ffffff;
+  -fx-stroke: #c6c6c6;
+}
+
+/* Styling for the Rectangle in a StoryView summary area */
+.story-view-summary-box {
+  -fx-fill: #ffffff;
+  -fx-stroke: #c6c6c6;
+}
+
+/* Styling for the header Rectangle in a StoryView summary area */
+.story-view-summary-header {
+  -fx-fill: #f1f1f1;
+  /*-fx-fill: #e0e0e0;*/
+  -fx-stroke: #ffffff;
+}
+
+.story-view-summary-text {
+  /*-fx-fill: #f1f1f1;*/
+  -fx-font-size: 10pt;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the Label control                                            *
+ *                                                                             *
+ ******************************************************************************/
+
+.label {
+  -fx-text-overrun: clip;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the Button control                                            *
+ *                                                                             *
+ ******************************************************************************/
+
+.button {
+    -fx-padding: 5 10 4 10;
+    -fx-background-color: transparent, transparent, transparent, #3f84a4;
+    -fx-background-radius: 3, 3, 2, 2;
+    -fx-background-insets: -1 -1 -2 -1, 0, 1, 1;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+    -fx-text-overrun: clip;
+}
+
+.button:hover {
+    -fx-color: -fx-hover-base;
+}
+
+.button:armed {
+    -fx-color: -fx-pressed-base;
+}
+
+.button:focused {
+    -fx-background-color: #b5d8eb, transparent, transparent, #3f84a4;
+    -fx-background-radius: 3, 3, 2, 2;
+    -fx-background-insets: -1 -1 -2 -1, 0, 1, 1;
+}
+
+.button:strong {
+    -fx-base: -fx-accent
+}
+
+.button:disabled {
+    -fx-opacity: .4;
+}
+
+.image-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent, transparent, transparent, transparent;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the ToggleButton control (being used as tabs                 *
+ *                                                                             *
+ ******************************************************************************/
+ 
+.toggle-button {
+    -fx-font-size: 13pt;
+    -fx-font-weight: bold;
+    -fx-padding: 3 10 2 10;
+    -fx-background-color: transparent, transparent, transparent, #3f84a4;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+}
+
+/*
+
+.toggle-button:hover {
+    -fx-color: -fx-hover-base;
+}
+
+.toggle-button:armed {
+    -fx-color: -fx-pressed-base;
+}
+
+*/
+
+.toggle-button:focused {
+    -fx-text-fill: -fx-light-text-color;
+    -fx-background-color:
+        transparent,
+        transparent,
+        transparent,
+        #3f84a4;
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-background-insets: 0;
+}
+
+.toggle-button:selected {
+    -fx-text-fill: -fx-dark-text-color;
+    -fx-background-color:
+        transparent,
+        transparent,
+        transparent,
+        #b5d8eb;
+    -fx-background-insets: 0, 0, 0, 0;
+}
+
+.toggle-button:selected:focused {
+    -fx-text-fill: -fx-light-text-color;
+    -fx-background-color:
+        transparent,
+        transparent,
+        transparent,
+        #b5d8eb;
+    -fx-background-insets: 0, 0, 0, 0;
+}
+
+
+
+.toggle-button:disabled {
+    -fx-opacity: 1.0;
+}
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the RadioButton control                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+/*
+.radio-button:disabled {
+    -fx-opacity: .4
+}
+
+.radio-button *.label {
+    -fx-padding: 0 0 0 15;
+    -fx-text-fill: -fx-text-background-color;
+}
+
+.radio-button *.radio  {
+    -fx-padding: 13.5 12 13.5 12;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 42, 42, 36, 30;
+    -fx-background-insets: 0 0 -3 0, 0, 3, 6;
+}
+
+.radio-button:focused *.radio {
+    -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 45, 42, 36, 30;
+    -fx-background-insets: -4.2, 0, 3, 6;
+}
+
+.radio-button *.dot {
+    -fx-background-radius: 30;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 9 9 9 9;
+}
+
+.radio-button:selected *.dot {
+    -fx-background-radius: 30, 24;
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 -3 0, 0;
+}
+*/
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the ScrollView control                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.scroll-view {
+    -fx-padding: 1;
+    -fx-background-color: transparent, #e0e0e0;
+    -fx-background-insets: 0, 1;
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: always;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the PageToolBar custom node                                            *
+ *                                                                             *
+ ******************************************************************************/
+.page-toolbar {
+    -fx-fill: #b5d8eb;
+}
+
+.page-toolbar-text {
+    -fx-text-fill: -fx-dark-text-color;
+}
+
+.cost-selection {
+    -fx-text: "Show Estimate as Dollars";
+    /*-fx-text-fill: -fx-dark-text-color;*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the PageFooter custom node                                            *
+ *                                                                             *
+ ******************************************************************************/
+.page-footer {
+    -fx-fill: #085478;
+}
+.copyright-notice {
+    -fx-text: "©2003-2010 Rally Software Development Corp.";
+    -fx-text-fill: -fx-light-text-color;
+}
+.apropos-version {
+    -fx-text-fill: -fx-light-text-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the Plan module                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+/*
+.owner-row-background {
+  -fx-fill: #b5d8eb;
+}
+*/
+
+.owners-header-background {
+  -fx-fill: #ffffff;
+}
+
+/*
+.resource-assignment-target {
+    -fx-columns: 5;
+}
+*/
+
+/*******************************************************************************
+ *                                                                             *
+ * CSS Styles for the XPicker control                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+
+#picker-button {
+    -fx-padding: 5 10 4 10;
+    -fx-background-color: transparent, -fx-outer-border, -fx-inner-border, white;
+    -fx-background-radius: 3, 3, 2, 2;
+    -fx-background-insets: -1 -1 -2 -1, 0, 1, 1;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-vpos: CENTER;
+    -fx-graphic-vpos: CENTER;
+    -fx-text-overrun: clip;
+}
+
+#picker-listview {
+    -fx-padding: 1;
+    -fx-background-color: -fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0,1;
+}
+
+#picker-listview:focused {
+    -fx-padding: 1;
+    -fx-background-color: -fx-focus-color,-fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1;
+    -fx-background-radius: -1.4, 0, 0;
+}
+
+/* TODO this is a workaround for RT-7512 css style ".list-view > * > *.scroll-bar:vertical" not matching */
+#picker-listview *.scroll-bar:vertical{
+    -fx-background-insets: 0, 0 0 0 1;
+    -fx-padding: -1 -1 -1 0;
+}
+
+/* TODO this is a workaround for RT-7512 css style ".list-view > * > *.scroll-bar:horizontal" not matching */
+#picker-listview *.scroll-bar:horizontal{
+    -fx-background-insets: 0, 1 0 0 0;
+    -fx-padding: 0 0 -1 -1;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ID-specific styles                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+#app-header-title {
+    -fx-text: "Roadmap Planning Tool";
+    -fx-text-fill: -fx-light-text-color;
+    -fx-font-size: 38;
+    /*-fx-font-weight: bold;*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Miscellaneous styles TODO: Keep this sparse, and organized, by creating     *
+ * additional categories                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.empasized-text {
+    -fx-font-weight: bold;
+}
+
+

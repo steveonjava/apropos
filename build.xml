@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<project name="Apropos" default="default" basedir=".">
+    <description>Builds, tests, and runs the project Apropos.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before compilation
+      -post-compile:             called after compilation
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="Apropos-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+    <property name="generated.dir" value="gen_src"/>
+    <property name="local.wsdl" value="show.xml"/>
+
+    <target name="check-soapapi">
+        <mkdir dir="${generated.dir}"/>
+        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${local.wsdl}" />
+    </target>
+
+    <target name="generate-wsdl" depends="check-soapapi" unless="soapapi.uptodate">
+        <path id="axis.classpath">
+          <fileset dir="lib">
+            <include name="**/*.jar" />
+          </fileset>
+        </path>
+        <taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
+        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${local.wsdl}"/>
+        <touch file="${generated.dir}/uptodate.txt"/>
+    </target>
+
+    <target name="-pre-compile" depends="generate-wsdl"/>
+
+    <target depends="init,deps-jar,-pre-compile" name="-do-compile">
+        <exec executable="${platform.fxhome}/bin/javafxpackager${binary.extension}" failonerror="true" logerror="true">
+            <arg value="-src"/>
+            <arg value="${src.gen_src.dir};${src.dir}"/>
+            <arg value="-workdir"/>
+            <arg file="${build.dir}"/>
+            <arg value="-d"/>
+            <arg file="${dist.dir}"/>
+            <arg value="-appname"/>
+            <arg value="${application.title}"/>
+            <arg value="-appvendor"/>
+            <arg value="${application.vendor}"/>
+            <arg value="-appwidth"/>
+            <arg value="${applet.width}"/>
+            <arg value="-appheight"/>
+            <arg value="${applet.height}"/>
+            <arg value="-appclass"/>
+            <arg value="${main.class}"/>
+            <arg line="${codebase.arg}"/>
+            <arg value="-encoding"/>
+            <arg value="${source.encoding}"/>
+            <arg value="-p"/>
+            <arg value="${javafx.profile}"/>
+            <arg value="${verbose.arg}"/>
+            <arg value="${draggable.arg}"/>
+            <arg value="${pack200.arg}"/>
+            <arg value="${sign.arg}"/>
+            <arg value="-updatecheck"/>
+            <arg value="${jnlp.update.model}"/>
+            <arg value="-cp"/>
+            <arg path="${javac.classpath}"/>
+            <arg value="-keystore"/>
+            <arg value="${jnlp.signjar.keystore}"/>
+            <arg value="-keystorePassword"/>
+            <arg value="${jnlp.signjar.storepass}"/>
+            <arg value="-keyalias"/>
+            <arg value="${jnlp.signjar.alias}"/>
+            <arg value="-keyaliasPassword"/>
+            <arg value="${jnlp.signjar.keypass}"/>
+        </exec>
+    </target>
+</project>
