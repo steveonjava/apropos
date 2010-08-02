@@ -110,7 +110,7 @@ public class RallyModel extends XObject {
     public var waiting = 0;
 
     bound function filtersOn() {
-        return selectedAllocation != null;
+        return selectedAllocation != null or selectedOwner != null;
     }
 
     bound function selected(s:Story) {
@@ -119,7 +119,7 @@ public class RallyModel extends XObject {
     }
 
     public bound function filter(stories:Story[]) {
-        if (filtersOn()) stories else stories[s|selected(s)];
+        if (not filtersOn()) stories else stories[s|selected(s)];
     }
 
     public function doLogin():Void {
