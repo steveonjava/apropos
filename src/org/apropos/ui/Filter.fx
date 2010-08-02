@@ -41,19 +41,6 @@ public class Filter extends XCustomNode {
 
     public var list:String[];
 
-//    public var selectedIndex:Integer on replace {
-//        if (choice.selectedIndex != selectedIndex) {
-//            choice.select(selectedIndex);
-//        }
-//    }
-//
-//    var choice:ChoiceBox = ChoiceBox {
-//        var selIndex = bind choice.selectedIndex on replace {
-//          selectedIndex = selIndex;
-//        }
-//        items: bind ["All", list]
-//    }
-
     public var selectedIndex:Integer = 0 on replace {
         if (choice.selectedIndex != selectedIndex) {
             choice.select(selectedIndex);
