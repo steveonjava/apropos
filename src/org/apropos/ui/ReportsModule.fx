@@ -91,7 +91,7 @@ public class ReportsModule extends AbstractModulePage {
     var chart:PieChart;
 
     function rebuildChart():Void {
-        def data = for (name in names) {
+        def data = for (name in names where release.getAllocationTotals(name) > 0) {
             PieChart.Data {
                 label: name
                 value: release.getAllocationTotals(name)
