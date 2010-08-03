@@ -30,14 +30,14 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.domain.QueryResult;
+import com.rallydev.webservice.v1_20.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_20.domain.QueryResult;
 import org.apropos.model.RallyModel;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.BrowserUtil;
 import org.jfxtras.util.SequenceUtil;
-import com.rallydev.webservice.v1_19.domain.User;
+import com.rallydev.webservice.v1_20.domain.User;
 import java.math.BigDecimal;
 
 /**
@@ -62,10 +62,10 @@ public class Story extends XObject, Comparable {
         if (initialized) {
             hierarchicalRequirement.setPortfolioKanbanState(stage);
             update();
-            if (stage == "Scheduled" and release instanceof Backlog) {
+            if (stage == "Schedule" and release instanceof Backlog) {
                 release = model.currentRelease;
             }
-            if (stage == "Backlogged" and not (release instanceof Backlog)) {
+            if (stage == "Analyze" and not (release instanceof Backlog)) {
                 release = model.backlog;
             }
             model.findStage(oldStage).removeStory(this);
@@ -74,10 +74,10 @@ public class Story extends XObject, Comparable {
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
-            if (release instanceof Backlog and stage == "Scheduled") {
-                stage = "Backlogged"
-            } else if ((stage == "Propose" or stage == "Backlogged") and not (release instanceof Backlog)) {
-                stage = "Scheduled"
+            if (release instanceof Backlog and stage == "Schedule") {
+                stage = "Analyze"
+            } else if ((stage == "Propose" or stage == "Analyze") and not (release instanceof Backlog)) {
+                stage = "Schedule"
             }
             hierarchicalRequirement.setPortfolioRelease(release.name);
             update();
@@ -254,18 +254,18 @@ public class Story extends XObject, Comparable {
 
     function promoteStage() {
         if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
-            stage = "Proposed";
+            stage = "Propose";
         }
-        if ((stage == "Proposed" or stage == "Backlogged") and not (release instanceof Backlog)) {
-            stage = "Scheduled";
+        if ((stage == "Propose" or stage == "Analyze") and not (release instanceof Backlog)) {
+            stage = "Schedule";
         }
         //TODO: There is no Portfolio Kanban stage "Develop", so put back in when alternative is found
-//        if (stage == "Scheduled" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
-//            stage = "Develop";
-//        }
-//        if ((stage == "Develop" or stage == "Scheduled") and hierarchicalRequirement.getScheduleState() == "Accepted") {
-//            stage = "Deployed";
-//        }
+        if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
+            stage = "Develop";
+        }
+        if ((stage == "Develop" or stage == "Schedule") and hierarchicalRequirement.getScheduleState() == "Accepted") {
+            stage = "Deploy";
+        }
     }
 
 

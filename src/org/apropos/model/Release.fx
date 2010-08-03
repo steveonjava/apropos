@@ -27,8 +27,8 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.domain.QueryResult;
+import com.rallydev.webservice.v1_20.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_20.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
