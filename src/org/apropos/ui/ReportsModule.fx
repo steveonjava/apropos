@@ -40,7 +40,7 @@ import org.apropos.model.Release;
 /**
  * @author Stephen Chin
  */
-public class AnalyzeModule extends AbstractModulePage {
+public class ReportsModule extends AbstractModulePage {
 
 //    def releaseChoice:ChoiceBox = ChoiceBox {
 //        items: bind model.releases

@@ -28,7 +28,7 @@
 package org.apropos.ui;
 
 import org.apropos.model.RallyModel;
-import org.apropos.ui.AnalyzeModule;
+import org.apropos.ui.ReportsModule;
 import org.apropos.ui.RoadmapModule;
 import org.apropos.ui.PortfolioModule;
 import org.apropos.ui.ScheduleModule;
@@ -68,7 +68,7 @@ public class AproposUI extends XCustomNode {
                     "Portfolio",
                     "Roadmap",
                     "Plan",
-                    "Analyze",
+                    "Reports",
                     "Schedule"
                 ]
                 content: bind for (label in buttonLabels)
@@ -143,7 +143,7 @@ public class AproposUI extends XCustomNode {
             XMap.Entry {key: "Portfolio", value: PortfolioModule {}}
             XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
             XMap.Entry {key: "Plan", value: PlanModule {}}
-            XMap.Entry {key: "Analyze", value: AnalyzeModule {}}
+            XMap.Entry {key: "Reports", value: ReportsModule {}}
             XMap.Entry {key: "Schedule", value: ScheduleModule {}}
         ]
     }
