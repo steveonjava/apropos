@@ -27,10 +27,10 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.domain.Project;
-import com.rallydev.webservice.v1_19.domain.User;
-import com.rallydev.webservice.v1_19.service.RallyService;
-import com.rallydev.webservice.v1_19.service.RallyServiceServiceLocator;
+import com.rallydev.webservice.v1_20.domain.Project;
+import com.rallydev.webservice.v1_20.domain.User;
+import com.rallydev.webservice.v1_20.service.RallyService;
+import com.rallydev.webservice.v1_20.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
 import javafx.stage.Alert;
 import javafx.util.Math;
@@ -43,7 +43,7 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.9";
+public def APROPOS_VERSION = "0.8.10";
 
 public var readOnly:Boolean;
 
@@ -74,7 +74,7 @@ public class RallyModel extends XObject {
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     public-init var initialTargets = ["396", "360", "168", "702", "150", "365", "270"];
-    public-init var stageNames = ["Proposed", "Backlogged", "Scheduled", "In Process", "Deployed", "Enabled", "Adopted", "Validated"];
+    public-init var stageNames = ["Propose", "Analyze", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
