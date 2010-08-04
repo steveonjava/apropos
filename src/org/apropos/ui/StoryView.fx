@@ -250,7 +250,7 @@ public class StoryView extends XCustomNode {
                                 url: "{__DIR__}images/maximize.png"
                             };
                             def minimizeImage:Image = Image {
-                                url: "{__DIR__}images/minimize.png"
+                                url: "{__DIR__}images/minimize.jpg"
                             };
                             var imageView:ImageView;
                             content: [
@@ -373,7 +373,7 @@ public class StoryView extends XCustomNode {
                                     styleClass: "image-button"
                                     graphic: ImageView {
                                         image: Image {
-                                            url: "{__DIR__}images/left.png"
+                                            url: "{__DIR__}images/left.jpg"
                                         }
                                     }
                                     action: previous
@@ -394,7 +394,7 @@ public class StoryView extends XCustomNode {
                                     styleClass: "image-button"
                                     graphic: ImageView {
                                         image: Image {
-                                            url: "{__DIR__}images/up.png"
+                                            url: "{__DIR__}images/up.jpg"
                                         }
                                     }
                                     onMouseClicked: function(e) {
@@ -413,7 +413,7 @@ public class StoryView extends XCustomNode {
                                     styleClass: "image-button"
                                     graphic: ImageView {
                                         image: Image {
-                                            url: "{__DIR__}images/down.png"
+                                            url: "{__DIR__}images/down.jpg"
                                         }
                                     }
                                     onMouseClicked: function(e) {
@@ -434,7 +434,7 @@ public class StoryView extends XCustomNode {
                                     styleClass: "image-button"
                                     graphic: ImageView {
                                         image: Image {
-                                            url: "{__DIR__}images/right.png"
+                                            url: "{__DIR__}images/right.jpg"
                                         }
                                     }
                                     action: next
