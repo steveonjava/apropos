@@ -29,7 +29,6 @@ package org.apropos.ui;
 
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.layout.LayoutInfo;
 import org.apropos.model.RallyModel;
@@ -38,6 +37,10 @@ import org.jfxtras.scene.control.XPane;
 import org.jfxtras.scene.form.XForm;
 import org.jfxtras.scene.layout.XStack;
 import org.jfxtras.scene.layout.XVBox;
+import javafx.scene.control.ProgressIndicator;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.scene.Cursor;
 
 /**
  * @author Stephen Chin
@@ -46,6 +49,23 @@ import org.jfxtras.scene.layout.XVBox;
 def model = RallyModel.instance;
 
 public class LoginScreen extends XCustomNode {
+    var progressIndicator:ProgressIndicator;
+
+    /**
+     * Because the initial web service calls are on the EDT, this timeline
+     * allows the UI to respond to a request to change the cursor to wait
+     */
+    def timeline = Timeline {
+        keyFrames: [
+            KeyFrame {
+                time: 500ms
+                action: function() {
+                    model.doLogin();
+                }
+            }
+        ]
+    }
+
     override function create() {
         XStack {
             content: [
@@ -56,22 +76,25 @@ public class LoginScreen extends XCustomNode {
                         content: [
                             XForm {
                                 model: model.login
-                                action: model.doLogin
+                                action: function() {
+                                    model.processingLogin = true;
+                                    timeline.play();
+                                }
                                 layoutInfo: LayoutInfo {width: 250, height: 60}
-                            }
+                            },
                             Button {
                                 text: "Login"
-                                action: model.doLogin
+                                action: function() {
+                                    model.processingLogin = true;
+                                    timeline.play();
+                                }
                                 layoutInfo: LayoutInfo {hpos: HPos.RIGHT}
                             }
                         ]
                     }
                 }
-                PageFooter {layoutInfo: LayoutInfo {vpos: VPos.BOTTOM}}
+                PageFooter {layoutInfo: LayoutInfo {vpos: VPos.BOTTOM}},
             ]
         }
     }
-    // Show wait cursor only in Login page, as the app has a progress indicator
-    override var cursor = bind if (model.processingLogin) Cursor.WAIT
-                                else Cursor.DEFAULT
 }

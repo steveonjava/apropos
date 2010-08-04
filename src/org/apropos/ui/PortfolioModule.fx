@@ -6,18 +6,14 @@
 
 package org.apropos.ui;
 
-import org.apropos.model.RallyModel;
-import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XVBox;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import org.jfxtras.scene.layout.XLayoutInfo;
+import javafx.scene.Cursor;
 
 /**
  * @author Stephen Chin
  */
 public class PortfolioModule extends AbstractModulePage {
+
     public var selectedView:StoryView;
     package var storyViews:StoryView[] = for (stage in model.stages) StoryView {
         narrowColumns: true

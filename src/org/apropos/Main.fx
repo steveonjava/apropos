@@ -35,6 +35,7 @@ import org.apropos.ui.LoginScreen;
 import org.jfxtras.scene.XScene;
 import org.jfxtras.scene.layout.XStack;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.Cursor;
 
 /**
  * @author Stephen Chin
@@ -43,6 +44,7 @@ import javafx.scene.shape.Rectangle;
 def model = RallyModel.instance;
 
 var scene:XScene;
+
 Stage {
     title: "Roadmap Planner"
     icons: [
@@ -56,6 +58,7 @@ Stage {
         width: 1280
         height: 700
         stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}rally-style.css"]
+        cursor: bind if (model.processingLogin) Cursor.WAIT else Cursor.DEFAULT
         content: XStack {
             styleClass: "background"
             content: bind [
