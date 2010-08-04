@@ -53,6 +53,9 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.util.SequenceUtil;
+import org.apropos.model.KanbanStageManager;
+import javafx.scene.control.Tooltip;
+import javafx.stage.Alert;
 
 /**
  * @author Stephen Chin
@@ -167,6 +170,13 @@ public class StoryView extends XCustomNode {
     }
 
     function previous() {
+        // Display an alert if this operation is not allowed
+        var msg = KanbanStageManager.getDemoteFeatureMsg(storyContainer.name);
+        if (msg != "") {
+            Alert.inform(msg);
+            return;
+        }
+
         storyContainer.moveBefore(filteredStories[table.selectedRow]);
         if ((table.selectedRow >= sizeof table.rows) and
             (sizeof table.rows > 0)) {
@@ -188,6 +198,13 @@ public class StoryView extends XCustomNode {
     }
 
     function next() {
+       // Display an alert if this operation is not allowed
+        var msg = KanbanStageManager.getPromoteFeatureMsg(storyContainer.name);
+        if (msg != "") {
+            Alert.inform(msg);
+            return;
+        }
+
         storyContainer.moveAfter(filteredStories[table.selectedRow]);
         if ((table.selectedRow >= sizeof table.rows) and
             (sizeof table.rows > 0)) {
@@ -350,9 +367,11 @@ public class StoryView extends XCustomNode {
                     spacing: 4
                     content: [
                         XHBox {
+                            var leftButton:Button;
+                            var rightButton:Button;
                             spacing: 4
                             content: [
-                                Button {
+                                leftButton = Button {
                                     styleClass: "image-button"
                                     graphic: ImageView {
                                         image: Image {
@@ -363,6 +382,15 @@ public class StoryView extends XCustomNode {
                                     disable: bind (table.selectedRow == -1) or
                                                   (sizeof filteredStories == 0) or
                                                   (storyContainer.containerBefore == null)
+                                    tooltip: bind
+                                        if (KanbanStageManager.getDemoteFeatureMsg(storyContainer.name) != "")
+                                            Tooltip {
+                                                text: bind KanbanStageManager.getDemoteFeatureMsg(storyContainer.name)
+                                            }
+                                        else null
+                                    opacity: bind if (KanbanStageManager.getDemoteFeatureMsg(storyContainer.name) != "" and
+                                                      not leftButton.disable) 0.4
+                                                      else 1.0
                                 }
                                 Button {
                                     styleClass: "image-button"
@@ -404,7 +432,7 @@ public class StoryView extends XCustomNode {
                                                   (sizeof filteredStories == 0) or
                                                   table.selectedRow == sizeof filteredStories - 1
                                 }
-                                Button {
+                                rightButton = Button {
                                     styleClass: "image-button"
                                     graphic: ImageView {
                                         image: Image {
@@ -415,6 +443,15 @@ public class StoryView extends XCustomNode {
                                     disable: bind (table.selectedRow == -1) or
                                                   (sizeof filteredStories == 0) or
                                                   (storyContainer.containerAfter == null)
+                                    tooltip: bind
+                                        if (KanbanStageManager.getPromoteFeatureMsg(storyContainer.name) != "")
+                                            Tooltip {
+                                                text: bind KanbanStageManager.getPromoteFeatureMsg(storyContainer.name)
+                                            }
+                                        else null
+                                    opacity: bind if (KanbanStageManager.getPromoteFeatureMsg(storyContainer.name) != "" and
+                                                      not rightButton.disable) 0.4
+                                                  else 1.0
                                 }
                             ]
                             //TODO: Center horizonally in the width of the table above it
