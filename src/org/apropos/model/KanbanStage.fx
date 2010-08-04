@@ -33,6 +33,28 @@ package org.apropos.model;
  */
 public class KanbanStage {
     public-init var name:String;
+
+    /**
+     * Indicates whether a feature in this stage may be demoted
+     * by the user within this application.
+     */
+    public var canDemoteFeature:Boolean;
+
+    /**
+     * A message that may be shown to the user relative to demoting
+     * a feature in this stage.
+     */
     public var demoteFeatureMsg:String;
+
+    /**
+     * Indicates whether a feature in this stage may be promoted
+     * by the user within this application.
+     */
+    public var canPromoteFeature:Boolean;
+
+    /**
+     * A message that may be shown to the user relative to demoting
+     * a feature in this stage.
+     */
     public var promoteFeatureMsg:String;
 }

@@ -30,41 +30,59 @@ package org.apropos.model;
 var stages = [
     KanbanStage {
         name: "Propose"
+        canDemoteFeature: false
+        canPromoteFeature: true
+        demoteFeatureMsg: ""
         promoteFeatureMsg: "Moves this Feature to the Analyze column."
     },
     KanbanStage {
         name: "Analyze"
+        canDemoteFeature: true
+        canPromoteFeature: false
         demoteFeatureMsg: "Moves this Feature to the Propose column."
         promoteFeatureMsg: "To schedule a feature into a release, go the Roadmap tab, and move the feature to the release column."
     },
     KanbanStage {
         name: "Schedule"
+        canDemoteFeature: false
+        canPromoteFeature: false
         demoteFeatureMsg: "To unschedule a feature, go the Roadmap tab, and move the feature to the backlog."
         promoteFeatureMsg: "Features automatically move to the Develop state when their Rally state is In-Progress or Completed."
     },
     KanbanStage {
         name: "Develop"
+        canDemoteFeature: false
+        canPromoteFeature: false
         demoteFeatureMsg: "Features automatically move from Develop to Schedule when their Rally state reverts from In-Progress to a prior state (ex: Defined, Analyze)."
         promoteFeatureMsg: "Features automatically move to the Deploy state when their Rally state is Accepted or beyond Accepted."
     },
     KanbanStage {
         name: "Deploy"
+        canDemoteFeature: false
+        canPromoteFeature: true
         demoteFeatureMsg: "Features move from Deploy to Develop when their Rally state changes from Accepted to either Completed or in-Progress."
         promoteFeatureMsg: "Moves this Feature to the Enable column."
     },
     KanbanStage {
         name: "Enable"
+        canDemoteFeature: true
+        canPromoteFeature: true
         demoteFeatureMsg: "Moves this Feature to the Deploy column."
         promoteFeatureMsg: "Moves this Feature to the Adopt column."
     },
     KanbanStage {
         name: "Adopt"
+        canDemoteFeature: true
+        canPromoteFeature: true
         demoteFeatureMsg: "Moves this Feature to the Enable column."
         promoteFeatureMsg: "Moves this Feature to the Validate column."
     },
     KanbanStage {
         name: "Validate"
+        canDemoteFeature: true
+        canPromoteFeature: false
         demoteFeatureMsg: "Moves this Feature to the Adopt column."
+        promoteFeatureMsg: ""
     }
 ];
 
@@ -78,6 +96,14 @@ function getKanbanStageByName(name:String):KanbanStage {
 }
 
 
+public bound function canDemoteFeature(name:String):Boolean {
+    return getKanbanStageByName(name).canDemoteFeature;
+}
+
+public bound function canPromoteFeature(name:String):Boolean {
+    return getKanbanStageByName(name).canPromoteFeature;
+}
+
 public bound function getDemoteFeatureMsg(name:String):String {
 //    var msg:String;
 //    var kanbanStage = getKanbanStageByName(name);
@@ -88,13 +114,14 @@ public bound function getDemoteFeatureMsg(name:String):String {
     return getKanbanStageByName(name).demoteFeatureMsg;
 }
 
-public function getPromoteFeatureMsg(name:String):String {
-    var msg:String;
-    var kanbanStage = getKanbanStageByName(name);
-    if (kanbanStage != null) {
-        msg = kanbanStage.promoteFeatureMsg;
-    }
-    return msg;
+public bound function getPromoteFeatureMsg(name:String):String {
+//    var msg:String;
+//    var kanbanStage = getKanbanStageByName(name);
+//    if (kanbanStage != null) {
+//        msg = kanbanStage.promoteFeatureMsg;
+//    }
+//    return msg;
+    return getKanbanStageByName(name).promoteFeatureMsg;
 }
 
 
