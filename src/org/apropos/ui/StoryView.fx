@@ -171,9 +171,8 @@ public class StoryView extends XCustomNode {
 
     function previous() {
         // Display an alert if this operation is not allowed
-        var msg = KanbanStageManager.getDemoteFeatureMsg(storyContainer.name);
-        if (msg != "") {
-            Alert.inform(msg);
+        if (not KanbanStageManager.canDemoteFeature(storyContainer.name)) {
+            Alert.inform(KanbanStageManager.getDemoteFeatureMsg(storyContainer.name));
             return;
         }
 
@@ -198,10 +197,9 @@ public class StoryView extends XCustomNode {
     }
 
     function next() {
-       // Display an alert if this operation is not allowed
-        var msg = KanbanStageManager.getPromoteFeatureMsg(storyContainer.name);
-        if (msg != "") {
-            Alert.inform(msg);
+        // Display an alert if this operation is not allowed
+        if (not KanbanStageManager.canPromoteFeature(storyContainer.name)) {
+            Alert.inform(KanbanStageManager.getPromoteFeatureMsg(storyContainer.name));
             return;
         }
 
@@ -388,7 +386,7 @@ public class StoryView extends XCustomNode {
                                                 text: bind KanbanStageManager.getDemoteFeatureMsg(storyContainer.name)
                                             }
                                         else null
-                                    opacity: bind if (KanbanStageManager.getDemoteFeatureMsg(storyContainer.name) != "" and
+                                    opacity: bind if (not KanbanStageManager.canDemoteFeature(storyContainer.name) and
                                                       not leftButton.disable) 0.4
                                                       else 1.0
                                 }
@@ -449,7 +447,7 @@ public class StoryView extends XCustomNode {
                                                 text: bind KanbanStageManager.getPromoteFeatureMsg(storyContainer.name)
                                             }
                                         else null
-                                    opacity: bind if (KanbanStageManager.getPromoteFeatureMsg(storyContainer.name) != "" and
+                                    opacity: bind if (not KanbanStageManager.canPromoteFeature(storyContainer.name) and
                                                       not rightButton.disable) 0.4
                                                   else 1.0
                                 }
