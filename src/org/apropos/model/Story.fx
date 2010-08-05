@@ -43,6 +43,8 @@ import java.math.BigDecimal;
 /**
  * @author Stephen Chin
  * @author Keith Combs
+ * TODO: Ascertain the best way to retrieve, and hold in an instance variable,
+ *       the owner's display name
  */
 public class Story extends XObject, Comparable {
     def model = bind RallyModel.instance;
@@ -95,7 +97,9 @@ public class Story extends XObject, Comparable {
             update();
         }
     }
-    public var ownerName:String = bind owner.getRefObjectName();
+    public var ownerName:String = bind owner.getRefObjectName() on replace {
+        ownerDisplayName = ownerName;
+    };
     public var ownerDisplayName:String;
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);

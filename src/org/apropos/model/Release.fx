@@ -85,7 +85,7 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                println("In loadStories, portfolioRelease:{portfolioRelease}");
+                //println("In loadStories, portfolioRelease:{portfolioRelease}");
                 model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((PortfolioRelease = \"{portfolioRelease}\") and (PortfolioHierarchy = \"Feature\"))", "Rank", true, start, 100);
                 //model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((PortfolioRelease = \"{name}\") and (PortfolioHierarchy = \"Feature\"))", "Rank", true, start, 100);
             }
@@ -104,15 +104,15 @@ public class Release extends StoryContainer {
                     def results = queryResult.getResults();
                     def newStories = for (domainObject in results) {
                         def hierarchicalRequirement = domainObject as HierarchicalRequirement;
-                        def ownerDisplayName = model.getOwnerDisplayName(hierarchicalRequirement.getOwner().getEmailAddress());
+                        //def ownerDisplayName = model.getOwnerDisplayName(hierarchicalRequirement.getOwner().getEmailAddress());
                         Story {
                            hierarchicalRequirement: hierarchicalRequirement
-                           ownerDisplayName: ownerDisplayName
+                           //ownerDisplayName: ownerDisplayName
                         };
                     }
                     insert newStories into stories;
                     for (story in newStories) {
-                        println("New story:{story.name}");
+                        //println("New story:{story.name}");
                         def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
                         if (insertionPoint < 0) {
                             insert story.inPackage before model.packageNames[-insertionPoint - 1];
