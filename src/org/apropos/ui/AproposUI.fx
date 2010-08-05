@@ -68,7 +68,7 @@ public class AproposUI extends XCustomNode {
                     "Kanban",
                     "Roadmap",
                     "Plan",
-                    "Reports",
+                    "Analyze",
                     "Schedule"
                 ]
                 content: bind for (label in buttonLabels)
@@ -143,7 +143,7 @@ public class AproposUI extends XCustomNode {
             XMap.Entry {key: "Kanban", value: KanbanModule {}}
             XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
             XMap.Entry {key: "Plan", value: PlanModule {}}
-            XMap.Entry {key: "Reports", value: ReportsModule {}}
+            XMap.Entry {key: "Analyze", value: ReportsModule {}}
             XMap.Entry {key: "Schedule", value: ScheduleModule {}}
         ]
     }
