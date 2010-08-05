@@ -29,9 +29,7 @@ package org.apropos.ui;
 
 import org.apropos.model.Story;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.XTableView;
@@ -48,6 +46,8 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.Label;
 import javafx.scene.Group;
 import javafx.scene.shape.Rectangle;
+import org.jfxtras.scene.layout.XLayoutInfo;
+import javafx.geometry.Insets;
 
 /**
  * @author Stephen Chin
@@ -164,22 +164,20 @@ public class PlanModule extends AbstractModulePage {
                     layoutInfo: LayoutInfo {
                         width: 80
                     }
-                }
+                },
                 TextBox {
                     text: bind target with inverse
                     columns: 5
-
-                }
-                VBox {
-                    def ownerStories = bind stories[s|s.owner.getRefObjectName() == owner.getRefObjectName()];
-                    content: [
-                        ProgressBar {
-                            progress: bind (sizeof ownerStories[s|s.acceptanceTest == "Y"] as Number) / (sizeof ownerStories)
-                        }
-                        ProgressBar {
-                            progress: bind (sizeof ownerStories[s|s.scheduled] as Number) / (sizeof ownerStories)
-                        }
-                    ]
+                },
+                ComplianceBarNode {
+                    numerator: bind ownerTotals[indexof owner]
+                    denominator: bind if (target != "") Double.parseDouble(target)
+                                      else 0
+                    layoutInfo: XLayoutInfo {
+                        width: 80
+                        height: 16
+                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                    }
                 },
                 Button {
                     text: "Own Selected Feature"
@@ -241,12 +239,6 @@ public class PlanModule extends AbstractModulePage {
                 displayName: "Est"
                 prefWidth: 40
                 id: "estimateDisplay"
-                renderer: TextRenderer {}
-            }
-            XTableColumn {
-                displayName: "Assigned"
-                prefWidth: 40
-                id: "drafted"
                 renderer: TextRenderer {}
             }
         ]
