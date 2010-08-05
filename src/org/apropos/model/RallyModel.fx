@@ -67,14 +67,14 @@ public class RallyModel extends XObject {
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
     public-init var ownerNames:String[] =
       if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
-      else if (show) ["dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
+      else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
       else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     public-init var initialTargets = ["396", "360", "168", "702", "150", "365", "270"];
-    public-init var stageNames = ["Propose", "Analyze", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
+    public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];

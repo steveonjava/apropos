@@ -33,10 +33,10 @@ var stages = [
         canDemoteFeature: false
         canPromoteFeature: true
         demoteFeatureMsg: ""
-        promoteFeatureMsg: "Moves this Feature to the Analyze column."
+        promoteFeatureMsg: "Moves this Feature to the Backlog column."
     },
     KanbanStage {
-        name: "Analyze"
+        name: "Backlog"
         canDemoteFeature: true
         canPromoteFeature: false
         demoteFeatureMsg: "Moves this Feature to the Propose column."
