@@ -25,54 +25,61 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.apropos;
+package org.apropos.ui;
 
-import javafx.stage.Stage;
-import javafx.scene.image.Image;
-import org.apropos.model.RallyModel;
-import org.apropos.ui.AproposUI;
-import org.apropos.ui.LoginScreen;
-import org.jfxtras.scene.XScene;
+import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.layout.XStack;
+import org.jfxtras.scene.shape.ResizableRectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.Cursor;
+import javafx.geometry.HPos;
+import javafx.util.Math;
 
 /**
- * @author Stephen Chin
- * @author Keith Combs
+ * @author Jim Weaver
+ * TODO: Provide the ability to use a style sheet for appearance.
  */
-def model = RallyModel.instance;
+public class ComplianceBarNode extends XCustomNode {
 
-var scene:XScene;
+    public var numerator:Number;
 
-Stage {
-    title: "Roadmap Planner"
-    icons: [
-        Image {url: "{__DIR__}ui/images/rally-reg-128.png"},
-        Image {url: "{__DIR__}ui/images/rally-reg-64.png"},
-        Image {url: "{__DIR__}ui/images/rally-reg-32.png"},
-    ]
-    scene: scene = XScene {
-        // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
-        // 1280 x 800 for MacBook Air
-        width: 1280
-        height: 700
-        stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}rally-style.css"]
-        cursor: bind if (model.processingLogin) Cursor.WAIT else Cursor.DEFAULT
-        content: XStack {
-            styleClass: "background"
-            content: bind [
-                Rectangle {
-                    styleClass: "background"
-                    width: bind scene.width
-                    height: bind scene.height
+    public var denominator:Number;
+
+    def percent = bind
+        if (denominator != 0) numerator / denominator
+        else 0;
+
+    def rallyYellow = Color.web("#fbde98");
+    def rallyGreen = Color.web("#b2e3b6");
+    def rallyRed = Color.web("#fcb5b1");
+    def background = Color.web("#f8f8f8");
+
+    init {
+        children = XStack {
+            content: [
+                XStack {
+                    content: [
+                        Rectangle {
+                            width: bind width
+                            height: bind height
+                            fill: background
+                        },
+                        Rectangle {
+                            fill: bind
+                                if (percent <= 0.25) rallyYellow
+                                else if (percent > 1.0) rallyRed
+                                else rallyGreen
+                            width: bind Math.min(1.0, percent) * width
+                            height: bind height
+                        },
+                    ]
+                    nodeHPos: HPos.LEFT
                 },
-                if (not model.loggedIn) LoginScreen {} else AproposUI {}
+                Label {
+                    text: bind "{(percent * 100) as Integer}%"
+                }
             ]
         }
     }
 }
-println("Current runtime environment:");
-println("- javafx.version:{FX.getProperty("javafx.version")}");
-println("- javafx.java.version:{FX.getProperty("javafx.java.version")}");
-
