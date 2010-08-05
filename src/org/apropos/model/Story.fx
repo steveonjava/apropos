@@ -65,7 +65,7 @@ public class Story extends XObject, Comparable {
             if (stage == "Schedule" and release instanceof Backlog) {
                 release = model.currentRelease;
             }
-            if (stage == "Analyze" and not (release instanceof Backlog)) {
+            if (stage == "Backlog" and not (release instanceof Backlog)) {
                 release = model.backlog;
             }
             model.findStage(oldStage).removeStory(this);
@@ -75,10 +75,14 @@ public class Story extends XObject, Comparable {
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
             if (release instanceof Backlog and stage == "Schedule") {
-                stage = "Analyze"
-            } else if ((stage == "Propose" or stage == "Analyze") and not (release instanceof Backlog)) {
+                stage = "Backlog"
+            }
+            else if ((stage == "Propose" or stage == "Backlog") and (release.name != "")) {
                 stage = "Schedule"
             }
+//            else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
+//                stage = "Schedule"
+//            }
             hierarchicalRequirement.setPortfolioRelease(release.name);
             update();
             oldRelease.removeStory(this);
@@ -256,10 +260,12 @@ public class Story extends XObject, Comparable {
         if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
             stage = "Propose";
         }
-        if ((stage == "Propose" or stage == "Analyze") and not (release instanceof Backlog)) {
+        if ((stage == "Propose" or stage == "Backlog") and (release.name != "")) {
             stage = "Schedule";
         }
-        //TODO: There is no Portfolio Kanban stage "Develop", so put back in when alternative is found
+//        if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
+//            stage = "Schedule";
+//        }
         if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
             stage = "Develop";
         }
