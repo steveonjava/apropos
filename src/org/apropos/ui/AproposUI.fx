@@ -30,7 +30,7 @@ package org.apropos.ui;
 import org.apropos.model.RallyModel;
 import org.apropos.ui.ReportsModule;
 import org.apropos.ui.RoadmapModule;
-import org.apropos.ui.PortfolioModule;
+import org.apropos.ui.KanbanModule;
 import org.apropos.ui.ScheduleModule;
 import org.apropos.ui.PlanModule;
 import javafx.scene.Node;
@@ -65,7 +65,7 @@ public class AproposUI extends XCustomNode {
             XHBox {
                 spacing: 5
                 def buttonLabels = [
-                    "Portfolio",
+                    "Kanban",
                     "Roadmap",
                     "Plan",
                     "Reports",
@@ -140,7 +140,7 @@ public class AproposUI extends XCustomNode {
 
     def modules = XMap {
         entries: [
-            XMap.Entry {key: "Portfolio", value: PortfolioModule {}}
+            XMap.Entry {key: "Kanban", value: KanbanModule {}}
             XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
             XMap.Entry {key: "Plan", value: PlanModule {}}
             XMap.Entry {key: "Reports", value: ReportsModule {}}

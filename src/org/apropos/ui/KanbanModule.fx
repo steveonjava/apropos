@@ -12,7 +12,7 @@ import javafx.scene.Cursor;
 /**
  * @author Stephen Chin
  */
-public class PortfolioModule extends AbstractModulePage {
+public class KanbanModule extends AbstractModulePage {
 
     public var selectedView:StoryView;
     package var storyViews:StoryView[] = for (stage in model.stages) StoryView {

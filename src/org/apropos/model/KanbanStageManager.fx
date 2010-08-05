@@ -53,7 +53,7 @@ var stages = [
         name: "Develop"
         canDemoteFeature: false
         canPromoteFeature: false
-        demoteFeatureMsg: "Features automatically move from Develop to Schedule when their Rally state reverts from In-Progress to a prior state (ex: Defined, Analyze)."
+        demoteFeatureMsg: "Features automatically move from Develop to Schedule when their Rally state reverts from In-Progress to a prior state (ex: Defined, Backlog)."
         promoteFeatureMsg: "Features automatically move to the Deploy state when their Rally state is Accepted or beyond Accepted."
     },
     KanbanStage {
