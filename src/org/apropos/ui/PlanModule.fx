@@ -63,7 +63,9 @@ public class PlanModule extends AbstractModulePage {
 
     function calculateOwnerTotals() {
         ownerTotals = for (owner in model.owners) {
-            SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName() and story.drafted) story.estimate)
+            //SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName() and story.drafted) story.estimate)
+            // TODO: Is this a correct implementation of S19374?
+            SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName()) story.estimate)
         }
     }
 
@@ -84,24 +86,32 @@ public class PlanModule extends AbstractModulePage {
         selectedIndex: bind model.selectedOwnerIndex with inverse
     };
 
+    // TODO: Decide whether to remove this code, as these buttons are (at least
+    //       temporarily) not desired in the UI
     def buttons = XHBox {
         spacing: 8
         content: [
+//            Button {
+//                text: "Auto Assign Features to Owners"
+//                action: function() {
+//                    for (story in stories) {
+//                        story.drafted = true;
+//                    }
+//                    calculateOwnerTotals();
+//                }
+//            },
+//            Button {
+//                text: "Clear Assignments"
+//                action: function() {
+//                    for (story in stories) {
+//                        story.drafted = false;
+//                    }
+//                    calculateOwnerTotals();
+//                }
+//            },
             Button {
-                text: "Auto Assign Features to Owners"
+                text: "update totals"
                 action: function() {
-                    for (story in stories) {
-                        story.drafted = true;
-                    }
-                    calculateOwnerTotals();
-                }
-            }
-            Button {
-                text: "Clear Assignments"
-                action: function() {
-                    for (story in stories) {
-                        story.drafted = false;
-                    }
                     calculateOwnerTotals();
                 }
             }
@@ -120,13 +130,13 @@ public class PlanModule extends AbstractModulePage {
                     }
                 },
                 Label {
-                    text: "Assigned";
+                    text: "Total";
                     layoutInfo: LayoutInfo {
                         width: 80
                     }
                 },
                 Label {
-                    text: "Target";
+                    text: "Limit";
                     layoutInfo: LayoutInfo {
                         width: 80
                     }
@@ -172,7 +182,7 @@ public class PlanModule extends AbstractModulePage {
                     ]
                 },
                 Button {
-                    text: "Take Selected Feature"
+                    text: "Own Selected Feature"
                     action: function() {
                         def story = filteredStories[table.selectedRow];
                         if (story.owner != owner) {
@@ -243,6 +253,7 @@ public class PlanModule extends AbstractModulePage {
     }
 
     init {
+        calculateOwnerTotals();
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
@@ -257,7 +268,7 @@ public class PlanModule extends AbstractModulePage {
                 XVBox {
                     spacing: 15
                     content: [
-                        buttons,
+                        //buttons,
                         Group {
                             content: [
                                 Rectangle {
