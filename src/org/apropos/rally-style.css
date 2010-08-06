@@ -54,7 +54,7 @@
 /* Color for the Rectangle (specific to this application) that fills a page's content area */
 .page-content-background {
   -fx-fill: #e0e0e0;
-  -fx-padding: 10 15 10 15
+  -fx-padding: 10 7 10 7
 }
 
 /* Color for the Rectangle in a StoryView header area */
@@ -398,6 +398,10 @@
 
 .empasized-text {
     -fx-font-weight: bold;
+}
+
+org.jfxtras.scene.control.XTableViewSkin {
+    font-size: 11;
 }
 
 

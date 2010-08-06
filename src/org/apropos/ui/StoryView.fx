@@ -168,7 +168,7 @@ public class StoryView extends XCustomNode {
             ],
             XTableColumn {
                 displayName: "Est"
-                prefWidth: 35
+                prefWidth: 40
                 id: "estimateDisplay"
                 renderer: TextRenderer {}
             }
