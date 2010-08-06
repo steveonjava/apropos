@@ -73,10 +73,10 @@ public class RallyModel extends XObject {
     public-read var myUser:User;
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
-    public-init var initialTargets = ["396", "360", "168", "702", "150", "365", "270"];
+    public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10"];
     public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
-    public-init var wipLimits = [0.0, 9600.0, 2400.0, 1000.0, 0, 12, 12, 0];
+    public-init var wipLimits = [0.0, 15.0, 15.0, 15.0, 0.0, 12.0, 12.0, 0.0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
     public-init var estimateToActualRatio = 4.53;
     public-init var actualToCostRatio = 66.5;
