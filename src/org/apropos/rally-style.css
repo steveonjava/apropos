@@ -400,8 +400,11 @@
     -fx-font-weight: bold;
 }
 
+/* TODO: Size the font when XTableView CSS styling is available */
+/*
 org.jfxtras.scene.control.XTableViewSkin {
     font-size: 11;
 }
+*/
 
 
