@@ -505,7 +505,7 @@ public class StoryView extends XCustomNode {
                                     layoutInfo: XLayoutInfo {
                                         hgrow: Priority.SOMETIMES
                                     }
-                                }
+                                },
                                 XVBox {
                                     content: [
                                         Rectangle {
@@ -535,7 +535,7 @@ public class StoryView extends XCustomNode {
                                     layoutInfo: XLayoutInfo {
                                         hgrow: Priority.SOMETIMES
                                     }
-                                }
+                                },
                                 XVBox {
                                     content: [
                                         Rectangle {
@@ -555,8 +555,10 @@ public class StoryView extends XCustomNode {
                                         }
                                         Label {
                                             styleClass: "story-view-summary-text"
-                                            text: bind if (limitByCount) "{%.0f totalLimit}" else "{model.convertEstimate(totalLimit)}"
-                                            textFill: bind if (totalLimit == 0) Color.TRANSPARENT else if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.BLACK
+                                            text: bind 
+                                                if (totalLimit == 0) "None"
+                                                else if (limitByCount) "{%.0f totalLimit}" else "{model.convertEstimate(totalLimit)}"
+                                            textFill: bind if (overLimit) ColorUtil.lighter(Color.RED, .3) else if (overSubLimit) Color.ORANGE else Color.BLACK
                                             layoutInfo: XLayoutInfo {
                                                 margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                             }
