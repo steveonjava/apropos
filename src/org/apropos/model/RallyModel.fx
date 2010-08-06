@@ -43,7 +43,7 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.15";
+public def APROPOS_VERSION = "0.8.16";
 
 public var readOnly:Boolean;
 

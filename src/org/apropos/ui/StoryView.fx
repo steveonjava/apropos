@@ -28,34 +28,40 @@
 package org.apropos.ui;
 
 import java.math.BigDecimal;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextBox;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.apropos.model.RallyModel;
-import org.apropos.model.Story;
 import org.apropos.model.StoryContainer;
 import org.jfxtras.scene.XCustomNode;
 import org.jfxtras.scene.control.XTableView;
 import org.jfxtras.scene.control.XTableColumn;
 import org.jfxtras.scene.control.renderer.RowNumberRenderer;
 import org.jfxtras.scene.control.renderer.TextRenderer;
-import org.jfxtras.scene.paint.ColorUtil;
-import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XLayoutInfo;
-import org.jfxtras.scene.layout.XLayoutInfo.*;
-import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.util.SequenceUtil;
-import org.apropos.model.KanbanStageManager;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Alert;
+import java.lang.String;
+import org.apropos.model.KanbanStageManager;
+import org.apropos.model.Release;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
+import java.lang.String;
+import org.apropos.model.KanbanStageManager;
+import org.apropos.model.Stage;
+import org.apropos.model.Story;
+import org.jfxtras.scene.layout.XHBox;
+import org.jfxtras.scene.layout.XLayoutInfo;
+import org.jfxtras.scene.layout.XVBox;
+import org.jfxtras.scene.paint.ColorUtil;
 
 /**
  * @author Stephen Chin
@@ -171,9 +177,11 @@ public class StoryView extends XCustomNode {
 
     function previous() {
         // Display an alert if this operation is not allowed
-        if (not KanbanStageManager.canDemoteFeature(storyContainer.name)) {
-            Alert.inform(KanbanStageManager.getDemoteFeatureMsg(storyContainer.name));
-            return;
+        if (storyContainer instanceof Stage) {
+            if (not KanbanStageManager.canDemoteFeature(storyContainer.name)) {
+                Alert.inform(KanbanStageManager.getDemoteFeatureMsg(storyContainer.name));
+                return;
+            }
         }
 
         storyContainer.moveBefore(filteredStories[table.selectedRow]);
@@ -198,10 +206,13 @@ public class StoryView extends XCustomNode {
 
     function next() {
         // Display an alert if this operation is not allowed
-        if (not KanbanStageManager.canPromoteFeature(storyContainer.name)) {
-            Alert.inform(KanbanStageManager.getPromoteFeatureMsg(storyContainer.name));
-            return;
+        if (storyContainer instanceof Stage) {
+            if (not KanbanStageManager.canPromoteFeature(storyContainer.name)) {
+                Alert.inform(KanbanStageManager.getPromoteFeatureMsg(storyContainer.name));
+                return;
+            }
         }
+        //else if (storyContainer instanceof Release)
 
         storyContainer.moveAfter(filteredStories[table.selectedRow]);
         if ((table.selectedRow >= sizeof table.rows) and
@@ -290,8 +301,8 @@ public class StoryView extends XCustomNode {
                                         }
                                     }
                                     layoutInfo: XLayoutInfo {
-                                        hgrow: ALWAYS
-                                        hpos: RIGHT
+                                        hgrow: Priority.ALWAYS
+                                        hpos: HPos.RIGHT
                                         margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                     }
                                 }
@@ -381,7 +392,8 @@ public class StoryView extends XCustomNode {
                                                   (sizeof filteredStories == 0) or
                                                   (storyContainer.containerBefore == null)
                                     tooltip: bind
-                                        if (KanbanStageManager.getDemoteFeatureMsg(storyContainer.name) != "")
+                                        if ((KanbanStageManager.getDemoteFeatureMsg(storyContainer.name) != "") and
+                                            (storyContainer instanceof Stage))
                                             Tooltip {
                                                 text: bind KanbanStageManager.getDemoteFeatureMsg(storyContainer.name)
                                             }
@@ -442,7 +454,8 @@ public class StoryView extends XCustomNode {
                                                   (sizeof filteredStories == 0) or
                                                   (storyContainer.containerAfter == null)
                                     tooltip: bind
-                                        if (KanbanStageManager.getPromoteFeatureMsg(storyContainer.name) != "")
+                                        if ((KanbanStageManager.getPromoteFeatureMsg(storyContainer.name) != "") and
+                                            (storyContainer instanceof Stage))
                                             Tooltip {
                                                 text: bind KanbanStageManager.getPromoteFeatureMsg(storyContainer.name)
                                             }
