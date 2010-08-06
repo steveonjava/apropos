@@ -54,8 +54,9 @@ Stage {
     ]
     scene: scene = XScene {
         // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
-        // 1280 x 800 for MacBook Air
-        width: 1280
+        // 1280 x 800 for MacBook Air (use 1280 x 700)
+        // 1024 x 768 for a projector (use 1000 x 700)
+        width: 1000
         height: 700
         stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}rally-style.css"]
         cursor: bind if (model.processingLogin) Cursor.WAIT else Cursor.DEFAULT
