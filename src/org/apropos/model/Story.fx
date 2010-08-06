@@ -76,16 +76,27 @@ public class Story extends XObject, Comparable {
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
-            if (release instanceof Backlog and stage == "Schedule") {
-                stage = "Backlog"
-            }
-            else if ((stage == "Propose" or stage == "Backlog") and (release.name != "")) {
-                stage = "Schedule"
-            }
+            //TODO: Determine if the commented lines are needed in light of the rules in the document in S19350
+//            if (release instanceof Backlog and stage == "Schedule") {
+//                stage = "Backlog"
+//            }
+//            else if ((stage == "Propose" or stage == "Backlog") and (release.name != "")) {
+//                stage = "Schedule"
+//            }
 //            else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
 //                stage = "Schedule"
 //            }
-            hierarchicalRequirement.setPortfolioRelease(release.name);
+            if (release instanceof Backlog) {
+                println("Release:{release.name} is instanceof Backlog");
+                stage = "Backlog";
+                hierarchicalRequirement.setPortfolioRelease("");
+                println("end - is instanceof Backlog");
+           }
+            else {
+               println("Release:{release.name} is *not* instanceof Backlog");
+               hierarchicalRequirement.setPortfolioRelease(release.name);
+               println("end - is *not* instanceof Backlog");
+            }
             update();
             oldRelease.removeStory(this);
             newRelease.addStory(this);
@@ -142,6 +153,7 @@ public class Story extends XObject, Comparable {
             model.waiting++;
             XWorker {
                 inBackground: function() {
+                    println("In inBackground, hierarchicalRequirement.getPortfolioRelease():{hierarchicalRequirement.getPortfolioRelease()}");
                     var result = model.rallyService.update(hierarchicalRequirement);
                     for (error in result.getErrors()) println("ERROR: {error}");
                     model.rallyService.read(hierarchicalRequirement) as HierarchicalRequirement;
