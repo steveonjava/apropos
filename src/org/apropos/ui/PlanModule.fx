@@ -245,6 +245,8 @@ public class PlanModule extends AbstractModulePage {
     }
 
     init {
+        model.selectedAllocationIndex = 0;
+        model.selectedOwnerIndex = 0;
         calculateOwnerTotals();
         pageToolBar = PageToolBar {
             leftNodes: [
@@ -288,4 +290,9 @@ public class PlanModule extends AbstractModulePage {
             ]
         }
     }
+
+    public override function initPage():Void {
+        allocationFilter.selectedIndex = 0;
+        ownerFilter.selectedIndex = 0;
+    };
 }

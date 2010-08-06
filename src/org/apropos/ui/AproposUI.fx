@@ -147,7 +147,9 @@ public class AproposUI extends XCustomNode {
             XMap.Entry {key: "Schedule", value: ScheduleModule {}}
         ]
     }
-    var activeModule = bind modules.boundGet((toggleGroup.selectedToggle as ToggleButton).text) as Node;
+    var activeModule:AbstractModulePage = bind modules.boundGet((toggleGroup.selectedToggle as ToggleButton).text) as AbstractModulePage on replace {
+        activeModule.initPage();
+    };
 
     def content:XStack = XStack {
         content: bind [

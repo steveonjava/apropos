@@ -49,4 +49,9 @@ public class KanbanModule extends AbstractModulePage {
             content: storyViews[s|s.visible]
         }
     }
+
+    public override function initPage():Void {
+        allocationFilter.selectedIndex = 0;
+        ownerFilter.selectedIndex = 0;
+    };
 }
