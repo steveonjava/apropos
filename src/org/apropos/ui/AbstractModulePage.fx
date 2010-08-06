@@ -48,6 +48,10 @@ public abstract class AbstractModulePage extends XCustomNode {
     public var pageContent:Node;
     public var pageFooter:PageFooter = PageFooter{};
 
+    public function initPage():Void {
+        println("In initPage()");
+    };
+
     override function create() {
         XStack {
             content: [

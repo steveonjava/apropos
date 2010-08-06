@@ -113,6 +113,8 @@ public class ScheduleModule extends AbstractModulePage {
 
 
     init {
+        model.selectedAllocationIndex = 0;
+        model.selectedOwnerIndex = 0;
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
@@ -122,4 +124,9 @@ public class ScheduleModule extends AbstractModulePage {
         };
         pageContent = table;
     }
+
+    public override function initPage():Void {
+        allocationFilter.selectedIndex = 0;
+        ownerFilter.selectedIndex = 0;
+    };
 }

@@ -51,6 +51,8 @@ public class RoadmapModule extends AbstractModulePage {
     }
 
     init {
+        allocationFilter.selectedIndex = 0;
+        ownerFilter.selectedIndex = 0;
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
@@ -64,4 +66,9 @@ public class RoadmapModule extends AbstractModulePage {
             content: storyViews[s|s.visible]
         }
     }
+
+    public override function initPage():Void {
+        allocationFilter.selectedIndex = 0;
+        ownerFilter.selectedIndex = 0;
+    };
 }
