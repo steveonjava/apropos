@@ -28,7 +28,7 @@
 package org.apropos.ui;
 
 import org.apropos.model.RallyModel;
-import org.apropos.ui.ReportsModule;
+import org.apropos.ui.AnalyzeModule;
 import org.apropos.ui.RoadmapModule;
 import org.apropos.ui.KanbanModule;
 import org.apropos.ui.ScheduleModule;
@@ -143,7 +143,7 @@ public class AproposUI extends XCustomNode {
             XMap.Entry {key: "Kanban", value: KanbanModule {}}
             XMap.Entry {key: "Roadmap", value: RoadmapModule {}}
             XMap.Entry {key: "Plan", value: PlanModule {}}
-            XMap.Entry {key: "Analyze", value: ReportsModule {}}
+            XMap.Entry {key: "Analyze", value: AnalyzeModule {}}
             XMap.Entry {key: "Schedule", value: ScheduleModule {}}
         ]
     }

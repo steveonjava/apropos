@@ -193,7 +193,7 @@ public class RallyModel extends XObject {
     }
 
     public function getRelease(releasePlanName:String) {
-        return releases[r|r.name == releasePlanName][0];
+        return if (releasePlanName == "") backlog else releases[r|r.portfolioRelease == releasePlanName][0];
     }
 
     public bound function limitByCount(stageIndex:Integer):Boolean {

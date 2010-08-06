@@ -86,18 +86,11 @@ public class Story extends XObject, Comparable {
 //            else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
 //                stage = "Schedule"
 //            }
-            if (release instanceof Backlog) {
-                println("Release:{release.name} is instanceof Backlog");
-                stage = "Backlog";
-                hierarchicalRequirement.setPortfolioRelease("");
-                println("end - is instanceof Backlog");
-           }
-            else {
-               println("Release:{release.name} is *not* instanceof Backlog");
-               hierarchicalRequirement.setPortfolioRelease(release.name);
-               println("end - is *not* instanceof Backlog");
-            }
+            hierarchicalRequirement.setPortfolioRelease(release.portfolioRelease);
             update();
+            if (release instanceof Backlog) {
+                stage = "Backlog"
+            }
             oldRelease.removeStory(this);
             newRelease.addStory(this);
         }
@@ -116,7 +109,8 @@ public class Story extends XObject, Comparable {
     public var estimateDisplay = bind model.convertEstimate(estimate);
     public var rank:BigDecimal on replace {
         if (initialized) {
-            hierarchicalRequirement.setRank(rank);
+            var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
+            hierarchicalRequirement.setRank(new BigDecimal(rank3));
             update();
         }
     }
@@ -136,9 +130,10 @@ public class Story extends XObject, Comparable {
 
     function reapply():Void {
         // todo - find a cleaner way to do this
-        hierarchicalRequirement.setPortfolioRelease(release.name);
+        hierarchicalRequirement.setPortfolioRelease(release.portfolioRelease);
         hierarchicalRequirement.setPortfolioKanbanState(stage);
-        hierarchicalRequirement.setRank(rank);
+        var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
+        hierarchicalRequirement.setRank(new BigDecimal(rank3));
         hierarchicalRequirement.setOwner(owner);
     }
 
@@ -153,7 +148,6 @@ public class Story extends XObject, Comparable {
             model.waiting++;
             XWorker {
                 inBackground: function() {
-                    println("In inBackground, hierarchicalRequirement.getPortfolioRelease():{hierarchicalRequirement.getPortfolioRelease()}");
                     var result = model.rallyService.update(hierarchicalRequirement);
                     for (error in result.getErrors()) println("ERROR: {error}");
                     model.rallyService.read(hierarchicalRequirement) as HierarchicalRequirement;
@@ -276,7 +270,7 @@ public class Story extends XObject, Comparable {
         if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
             stage = "Propose";
         }
-        if ((stage == "Propose" or stage == "Backlog") and (release.name != "")) {
+        if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
             stage = "Schedule";
         }
 //        if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
