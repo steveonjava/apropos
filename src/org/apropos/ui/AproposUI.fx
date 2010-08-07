@@ -103,6 +103,7 @@ public class AproposUI extends XCustomNode {
                                     vpos: VPos.TOP
                                     hpos: HPos.LEFT
                                     hgrow: Priority.NEVER
+                                    //vgrow: Priority.NEVER
                                     vgrow: Priority.ALWAYS
                                 }
                             },
@@ -113,12 +114,12 @@ public class AproposUI extends XCustomNode {
                                 layoutInfo: XLayoutInfo {vpos: TOP}
                             }
                         ]
-                    }
-
+                    },
                     buttonBar
                 ]
                 layoutInfo: XLayoutInfo {
                     hgrow: Priority.ALWAYS
+                    vgrow: Priority.NEVER
                     margin: Insets {
                         top: 10
                         left: 10
@@ -180,6 +181,7 @@ public class AproposUI extends XCustomNode {
         XStack {
             content: [
                 XVBox {
+                    spacing: 0
                     content: [titleBar, content]
                 }
                 // todo - it is kind of annoying, but progress indicators don't play nice with layouts...
