@@ -52,6 +52,8 @@ import javafx.geometry.VPos;
 import javafx.scene.layout.Priority;
 import javafx.geometry.HPos;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import org.jfxtras.scene.shape.ResizableRectangle;
 
 /**
  * @author Stephen Chin
@@ -153,13 +155,12 @@ public class AproposUI extends XCustomNode {
 
     def content:XStack = XStack {
         content: bind [
-          Rectangle {
-            managed: false
-            width: bind content.width
-            height: bind content.height
-            styleClass: "page-content-background"
-          }
-          activeModule
+            ResizableRectangle {
+                //TODO: Implement JavaFX CSS support in ResizableRectangle
+                //styleClass: "page-content-background"
+                fill: Color.web("#e0e0e0")
+            },
+            activeModule,
         ]
     }
 

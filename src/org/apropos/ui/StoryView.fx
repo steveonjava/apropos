@@ -237,145 +237,151 @@ public class StoryView extends XCustomNode {
         XVBox {
             spacing: 8
             content: [
-                viewDetail = XVBox {
-                    onKeyTyped: function(e) {
-                        if (e.code == KeyCode.VK_LEFT) {
-                            previous();
-                        } else if (e.code == KeyCode.VK_RIGHT) {
-                            next();
-                        }
-                    }
+                XStack {
+                    nodeHPos: HPos.LEFT
                     content: [
-                        Rectangle {
-                            managed: false
-                            styleClass: "story-view-box"
-                            width: bind viewDetail.width
-                            height: bind viewDetail.height
+                        ResizableRectangle {
+                            //TODO: Implement JavaFX CSS support in ResizableRectangle
+                            //styleClass: "story-view-box"
+                            fill: Color.web("#ffffff")
+                            stroke: Color.web("#c6c6c6")
+                            layoutInfo: XLayoutInfo {
+                                width: 0
+                                height: 0
+                            }
                         },
-                        XStack {
-                            nodeHPos: HPos.LEFT
+                        viewDetail = XVBox {
+                            onKeyTyped: function(e) {
+                                if (e.code == KeyCode.VK_LEFT) {
+                                    previous();
+                                } else if (e.code == KeyCode.VK_RIGHT) {
+                                    next();
+                                }
+                            }
                             content: [
-                                ResizableRectangle {
-                                    //TODO: Implement JavaFX CSS support in ResizableRectangle
-                                    //styleClass: "story-view-header"
-                                    fill: Color.web("#b5d8eb")
-                                    layoutInfo: XLayoutInfo {
-                                        width: 0
-                                        height: 0
-                                    }
-                                },
-                                XHBox {
-                                    def maximizeImage:Image = Image {
-                                        url: "{__DIR__}images/maximize.png"
-                                    };
-                                    def minimizeImage:Image = Image {
-                                        url: "{__DIR__}images/minimize.jpg"
-                                    };
-                                    var imageView:ImageView;
+                                XStack {
+                                    nodeHPos: HPos.LEFT
                                     content: [
-                                        Label {
-                                            styleClass: "story-view-header-title"
-                                            text: bind storyContainer.name
+                                        ResizableRectangle {
+                                            //TODO: Implement JavaFX CSS support in ResizableRectangle
+                                            //styleClass: "story-view-header"
+                                            fill: Color.web("#b5d8eb")
                                             layoutInfo: XLayoutInfo {
-                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                                width: 0
+                                                height: 0
                                             }
-                                        }
-                                        //TODO: Change to ToggleButton or Button?
-                                        imageView = ImageView {
-                                            //effect: bind if (imageView.hover) DropShadow {color: Color.WHITE} else null
-                                            image: bind if (maximized) minimizeImage
-                                                        else maximizeImage
-                                            onMousePressed: function(e) {
-                                                maximized = not maximized;
-                // todo - bug with visibility in javafx 1.3
-                //                                for (view in storyViews) {
-                //                                    if (view != this) {
-                //                                        view.visible = not view.visible;
-                //                                    }
-                //                                }
-                                                for (view in storyViews) {
-                                                    if (view != this) {
-                                                        view.managed = not view.managed;
-                                                        if (not view.managed) {
-                                                            view.layoutX = 2000;
-                                                        }
+                                        },
+                                        XHBox {
+                                            def maximizeImage:Image = Image {
+                                                url: "{__DIR__}images/maximize.png"
+                                            };
+                                            def minimizeImage:Image = Image {
+                                                url: "{__DIR__}images/minimize.jpg"
+                                            };
+                                            var imageView:ImageView;
+                                            content: [
+                                                Label {
+                                                    styleClass: "story-view-header-title"
+                                                    text: bind storyContainer.name
+                                                    layoutInfo: XLayoutInfo {
+                                                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                                     }
                                                 }
+                                                //TODO: Change to ToggleButton or Button?
+                                                imageView = ImageView {
+                                                    //effect: bind if (imageView.hover) DropShadow {color: Color.WHITE} else null
+                                                    image: bind if (maximized) minimizeImage
+                                                                else maximizeImage
+                                                    onMousePressed: function(e) {
+                                                        maximized = not maximized;
+                        // todo - bug with visibility in javafx 1.3
+                        //                                for (view in storyViews) {
+                        //                                    if (view != this) {
+                        //                                        view.visible = not view.visible;
+                        //                                    }
+                        //                                }
+                                                        for (view in storyViews) {
+                                                            if (view != this) {
+                                                                view.managed = not view.managed;
+                                                                if (not view.managed) {
+                                                                    view.layoutX = 2000;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    layoutInfo: XLayoutInfo {
+                                                        hgrow: Priority.ALWAYS
+                                                        hpos: HPos.RIGHT
+                                                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                XHBox {
+                                    var text:String;
+                                    var error = false;
+                                    def search = function() {
+                                        var match = -1;
+                                        for (story in filteredStories where indexof story > table.selectedRow) {
+                                            if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
+                                                match = indexof story;
+                                                break;
                                             }
+                                        }
+                                        if (match == -1) for (story in filteredStories) {
+                                            if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
+                                                match = indexof story;
+                                                break;
+                                            }
+                                        }
+                                        if (match != -1) {
+                                            table.selectedRow = match;
+                                            table.scrollToSelected();
+                                            table.requestFocus();
+                                        } else {
+                                            error = true;
+                                        }
+                                    }
+                                    content: [
+                                        TextBox {
+                                            //TODO: Use a styleClass instead
+                                            style: bind if (error) "background-fill: red; text-fill: white" else ""
+                                            text: bind text with inverse
+                                            action: search
+                                            onKeyPressed: function(e) {error = false}
+                                            onMousePressed: function(e) {error = false}
                                             layoutInfo: XLayoutInfo {
-                                                hgrow: Priority.ALWAYS
-                                                hpos: HPos.RIGHT
-                                                vgrow: Priority.NEVER
-                                                vfill: false
-                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                                margin: Insets {top: 3, right: 3, bottom: 3, left: 3}
+                                            }
+                                        }
+                                        Button {
+                                            styleClass: "image-button"
+                                            graphic: ImageView {
+                                                image: Image {
+                                                    url: "{__DIR__}images/search.png"
+                                                }
+                                            }
+                                            action: search
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 3, right: 3, bottom: 3, left: 0}
                                             }
                                         }
                                     ]
                                 }
-                            ]
-                        },
-
-                        XHBox {
-                            var text:String;
-                            var error = false;
-                            def search = function() {
-                                var match = -1;
-                                for (story in filteredStories where indexof story > table.selectedRow) {
-                                    if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
-                                        match = indexof story;
-                                        break;
-                                    }
-                                }
-                                if (match == -1) for (story in filteredStories) {
-                                    if (story.id.contains(text) or story.name.contains(text) or story.textDescription.contains(text)) {
-                                        match = indexof story;
-                                        break;
-                                    }
-                                }
-                                if (match != -1) {
-                                    table.selectedRow = match;
-                                    table.scrollToSelected();
-                                    table.requestFocus();
-                                } else {
-                                    error = true;
-                                }
-                            }
-                            content: [
-                                TextBox {
-                                    //TODO: Use a styleClass instead
-                                    style: bind if (error) "background-fill: red; text-fill: white" else ""
-                                    text: bind text with inverse
-                                    action: search
-                                    onKeyPressed: function(e) {error = false}
-                                    onMousePressed: function(e) {error = false}
-                                    layoutInfo: XLayoutInfo {
-                                        margin: Insets {top: 3, right: 3, bottom: 3, left: 3}
-                                    }
-                                }
-                                Button {
-                                    styleClass: "image-button"
-                                    graphic: ImageView {
-                                        image: Image {
-                                            url: "{__DIR__}images/search.png"
+                                table = XTableView {
+                                    rowType: Story {}.getJFXClass()
+                                    rows: bind filteredStories
+                                    rowHeight: 50
+                                    onMouseClicked: function(e) {
+                                        if (e.clickCount == 2) {
+                                            filteredStories[table.selectedRow].browse();
                                         }
                                     }
-                                    action: search
-                                    layoutInfo: XLayoutInfo {
-                                        margin: Insets {top: 3, right: 3, bottom: 3, left: 0}
-                                    }
+                                    columns: createColumns()
                                 }
                             ]
-                        }
-                        table = XTableView {
-                            rowType: Story {}.getJFXClass()
-                            rows: bind filteredStories
-                            rowHeight: 50
-                            onMouseClicked: function(e) {
-                                if (e.clickCount == 2) {
-                                    filteredStories[table.selectedRow].browse();
-                                }
-                            }
-                            columns: createColumns()
                         }
                     ]
                 },
