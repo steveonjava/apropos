@@ -43,9 +43,19 @@ import javafx.scene.Cursor;
  */
 def model = RallyModel.instance;
 
+var stage:Stage;
 var scene:XScene;
 
-Stage {
+stage = Stage {
+    // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
+    // 1280 x 800 for MacBook Air (use 1280 x 700)
+    // 1024 x 768 for a projector (use 1000 x 700)
+    override var width = 1000 on replace {
+      if (width < 1000) width = 1000;
+    }
+    override var height = 700 on replace {
+      if (height < 700) height = 700;
+    }
     title: "Roadmap Planner"
     icons: [
         Image {url: "{__DIR__}ui/images/rally-reg-128.png"},
@@ -53,11 +63,6 @@ Stage {
         Image {url: "{__DIR__}ui/images/rally-reg-32.png"},
     ]
     scene: scene = XScene {
-        // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
-        // 1280 x 800 for MacBook Air (use 1280 x 700)
-        // 1024 x 768 for a projector (use 1000 x 700)
-        width: 1000
-        height: 700
         stylesheets: ["/org/jfxtras/scene/control/skin/jfxtras.css", "{__DIR__}rally-style.css"]
         cursor: bind if (model.processingLogin) Cursor.WAIT else Cursor.DEFAULT
         content: XStack {
