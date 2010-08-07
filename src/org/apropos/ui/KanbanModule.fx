@@ -45,7 +45,7 @@ public class KanbanModule extends AbstractModulePage {
         };
         pageContent = XHBox {
             animate: true
-            spacing: 9
+            spacing: 6
             content: storyViews[s|s.visible]
         }
     }
