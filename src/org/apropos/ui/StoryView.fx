@@ -41,27 +41,24 @@ import org.jfxtras.scene.control.renderer.TextRenderer;
 import org.jfxtras.util.SequenceUtil;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Alert;
-import java.lang.String;
 import org.apropos.model.KanbanStageManager;
-import org.apropos.model.Release;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import java.lang.String;
-import org.apropos.model.KanbanStageManager;
 import org.apropos.model.Stage;
 import org.apropos.model.Story;
 import org.jfxtras.scene.layout.XHBox;
 import org.jfxtras.scene.layout.XLayoutInfo;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.scene.paint.ColorUtil;
+import org.jfxtras.scene.shape.ResizableRectangle;
+import org.jfxtras.scene.layout.XStack;
 
 /**
  * @author Stephen Chin
@@ -235,7 +232,6 @@ public class StoryView extends XCustomNode {
     }
 
     override function create() {
-        var viewHeader:XHBox;
         var viewDetail:XVBox;
         var viewSummary:XHBox;
         XVBox {
@@ -255,59 +251,70 @@ public class StoryView extends XCustomNode {
                             styleClass: "story-view-box"
                             width: bind viewDetail.width
                             height: bind viewDetail.height
-                        }
-                        viewHeader = XHBox {
-                            def maximizeImage:Image = Image {
-                                url: "{__DIR__}images/maximize.png"
-                            };
-                            def minimizeImage:Image = Image {
-                                url: "{__DIR__}images/minimize.jpg"
-                            };
-                            var imageView:ImageView;
+                        },
+                        XStack {
+                            nodeHPos: HPos.LEFT
                             content: [
-                                Rectangle {
-                                    styleClass: "story-view-header"
-                                    managed: false
-                                    width: bind viewHeader.width
-                                    height: bind viewHeader.height
-                                }
-                                Label {
-                                    styleClass: "story-view-header-title"
-                                    text: bind storyContainer.name
+                                ResizableRectangle {
+                                    //TODO: Implement JavaFX CSS support in ResizableRectangle
+                                    //styleClass: "story-view-header"
+                                    fill: Color.web("#b5d8eb")
                                     layoutInfo: XLayoutInfo {
-                                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                        width: 0
+                                        height: 0
                                     }
-                                }
-                                //TODO: Change to ToggleButton or Button?
-                                imageView = ImageView {
-                                    effect: bind if (imageView.hover) DropShadow {color: Color.WHITE} else null
-                                    image: bind if (maximized) minimizeImage
-                                                else maximizeImage
-                                    onMousePressed: function(e) {
-                                        maximized = not maximized;
-        // todo - bug with visibility in javafx 1.3
-        //                                for (view in storyViews) {
-        //                                    if (view != this) {
-        //                                        view.visible = not view.visible;
-        //                                    }
-        //                                }
-                                        for (view in storyViews) {
-                                            if (view != this) {
-                                                view.managed = not view.managed;
-                                                if (not view.managed) {
-                                                    view.layoutX = 2000;
-                                                }
+                                },
+                                XHBox {
+                                    def maximizeImage:Image = Image {
+                                        url: "{__DIR__}images/maximize.png"
+                                    };
+                                    def minimizeImage:Image = Image {
+                                        url: "{__DIR__}images/minimize.jpg"
+                                    };
+                                    var imageView:ImageView;
+                                    content: [
+                                        Label {
+                                            styleClass: "story-view-header-title"
+                                            text: bind storyContainer.name
+                                            layoutInfo: XLayoutInfo {
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
                                             }
                                         }
-                                    }
-                                    layoutInfo: XLayoutInfo {
-                                        hgrow: Priority.ALWAYS
-                                        hpos: HPos.RIGHT
-                                        margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
-                                    }
+                                        //TODO: Change to ToggleButton or Button?
+                                        imageView = ImageView {
+                                            //effect: bind if (imageView.hover) DropShadow {color: Color.WHITE} else null
+                                            image: bind if (maximized) minimizeImage
+                                                        else maximizeImage
+                                            onMousePressed: function(e) {
+                                                maximized = not maximized;
+                // todo - bug with visibility in javafx 1.3
+                //                                for (view in storyViews) {
+                //                                    if (view != this) {
+                //                                        view.visible = not view.visible;
+                //                                    }
+                //                                }
+                                                for (view in storyViews) {
+                                                    if (view != this) {
+                                                        view.managed = not view.managed;
+                                                        if (not view.managed) {
+                                                            view.layoutX = 2000;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            layoutInfo: XLayoutInfo {
+                                                hgrow: Priority.ALWAYS
+                                                hpos: HPos.RIGHT
+                                                vgrow: Priority.NEVER
+                                                vfill: false
+                                                margin: Insets {top: 5, right: 5, bottom: 5, left: 5}
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
-                        }
+                        },
+
                         XHBox {
                             var text:String;
                             var error = false;
