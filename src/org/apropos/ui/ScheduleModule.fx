@@ -66,13 +66,13 @@ public class ScheduleModule extends AbstractModulePage {
         columns: [
             XTableColumn {
                 displayName: "#"
-                prefWidth: 20
+                prefWidth: 35
                 id: "rank"
                 renderer: RowNumberRenderer {}
             }
             XTableColumn {
                 displayName: "ID"
-                prefWidth: 20
+                prefWidth: 80
                 id: "id"
                 renderer: TextRenderer {}
             }

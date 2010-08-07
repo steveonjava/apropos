@@ -213,7 +213,7 @@ public class PlanModule extends AbstractModulePage {
             }
             XTableColumn {
                 displayName: "ID"
-                prefWidth: 20
+                prefWidth: 80
                 id: "id"
                 renderer: TextRenderer {}
             }

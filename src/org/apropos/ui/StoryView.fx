@@ -145,7 +145,7 @@ public class StoryView extends XCustomNode {
             ],
             XTableColumn {
                 displayName: "Feature"
-                prefWidth: 90
+                prefWidth: 92
                 id: "name"
                 renderer: TextRenderer {}
             }
@@ -165,7 +165,7 @@ public class StoryView extends XCustomNode {
             ],
             XTableColumn {
                 displayName: "Est"
-                prefWidth: 40
+                prefWidth: 42
                 id: "estimateDisplay"
                 renderer: TextRenderer {}
             }
