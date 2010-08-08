@@ -61,7 +61,7 @@ public class RoadmapModule extends AbstractModulePage {
             rightNodes: CostSelectionNode {}
         }
         pageContent = XHBox {
-            animate: true
+            animate: bind model.animateLayouts
             spacing: 10
             content: storyViews[s|s.visible]
         }
