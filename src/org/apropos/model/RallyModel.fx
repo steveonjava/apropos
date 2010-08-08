@@ -43,7 +43,7 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.19";
+public def APROPOS_VERSION = "0.8.20";
 
 public var readOnly:Boolean;
 
@@ -58,6 +58,7 @@ public def instance = RallyModel {}
 
 public class RallyModel extends XObject {
     var warned = false;
+    public var animateLayouts:Boolean = false;
     public var login = Login {userName: GUEST_USER, password: GUEST_PASSWORD};
     public var loggedIn = false;
     public var processingLogin:Boolean = false;

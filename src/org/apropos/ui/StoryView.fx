@@ -293,6 +293,7 @@ public class StoryView extends XCustomNode {
                                                     image: bind if (maximized) minimizeImage
                                                                 else maximizeImage
                                                     onMousePressed: function(e) {
+                                                        model.animateLayouts = true;
                                                         maximized = not maximized;
                         // todo - bug with visibility in javafx 1.3
                         //                                for (view in storyViews) {

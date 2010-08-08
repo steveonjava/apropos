@@ -36,6 +36,8 @@ import org.jfxtras.scene.layout.XLayoutInfo.*;
 import org.jfxtras.scene.layout.XVBox;
 import org.jfxtras.scene.control.XPicker;
 import org.apropos.model.Release;
+import javafx.animation.transition.FadeTransition;
+import javafx.animation.Interpolator;
 
 /**
  * @author Stephen Chin
@@ -55,12 +57,22 @@ public class AnalyzeModule extends AbstractModulePage {
 
     def release = bind releaseChoice.selectedItem as Release;
 
+    def fadeIn = FadeTransition {
+        node: bind pageContent
+        fromValue: 0.0
+        toValue: 1.0
+        duration: 2000ms
+        interpolator: Interpolator.LINEAR
+    };
+
+
     public var selectedIndex:Integer = -1 on replace {
         if (releaseChoice.selectedIndex != selectedIndex) {
             releaseChoice.select(selectedIndex);
         }
         if (selectedIndex >= 0) {
-          rebuildChart();
+            fadeIn.playFromStart();
+            rebuildChart();
         }
     }
 
@@ -124,6 +136,9 @@ public class AnalyzeModule extends AbstractModulePage {
         pageContent = XVBox {
             content: bind chart
         }
-        releaseChoice.select(0);
     }
+
+    public override function initPage():Void {
+        releaseChoice.select(0);
+    };
 }

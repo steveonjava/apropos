@@ -44,7 +44,7 @@ public class KanbanModule extends AbstractModulePage {
             rightNodes: CostSelectionNode {}
         };
         pageContent = XHBox {
-            animate: true
+            animate: bind model.animateLayouts
             spacing: 6
             content: storyViews[s|s.visible]
         }
