@@ -55,7 +55,7 @@ public class AnalyzeModule extends AbstractModulePage {
 //
 //    def release = bind releaseChoice.selectedItem as Release;
 
-    def release = bind releaseChoice.selectedItem as Release;
+    def release:Release = bind model.releases[selectedIndex] as Release;
 
     def fadeIn = FadeTransition {
         node: bind pageContent
@@ -66,7 +66,7 @@ public class AnalyzeModule extends AbstractModulePage {
     };
 
 
-    public var selectedIndex:Integer = -1 on replace {
+    public var selectedIndex:Integer = 0 on replace {
         if (releaseChoice.selectedIndex != selectedIndex) {
             releaseChoice.select(selectedIndex);
         }
@@ -76,16 +76,25 @@ public class AnalyzeModule extends AbstractModulePage {
         }
     }
 
-    var releaseChoice:XPicker = XPicker {
-        firstLetter: true
-        promptText: "Please choose ..."
-        //id: "JFXtras Shapes"
-        layoutInfo: XLayoutInfo {
-//            hfill: true
-//            maxWidth: 4000
-            width: 160
-        }
-        items: bind model.releases
+//    var releaseChoice:XPicker = XPicker {
+//        firstLetter: true
+//        promptText: "Please choose ..."
+//        //id: "JFXtras Shapes"
+//        layoutInfo: XLayoutInfo {
+////            hfill: true
+////            maxWidth: 4000
+//            width: 160
+//        }
+//        items: bind model.releases
+//        onIndexChange: function(index) {
+//            selectedIndex = index;
+//        }
+//    };
+
+    var releaseChoice:RallyPicker = RallyPicker {
+        rowWidth: 160
+        rowHeight: 20
+        items: bind for (rel in model.releases) "{rel}"
         onIndexChange: function(index) {
             selectedIndex = index;
         }
@@ -111,7 +120,7 @@ public class AnalyzeModule extends AbstractModulePage {
         }
         chart = PieChart {
             titleFont: Font.font(null, 24)
-            title: bind "Investment Allocation for {releaseChoice.selectedItem}"
+            title: bind "Investment Allocation for {release}"
             data: data
             legendVisible: true
             layoutInfo: XLayoutInfo {hgrow: ALWAYS, vgrow: ALWAYS, vfill: true, hfill: true}
@@ -139,6 +148,7 @@ public class AnalyzeModule extends AbstractModulePage {
     }
 
     public override function initPage():Void {
+        fadeIn.playFromStart();
         releaseChoice.select(0);
     };
 }
