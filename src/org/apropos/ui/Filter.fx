@@ -47,16 +47,24 @@ public class Filter extends XCustomNode {
         }
     }
 
-    var choice:XPicker = XPicker {
-        firstLetter: true
-        promptText: "Please choose ..."
-        //id: "JFXtras Shapes"
-        layoutInfo: XLayoutInfo {
-//            hfill: true
-//            maxWidth: 4000
-            width: 160
-        }
+//    var choice:XPicker = XPicker {
+//        firstLetter: true
+//        promptText: "Please choose ..."
+//        //id: "JFXtras Shapes"
+//        layoutInfo: XLayoutInfo {
+//            width: 160
+//        }
+//        items: bind ["All", list]
+//        onIndexChange: function(index) {
+//            selectedIndex = index;
+//        }
+//    };
+
+    var choice:RallyPicker = RallyPicker {
+        rowWidth: 160
+        rowHeight: 20
         items: bind ["All", list]
+        //items: ["All", list]
         onIndexChange: function(index) {
             selectedIndex = index;
         }
