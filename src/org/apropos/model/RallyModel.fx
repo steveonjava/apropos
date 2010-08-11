@@ -44,7 +44,7 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.23";
+public def APROPOS_VERSION = "0.8.24";
 
 public var readOnly:Boolean;
 
@@ -70,7 +70,9 @@ public class RallyModel extends XObject {
     public-init var ownerNames:String[] =
       if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
       else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
-      else ["catherine@rallydev.com", "klindholm@rallydev.com"];
+      else ["alex@rallydev.com", "lmaccherone@rallydev.com", "mringer@rallydev.com",
+            "klindholm@rallydev.com", "sstolt@rallydev.com", "mcampbell@rallydev.com",
+            "catherine@rallydev.com", "katie@rallydev.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myUserProfile:UserProfile;
