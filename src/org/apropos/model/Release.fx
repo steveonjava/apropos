@@ -32,7 +32,6 @@ import com.rallydev.webservice.v1_19.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
-import java.math.BigDecimal;
 
 /**
  * @author Stephen Chin

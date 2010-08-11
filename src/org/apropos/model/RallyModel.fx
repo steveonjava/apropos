@@ -29,6 +29,7 @@ package org.apropos.model;
 
 import com.rallydev.webservice.v1_19.domain.Project;
 import com.rallydev.webservice.v1_19.domain.User;
+import com.rallydev.webservice.v1_19.domain.UserProfile;
 import com.rallydev.webservice.v1_19.service.RallyService;
 import com.rallydev.webservice.v1_19.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
@@ -43,7 +44,7 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.22";
+public def APROPOS_VERSION = "0.8.23";
 
 public var readOnly:Boolean;
 
@@ -72,6 +73,7 @@ public class RallyModel extends XObject {
       else ["catherine@rallydev.com", "klindholm@rallydev.com"];
     public-init var owners:User[];
     public-read var myUser:User;
+    public-read var myUserProfile:UserProfile;
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10"];
@@ -106,7 +108,7 @@ public class RallyModel extends XObject {
     public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
         owners[selectedOwnerIndex - 1].getDisplayName();
     }
-    public var mainProjectName = if (community) "" else if (show) "Online Store" else "Product Dev";
+    public var mainProjectName; // = if (community) "" else if (show) "Online Store" else "Product Dev";
     public-read var mainProject:Project;
     public var waiting = 0;
 
@@ -163,12 +165,6 @@ public class RallyModel extends XObject {
     }
 
     function loadOwners() {
-        def myResult = rallyService.query(null, mainProject, false, false, "User", "(UserName = \"{login.userName}\")", null, true, 0, 100).getResults();
-        if (sizeof myResult > 0) {
-            myUser = myResult[0] as User;
-        } else {
-            println("Unable to get credentials for users -- please update account priveleges");
-        }
         owners = for (ownerName in ownerNames) {
             def results = rallyService.query(null, mainProject, false, false, "User", "(UserName = \"{ownerName}\")", null, true, 0, 100).getResults();
             if (sizeof results == 0) null else results[0] as User;
@@ -262,18 +258,40 @@ public class RallyModel extends XObject {
         stub.setPassword(login.password);
 
         stub.setMaintainSession(true);
+        
+        // Get the logged-user, project, and workspace
+
+        myUser = rallyService.getCurrentUser() as User;
+        if (myUser != null) {
+            println("myUser.getName():{myUser.getEmailAddress()}");
+            myUserProfile = myUser.getUserProfile();
+            myUserProfile = rallyService.read(myUserProfile) as UserProfile;
+            mainProject = myUserProfile.getDefaultProject();
+            mainProject = rallyService.read(mainProject) as Project;
+            mainProjectName = mainProject.getName();
+            println("mainProjectName:{mainProjectName}");
+            //println("myUserProfile.getDefaultWorkspace():{myUserProfile.getDefaultWorkspace()}");
+        }
+        else {
+            println("Unable to login user");
+            Alert.inform("Unable to login user");
+        }
+
         // todo - need to create a project selector dialog
-        def projects = rallyService.query(null, "Project", null, null, true, 0, 200).getResults();
-        for (project in projects) {
-            def p = project as Project;
-            if (p.getName() == mainProjectName) {
-                mainProject = p;
-                println("Found mainProjectName:{mainProjectName}");
-            }
-        }
-        if (mainProject == null) {
-            mainProject = projects[0] as Project;
-        }
+// TODO: Remove this commented logic when appropriate
+//        def projects = rallyService.query(null, "Project", null, null, true, 0, 200).getResults();
+//        for (project in projects) {
+//            def p = project as Project;
+//            if (p.getName() == mainProjectName) {
+//                mainProject = p;
+//                println("Found mainProjectName:{mainProjectName}");
+//            }
+//        }
+//        mainProject = myUserProfile.getDefaultProject();
+//        if (mainProject == null) {
+//            mainProject = projects[0] as Project;
+//        }
+//        mainProjectName = mainProject.getName();
     }
 
     public bound function convertEstimate(estimate:Double):String {
