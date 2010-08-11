@@ -30,14 +30,14 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_20.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_20.domain.QueryResult;
+import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.domain.QueryResult;
 import org.apropos.model.RallyModel;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.BrowserUtil;
 import org.jfxtras.util.SequenceUtil;
-import com.rallydev.webservice.v1_20.domain.User;
+import com.rallydev.webservice.v1_19.domain.User;
 import java.math.BigDecimal;
 
 /**
@@ -59,10 +59,10 @@ public class Story extends XObject, Comparable {
     public var description:String;
     public var textDescription:String;
     public var parentName:String;
-    public var portfolioAllocation:String;
+    public var roadmapAllocation:String;
     public var stage:String on replace oldStage=newStage {
         if (initialized) {
-            hierarchicalRequirement.setPortfolioKanbanState(stage);
+            hierarchicalRequirement.setRoadmapKanbanState(stage);
             update();
             if (stage == "Schedule" and release instanceof Backlog) {
                 release = model.currentRelease;
@@ -86,7 +86,7 @@ public class Story extends XObject, Comparable {
 //            else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
 //                stage = "Schedule"
 //            }
-            hierarchicalRequirement.setPortfolioRelease(release.portfolioRelease);
+            hierarchicalRequirement.setRoadmapRelease(release.roadmapRelease);
             update();
             if (release instanceof Backlog) {
                 stage = "Backlog"
@@ -130,8 +130,8 @@ public class Story extends XObject, Comparable {
 
     function reapply():Void {
         // todo - find a cleaner way to do this
-        hierarchicalRequirement.setPortfolioRelease(release.portfolioRelease);
-        hierarchicalRequirement.setPortfolioKanbanState(stage);
+        hierarchicalRequirement.setRoadmapRelease(release.roadmapRelease);
+        hierarchicalRequirement.setRoadmapKanbanState(stage);
         var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
         hierarchicalRequirement.setRank(new BigDecimal(rank3));
         hierarchicalRequirement.setOwner(owner);
@@ -242,20 +242,20 @@ public class Story extends XObject, Comparable {
 
     function initialize() {
         initialized = false;
-        name = hierarchicalRequirement.getRefObjectName();
+        name = removeTags(hierarchicalRequirement.getRefObjectName());
         id = hierarchicalRequirement.getFormattedID();
-        description = hierarchicalRequirement.getDescription();
+        description = removeTags(hierarchicalRequirement.getDescription());
         textDescription = removeTags(description);
-        parentName = hierarchicalRequirement.getParent().getRefObjectName();
-        portfolioAllocation = hierarchicalRequirement.getPortfolioAllocation();
-        release = model.getRelease(hierarchicalRequirement.getPortfolioRelease());
+        parentName = removeTags(hierarchicalRequirement.getParent().getRefObjectName());
+        roadmapAllocation = hierarchicalRequirement.getRoadmapAllocation();
+        release = model.getRelease(hierarchicalRequirement.getRoadmapRelease());
         rank = hierarchicalRequirement.getRank();
         owner = hierarchicalRequirement.getOwner();
         inPackage = hierarchicalRequirement.get_package();
         if (inPackage == "") inPackage = "<missing package>";
         var desc = description.toLowerCase();
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
-        stage = hierarchicalRequirement.getPortfolioKanbanState();
+        stage = hierarchicalRequirement.getRoadmapKanbanState();
         def children = hierarchicalRequirement.getChildren();
         if (children == null or children.length == 0) {
             estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
@@ -352,6 +352,6 @@ public class Story extends XObject, Comparable {
     }
 
     override function toString() {
-        return "Story \{name: {name}\}, estimate: \{{estimate}\}, rank: \{{rank}\}, inPackage: \{{inPackage}\}";
+        return "Story \{name: {name}\}, estimate: \{{estimate}\}, rank: \{{rank}\}, inPackage: \{{inPackage}\}, hierarchicalRequirement: \{{hierarchicalRequirement}\}";
     }
 }

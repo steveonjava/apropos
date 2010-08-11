@@ -27,10 +27,10 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_20.domain.Project;
-import com.rallydev.webservice.v1_20.domain.User;
-import com.rallydev.webservice.v1_20.service.RallyService;
-import com.rallydev.webservice.v1_20.service.RallyServiceServiceLocator;
+import com.rallydev.webservice.v1_19.domain.Project;
+import com.rallydev.webservice.v1_19.domain.User;
+import com.rallydev.webservice.v1_19.service.RallyService;
+import com.rallydev.webservice.v1_19.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
 import javafx.stage.Alert;
 import javafx.util.Math;
@@ -48,10 +48,10 @@ public def APROPOS_VERSION = "0.8.21";
 public var readOnly:Boolean;
 
 def community:Boolean = false;
-def show:Boolean = true;
+def show:Boolean = false;
 public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rally1.rallydev.com/";
 
-def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "build@inovis.com";
+def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
 def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "StephenIsCool";
 
 public def instance = RallyModel {}
@@ -63,13 +63,13 @@ public class RallyModel extends XObject {
     public var loggedIn = false;
     public var processingLogin:Boolean = false;
     public var showInDollars = false;
-    public-init var releasePlanNames = ["2010 Q3", "2010 Q4"];
+    public-init var releasePlanNames = ["Q3 2010", "Q4 2010", "Q1 2011", "Q2 2011"];
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
     public-init var ownerNames:String[] =
       if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
       else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
-      else ["michelle.covey@inovis.com", "tom.aydelotte@inovis.com", "david.gouge@inovis.com", "murray.brook@inovis.com", "brian.huddleston@inovis.com", "peter.corliss@inovis.com", "jason.westigard@inovis.com"];
+      else ["catherine@rallydev.com", "klindholm@rallydev.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myImage:Image;
@@ -106,7 +106,7 @@ public class RallyModel extends XObject {
     public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
         owners[selectedOwnerIndex - 1].getDisplayName();
     }
-    public var mainProjectName = if (community) "" else if (show) "Online Store" else "Business Community Management";
+    public var mainProjectName = if (community) "" else if (show) "Online Store" else "Product Dev";
     public-read var mainProject:Project;
     public var waiting = 0;
 
@@ -115,7 +115,7 @@ public class RallyModel extends XObject {
     }
 
     bound function selected(s:Story) {
-        (selectedAllocation == null or s.portfolioAllocation == selectedAllocation) and
+        (selectedAllocation == null or s.roadmapAllocation == selectedAllocation) and
         (selectedOwner == null or s.ownerName == selectedOwner)
     }
 
@@ -126,7 +126,6 @@ public class RallyModel extends XObject {
     public function doLogin():Void {
         try {
             processingLogin = true;
-            readOnly = login.userName == GUEST_USER and not show;
 
             createService();
             loadReleases();
@@ -194,7 +193,7 @@ public class RallyModel extends XObject {
     }
 
     public function getRelease(releasePlanName:String) {
-        return if (releasePlanName == "") backlog else releases[r|r.portfolioRelease == releasePlanName][0];
+        return if (releasePlanName == "") backlog else releases[r|r.roadmapRelease == releasePlanName][0];
     }
 
     public bound function limitByCount(stageIndex:Integer):Boolean {
@@ -264,11 +263,12 @@ public class RallyModel extends XObject {
 
         stub.setMaintainSession(true);
         // todo - need to create a project selector dialog
-        def projects = rallyService.query(null, "Project", null, null, true, 0, 100).getResults();
+        def projects = rallyService.query(null, "Project", null, null, true, 0, 200).getResults();
         for (project in projects) {
             def p = project as Project;
             if (p.getName() == mainProjectName) {
                 mainProject = p;
+                println("Found mainProjectName:{mainProjectName}");
             }
         }
         if (mainProject == null) {

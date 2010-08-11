@@ -34,14 +34,14 @@ public abstract class StoryContainer {
 
     public var name:String on replace {
         if (name != "Backlog") {
-            portfolioRelease = name;
+            roadmapRelease = name;
         }
         else {
-            portfolioRelease = "";
+            roadmapRelease = "";
         }
     };
 
-    public var portfolioRelease:String;
+    public var roadmapRelease:String;
 
     public var stories:Story[];
 

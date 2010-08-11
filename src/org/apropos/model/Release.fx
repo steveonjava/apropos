@@ -27,8 +27,8 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_20.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_20.domain.QueryResult;
+import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
@@ -49,7 +49,7 @@ public class Release extends StoryContainer {
     package var model = RallyModel.instance;
 
     public function getAllocationTotals(name:String):Double {
-        SequenceUtil.sum(for (s in stories where s.portfolioAllocation == name) s.estimate)
+        SequenceUtil.sum(for (s in stories where s.roadmapAllocation == name) s.estimate)
     }
     override function moveBefore(story:Story) {
         story.release = containerBefore as Release;
@@ -85,9 +85,9 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                //println("In loadStories, portfolioRelease:{portfolioRelease}");
-                model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((PortfolioRelease = \"{portfolioRelease}\") and (PortfolioHierarchy = \"Feature\"))", "Rank", true, start, 100);
-                //model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((PortfolioRelease = \"{name}\") and (PortfolioHierarchy = \"Feature\"))", "Rank", true, start, 100);
+                //println("In loadStories, roadmapRelease:{roadmapRelease}");
+                model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
+                //model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{name}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;
@@ -102,6 +102,7 @@ public class Release extends StoryContainer {
                     for (error in queryResult.getErrors()) println('ERROR: {error}"');
                 } else {
                     def results = queryResult.getResults();
+
                     def newStories = for (domainObject in results) {
                         def hierarchicalRequirement = domainObject as HierarchicalRequirement;
                         //def ownerDisplayName = model.getOwnerDisplayName(hierarchicalRequirement.getOwner().getEmailAddress());
@@ -125,10 +126,10 @@ public class Release extends StoryContainer {
                         }
                     }
                     for (story in newStories) {
-                        if (story.portfolioAllocation.trim() != "") {
-                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.portfolioAllocation);
+                        if (story.roadmapAllocation.trim() != "") {
+                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
                             if (insertionPoint < 0) {
-                                insert story.portfolioAllocation before model.allocationNames[-insertionPoint - 1];
+                                insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
                             }
                         }
                     }
