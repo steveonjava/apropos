@@ -44,7 +44,7 @@ import org.jfxtras.util.SequenceUtil;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.24";
+public def APROPOS_VERSION = "0.8.25";
 
 public var readOnly:Boolean;
 
@@ -168,7 +168,7 @@ public class RallyModel extends XObject {
 
     function loadOwners() {
         owners = for (ownerName in ownerNames) {
-            def results = rallyService.query(null, mainProject, false, false, "User", "(UserName = \"{ownerName}\")", null, true, 0, 100).getResults();
+            def results = rallyService.query(null, mainProject, false, false, "User", "(EmailAddress = \"{ownerName}\")", null, true, 0, 100).getResults();
             if (sizeof results == 0) null else results[0] as User;
         }
         // hack to login for image retrieval
