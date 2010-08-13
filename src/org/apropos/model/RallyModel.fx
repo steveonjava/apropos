@@ -47,7 +47,7 @@ import javafx.animation.KeyFrame;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.25";
+public def APROPOS_VERSION = "0.8.26";
 
 public var readOnly:Boolean;
 
@@ -96,7 +96,7 @@ public class RallyModel extends XObject {
     public-init var actualToCostRatio = 66.5;
     public-read var rallyService:RallyService;
     public var backlog:Backlog;
-    public-init var releaseNames = ["Internal Release 2010Q3", "Internal Release 2010Q4", "Internal Release 2011Q1", "Internal Release 2011Q2"];
+    //public-init var releaseNames = ["Internal Release 2010Q3", "Internal Release 2010Q4", "Internal Release 2011Q1", "Internal Release 2011Q2"];
     public var releases:Release[];
     public var stages:Stage[];
 
@@ -108,6 +108,16 @@ public class RallyModel extends XObject {
         allocationNames[selectedAllocationIndex - 1];
     }
 
+    public var selectedReleaseIndex:Integer;
+    public var selectedReleaseName:String = bind if (selectedReleaseIndex == 0) null else {
+        releasePlanNames[selectedReleaseIndex - 1];
+    }
+
+    public var selectedOwnerIndex:Integer;
+    public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
+        owners[selectedOwnerIndex - 1].getDisplayName();
+    }
+
     //TODO: Remove the concept of packages, in favor of Portfolio Allocations
     public var packageNames:String[];
     public var selectedPackageIndex:Integer;
@@ -115,20 +125,17 @@ public class RallyModel extends XObject {
         packageNames[selectedPackageIndex - 1];
     }
 
-    public var selectedOwnerIndex:Integer;
-    public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
-        owners[selectedOwnerIndex - 1].getDisplayName();
-    }
     public var mainProjectName; // = if (community) "" else if (show) "Online Store" else "Product Dev";
     public-read var mainProject:Project;
     public var waiting = 0;
 
     bound function filtersOn() {
-        return selectedAllocation != null or selectedOwner != null;
+        return selectedAllocation != null or selectedReleaseName != null or selectedOwner != null;
     }
 
     bound function selected(s:Story) {
         (selectedAllocation == null or s.roadmapAllocation == selectedAllocation) and
+        (selectedReleaseName == null or s.release.name == selectedReleaseName) and
         (selectedOwner == null or s.ownerName == selectedOwner)
     }
 
@@ -149,6 +156,7 @@ public class RallyModel extends XObject {
                     println("calling loadReleases() and loadOwners()");
                     loadReleases();
                     loadOwners();
+                    processingLogin = false;
                 }
             }
 
@@ -176,7 +184,7 @@ public class RallyModel extends XObject {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
         } finally {
-          processingLogin = false;
+          //processingLogin = false;
         }
     }
 

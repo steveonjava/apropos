@@ -48,6 +48,12 @@ public class ScheduleModule extends AbstractModulePage {
         selectedIndex: bind model.selectedAllocationIndex with inverse
     }
 
+    def releaseFilter = Filter {
+        name: "Release"
+        list: bind model.releasePlanNames
+        selectedIndex: bind model.selectedReleaseIndex with inverse
+    };
+
     def ownerFilter = Filter {
         name: "Owner"
         list: bind for (o in model.owners) o.getDisplayName()
@@ -118,6 +124,7 @@ public class ScheduleModule extends AbstractModulePage {
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
+                releaseFilter,
                 ownerFilter
             ]
             rightNodes: CostSelectionNode {}
@@ -127,6 +134,7 @@ public class ScheduleModule extends AbstractModulePage {
 
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
+        releaseFilter.selectedIndex = 0;
         ownerFilter.selectedIndex = 0;
     };
 }

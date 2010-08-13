@@ -55,6 +55,7 @@ public class KanbanModule extends AbstractModulePage {
 
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
+        model.selectedReleaseIndex = 0;
         ownerFilter.selectedIndex = 0;
     };
 }

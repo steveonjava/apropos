@@ -80,6 +80,13 @@ public class PlanModule extends AbstractModulePage {
         list: bind model.allocationNames
         selectedIndex: bind model.selectedAllocationIndex with inverse
     };
+
+    def releaseFilter = Filter {
+        name: "Release"
+        list: bind model.releasePlanNames
+        selectedIndex: bind model.selectedReleaseIndex with inverse
+    };
+
     def ownerFilter = Filter {
         name: "Owner"
         list: bind for (o in model.owners) o.getDisplayName()
@@ -148,7 +155,7 @@ public class PlanModule extends AbstractModulePage {
     def owners:XGrid = XGrid {
         hgap: 10
         vgap: 10
-        rows: for (owner in model.owners) {
+        rows: bind for (owner in model.owners) {
             var target:String = model.initialTargets[indexof owner];
             row([
                 Label {
@@ -251,6 +258,7 @@ public class PlanModule extends AbstractModulePage {
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
+                releaseFilter,
                 ownerFilter
             ]
             rightNodes: CostSelectionNode {}
@@ -293,6 +301,7 @@ public class PlanModule extends AbstractModulePage {
 
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
+        releaseFilter.selectedIndex = 0;
         ownerFilter.selectedIndex = 0;
     };
 }
