@@ -40,6 +40,7 @@ public class Filter extends XCustomNode {
     public-init var name:String;
 
     public var list:String[];
+    public var all:Boolean = true;
 
     public var selectedIndex:Integer = 0 on replace {
         if (choice.selectedIndex != selectedIndex) {
@@ -63,7 +64,7 @@ public class Filter extends XCustomNode {
     var choice:RallyPicker = RallyPicker {
         rowWidth: 160
         rowHeight: 20
-        items: bind ["All", list]
+        items: bind [if (all) "All" else null, list]
         //items: ["All", list]
         onIndexChange: function(index) {
             selectedIndex = index;

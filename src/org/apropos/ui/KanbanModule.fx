@@ -30,6 +30,13 @@ public class KanbanModule extends AbstractModulePage {
         list: bind model.allocationNames
         selectedIndex: bind model.selectedAllocationIndex with inverse
     };
+
+    def releaseFilter = Filter {
+        name: "Release"
+        list: bind model.releasePlanNames
+        selectedIndex: bind model.selectedReleaseIndex with inverse
+    };
+
     def ownerFilter = Filter {
         name: "Owner"
         list: bind for (o in model.owners) o.getDisplayName()
@@ -41,6 +48,7 @@ public class KanbanModule extends AbstractModulePage {
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
+                releaseFilter,
                 ownerFilter
             ]
             rightNodes: CostSelectionNode {}

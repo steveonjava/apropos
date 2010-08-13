@@ -70,7 +70,7 @@ public class CustomFieldUtil {
                 onEvent: function(e:Event) {
                     if (e.type == PullParser.END_VALUE) {
                         if (e.name != "null") {
-                            println("inserting {e.text} into validvalues");
+                            //println("inserting {e.text} into validvalues");
                             insert e.text into validValues;
                         }
                     }
