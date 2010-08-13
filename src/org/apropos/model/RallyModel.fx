@@ -40,8 +40,6 @@ import org.jfxtras.util.SequenceUtil;
 import javafx.stage.Alert;
 import com.rallydev.webservice.v1_19.domain.OperationResult;
 import org.apache.axis.AxisFault;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 
 /**
  * @author Stephen Chin
@@ -166,7 +164,6 @@ public class RallyModel extends XObject {
                 password: login.password
             };
             def roadmapKanbanStates = bind cfuA.validValues on replace {
-                println("roadmapKanbanStages:{roadmapKanbanStates}");
                 stageNames = roadmapKanbanStates;
             };
 
@@ -176,7 +173,6 @@ public class RallyModel extends XObject {
                 password: login.password
             };
             def roadmapReleases = bind cfuB.validValues on replace {
-                println("roadmapReleases:{roadmapReleases}");
                 releasePlanNames = roadmapReleases;
             };
 

@@ -38,9 +38,12 @@ import org.jfxtras.scene.control.renderer.TextRenderer;
  */
 public class ScheduleModule extends AbstractModulePage {
 
-    var stories:Story[] = bind model.currentRelease.stories;
+    var stories:Story[] = bind model.releases[selectedReleaseIndex].stories;
 
-    var filteredStories = bind model.filter(model.currentRelease.stories);
+    // There is no "All" in the dropdown, so 0 is the first RoadmapRelease
+    var selectedReleaseIndex:Integer = 0;
+
+    public-read var filteredStories = bind model.filter(stories);
 
     def allocationFilter = Filter {
         name: "Investment Allocation"
@@ -50,8 +53,9 @@ public class ScheduleModule extends AbstractModulePage {
 
     def releaseFilter = Filter {
         name: "Release"
+        all: false
         list: bind model.releasePlanNames
-        selectedIndex: bind model.selectedReleaseIndex with inverse
+        selectedIndex: bind selectedReleaseIndex with inverse
     };
 
     def ownerFilter = Filter {

@@ -53,11 +53,14 @@ import javafx.geometry.Insets;
  * @author Stephen Chin
  */
 public class PlanModule extends AbstractModulePage {
-    var stories:Story[] = bind model.currentRelease.stories;
+    var stories:Story[] = bind model.releases[selectedReleaseIndex].stories;
 
     var selectedPackage = bind model.selectedPackage;
 
-    public-read var filteredStories = bind model.filter(model.currentRelease.stories);
+    // There is no "All" in the dropdown, so 0 is the first RoadmapRelease
+    var selectedReleaseIndex:Integer = 0;
+
+    public-read var filteredStories = bind model.filter(stories);
 
     var ownerTotals:Double[];
 
@@ -83,8 +86,9 @@ public class PlanModule extends AbstractModulePage {
 
     def releaseFilter = Filter {
         name: "Release"
+        all: false
         list: bind model.releasePlanNames
-        selectedIndex: bind model.selectedReleaseIndex with inverse
+        selectedIndex: bind selectedReleaseIndex with inverse
     };
 
     def ownerFilter = Filter {
