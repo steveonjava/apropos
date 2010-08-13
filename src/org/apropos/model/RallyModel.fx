@@ -33,12 +33,15 @@ import com.rallydev.webservice.v1_19.domain.UserProfile;
 import com.rallydev.webservice.v1_19.service.RallyService;
 import com.rallydev.webservice.v1_19.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
-import javafx.stage.Alert;
 import javafx.util.Math;
 import org.apache.axis.client.Stub;
-import org.apache.axis.AxisFault;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.SequenceUtil;
+import javafx.stage.Alert;
+import com.rallydev.webservice.v1_19.domain.OperationResult;
+import org.apache.axis.AxisFault;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 
 /**
  * @author Stephen Chin
@@ -53,7 +56,7 @@ def show:Boolean = false;
 public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rally1.rallydev.com/";
 
 def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
-def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "StephenIsCool";
+def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
 
@@ -64,7 +67,10 @@ public class RallyModel extends XObject {
     public var loggedIn = false;
     public var processingLogin:Boolean = false;
     public var showInDollars = false;
-    public-init var releasePlanNames = ["Q3 2010", "Q4 2010", "Q1 2011", "Q2 2011"];
+
+    //public-init var releasePlanNames = ["Q3 2010", "Q4 2010", "Q1 2011", "Q2 2011"];
+    public-init var releasePlanNames:String[];
+
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
     public-init var ownerNames:String[] =
@@ -72,14 +78,17 @@ public class RallyModel extends XObject {
       else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
       else ["alex@rallydev.com", "lmaccherone@rallydev.com", "mringer@rallydev.com",
             "klindholm@rallydev.com", "sstolt@rallydev.com", "mcampbell@rallydev.com",
-            "catherine@rallydev.com", "katie@rallydev.com"];
+            "catherine@rallydev.com", "katie@rallydev.com", "james.l.weaver@gmail.com"];
     public-init var owners:User[];
     public-read var myUser:User;
     public-read var myUserProfile:UserProfile;
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10"];
-    public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
+
+    //public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
+    public-init var stageNames:String[];
+
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 15.0, 15.0, 15.0, 0.0, 12.0, 12.0, 0.0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
@@ -132,10 +141,37 @@ public class RallyModel extends XObject {
             processingLogin = true;
 
             createService();
-            loadReleases();
-            loadOwners();
-
+ 
             loggedIn = true;
+
+            def startLoading:Boolean = bind cfuA.done and cfuB.done on replace {
+                if (startLoading) {
+                    println("calling loadReleases() and loadOwners()");
+                    loadReleases();
+                    loadOwners();
+                }
+            }
+
+            var cfuA:CustomFieldUtil = CustomFieldUtil {
+                customFieldName: "RoadmapKanbanState"
+                username: login.userName
+                password: login.password
+            };
+            def roadmapKanbanStates = bind cfuA.validValues on replace {
+                println("roadmapKanbanStages:{roadmapKanbanStates}");
+                stageNames = roadmapKanbanStates;
+            };
+
+            var cfuB:CustomFieldUtil = CustomFieldUtil {
+                customFieldName: "RoadmapRelease"
+                username: login.userName
+                password: login.password
+            };
+            def roadmapReleases = bind cfuB.validValues on replace {
+                println("roadmapReleases:{roadmapReleases}");
+                releasePlanNames = roadmapReleases;
+            };
+
         } catch (e:AxisFault) {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
@@ -265,14 +301,22 @@ public class RallyModel extends XObject {
 
         myUser = rallyService.getCurrentUser() as User;
         if (myUser != null) {
-            println("myUser.getName():{myUser.getEmailAddress()}");
             myUserProfile = myUser.getUserProfile();
             myUserProfile = rallyService.read(myUserProfile) as UserProfile;
             mainProject = myUserProfile.getDefaultProject();
-            mainProject = rallyService.read(mainProject) as Project;
-            mainProjectName = mainProject.getName();
-            println("mainProjectName:{mainProjectName}");
-            //println("myUserProfile.getDefaultWorkspace():{myUserProfile.getDefaultWorkspace()}");
+
+            var proj = rallyService.read(mainProject);
+            if (proj instanceof OperationResult) {
+                def operRes = proj as OperationResult;
+                Alert.inform("No default project set for user.  Please set a default project in Rally");
+                println("operRes.getErrors() = {operRes.getErrors()}");
+            }
+            else {
+                mainProject = rallyService.read(mainProject) as Project;
+                mainProjectName = mainProject.getName();
+                println("mainProjectName:{mainProjectName}");
+                println("myUserProfile.getDefaultWorkspace():{myUserProfile.getDefaultWorkspace()}");
+            }
         }
         else {
             println("Unable to login user");

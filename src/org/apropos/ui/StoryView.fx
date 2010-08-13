@@ -77,7 +77,10 @@ public class StoryView extends XCustomNode {
 
     public var overSubLimit = false;
 
-    public-init var storyContainer:StoryContainer;
+    //public-init var storyContainer:StoryContainer;
+    public var storyContainer:StoryContainer;
+
+    //public var storyContainerName:String; //TODO: Find a better way to dynamically update the name on the StoryView
 
     public-read var filteredStories = bind model.filter(storyContainer.getVisibleStories());
 
