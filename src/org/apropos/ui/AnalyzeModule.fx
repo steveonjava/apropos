@@ -145,6 +145,9 @@ public class AnalyzeModule extends AbstractModulePage {
         pageContent = XVBox {
             content: bind chart
         }
+        model.selectedAllocationIndex = 0;
+        model.selectedReleaseIndex = 0;
+        model.selectedOwnerIndex = 0;
     }
 
     public override function initPage():Void {
