@@ -33,9 +33,9 @@ import org.jfxtras.scene.layout.XHBox;
  * @author Stephen Chin
  */
 public class RoadmapModule extends AbstractModulePage {
-    package var storyViews:StoryView[] = for (release in [model.backlog, model.releases]) StoryView {
+    package var storyViews:StoryView[] = bind for (release in [model.backlog, model.releases]) StoryView {
         storyViews: bind storyViews;
-        storyContainer: release
+        storyContainer: bind release
     }
 
     def allocationFilter = Filter {
@@ -64,7 +64,7 @@ public class RoadmapModule extends AbstractModulePage {
             //animate: bind model.animateLayouts
             animate: false
             spacing: 10
-            content: storyViews[s|s.visible]
+            content: bind storyViews[s|s.visible]
         }
     }
 

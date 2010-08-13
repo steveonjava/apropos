@@ -15,13 +15,14 @@ import javafx.scene.Cursor;
 public class KanbanModule extends AbstractModulePage {
 
     public var selectedView:StoryView;
-    package var storyViews:StoryView[] = for (stage in model.stages) StoryView {
+    package var storyViews:StoryView[] = bind for (stage in model.stages) StoryView {
         narrowColumns: true
         limitByCount: bind model.limitByCount(indexof stage)
         totalLimit: bind model.getWipLimit(indexof stage)
         overSubLimit: bind model.overSubLimit(indexof stage)
         storyViews: bind storyViews
-        storyContainer: stage
+        storyContainer: bind stage
+        //storyContainerName: bind stage.name //TODO: Find a better way to dynamically update the name on the StoryView
     }
 
     def allocationFilter = Filter {
@@ -36,6 +37,7 @@ public class KanbanModule extends AbstractModulePage {
     };
 
     init {
+        println("------------In KanbanModule init");
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
@@ -47,7 +49,7 @@ public class KanbanModule extends AbstractModulePage {
             //animate: bind model.animateLayouts
             animate: false
             spacing: 6
-            content: storyViews[s|s.visible]
+            content: bind storyViews[s|s.visible]
         }
     }
 
