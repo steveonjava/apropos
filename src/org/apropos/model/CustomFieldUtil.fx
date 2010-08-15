@@ -39,6 +39,8 @@ import javafx.io.http.HttpHeader;
  * @author Jim Weaver
  */
 public class CustomFieldUtil {
+    package var model = RallyModel.instance;
+
     postinit {
         retrieveValidValues();
     }
@@ -51,7 +53,7 @@ public class CustomFieldUtil {
     public-init var username:String;
     public-init var password:String;
 
-    public-read var done:Boolean;
+    //public-read var done:Boolean;
 
     var url:String;
     var httpRequest:HttpRequest;
@@ -70,7 +72,7 @@ public class CustomFieldUtil {
                 onEvent: function(e:Event) {
                     if (e.type == PullParser.END_VALUE) {
                         if (e.name != "null") {
-                            //println("inserting {e.text} into validvalues");
+                            println("inserting {e.text} into validvalues");
                             insert e.text into validValues;
                         }
                     }
@@ -90,12 +92,24 @@ public class CustomFieldUtil {
             location: url
             method: HttpRequest.GET
             onException: function(e) {
+                println("In HttpRequest#onException, stackTrace is:");
                 e.printStackTrace();
             }
             onInput: parseResponse
             onDone: function() {
                 println("HttpRequest is done, responseCode:{httpRequest.responseCode}");
-                done = true;
+                //TODO: Reconsider best way of doing this.  Former way didn't work on Mac w/Java 1.5
+                if (customFieldName == "RoadmapKanbanState") {
+                    model.roadmapKanbanStatesLoaded = true;
+                }
+                else if (customFieldName == "RoadmapRelease") {
+                    model.roadmapReleasesLoaded = true;
+                }
+
+                //done = true;
+            }
+            onError: function(is:InputStream) {
+                println("In HttpRequest#onException, InputStream is:{is}");
             }
         };
         httpRequest.start();
