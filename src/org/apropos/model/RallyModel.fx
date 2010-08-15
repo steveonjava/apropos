@@ -45,7 +45,7 @@ import org.apache.axis.AxisFault;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.27";
+public def APROPOS_VERSION = "0.8.28";
 
 public var readOnly:Boolean;
 
@@ -133,7 +133,6 @@ public class RallyModel extends XObject {
         if (startLoading) {
             loadReleases();
             loadOwners();
-            processingLogin = false;
         }
     }
 
@@ -190,29 +189,13 @@ public class RallyModel extends XObject {
             s.containerBefore = stages[indexof s - 1];
             s.containerAfter = stages[indexof s + 1];
         }
+        processingLogin = false;
     }
 
     function loadOwners() {
         owners = for (ownerName in ownerNames) {
             def results = rallyService.query(null, mainProject, false, false, "User", "(EmailAddress = \"{ownerName}\")", null, true, 0, 100).getResults();
             if (sizeof results == 0) null else results[0] as User;
-        }
-        // hack to login for image retrieval
-        Image {url: "{server}slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
-        Image {url: "{server}slm/j_spring_security_check?j_username={login.userName}&j_password={login.password}"}
-        myImage = Image {
-            width: 70
-            height: 70
-            preserveRatio: true
-            url: "{server}slm/profile/viewThumbnailImage.sp?tSize=200&uid={myUser.getObjectID()}"
-        }
-        ownerImages = for (owner in owners) {
-            Image {
-                width: 70
-                height: 70
-                preserveRatio: true
-                url: "{server}slm/profile/viewThumbnailImage.sp?tSize=200&uid={owner.getObjectID()}"
-            }
         }
     }
 
