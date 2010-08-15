@@ -84,9 +84,7 @@ public class Release extends StoryContainer {
         model.waiting++;
         XWorker {
             inBackground: function() {
-                //println("In loadStories, roadmapRelease:{roadmapRelease}");
                 model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
-                //model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{name}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;
@@ -104,15 +102,12 @@ public class Release extends StoryContainer {
 
                     def newStories = for (domainObject in results) {
                         def hierarchicalRequirement = domainObject as HierarchicalRequirement;
-                        //def ownerDisplayName = model.getOwnerDisplayName(hierarchicalRequirement.getOwner().getEmailAddress());
                         Story {
                            hierarchicalRequirement: hierarchicalRequirement
-                           //ownerDisplayName: ownerDisplayName
                         };
                     }
                     insert newStories into stories;
                     for (story in newStories) {
-                        //println("New story:{story.name}");
                         def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
                         if (insertionPoint < 0) {
                             insert story.inPackage before model.packageNames[-insertionPoint - 1];

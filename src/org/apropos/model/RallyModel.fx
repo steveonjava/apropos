@@ -66,8 +66,11 @@ public class RallyModel extends XObject {
     public var processingLogin:Boolean = false;
     public var showInDollars = false;
 
-    //public-init var releasePlanNames = ["Q3 2010", "Q4 2010", "Q1 2011", "Q2 2011"];
-    public-init var releasePlanNames:String[];
+    var kanbanStatesCFU:CustomFieldUtil;
+    public-read var stageNames = bind kanbanStatesCFU.validValues;
+
+    var releasesCFU:CustomFieldUtil;
+    public-read var releasePlanNames = bind releasesCFU.validValues;
 
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
@@ -83,10 +86,6 @@ public class RallyModel extends XObject {
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10"];
-
-    //public-init var stageNames = ["Propose", "Backlog", "Schedule", "Develop", "Deploy", "Enable", "Adopt", "Validate"];
-    public-init var stageNames:String[];
-
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 15.0, 15.0, 15.0, 0.0, 12.0, 12.0, 0.0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
@@ -94,7 +93,6 @@ public class RallyModel extends XObject {
     public-init var actualToCostRatio = 66.5;
     public-read var rallyService:RallyService;
     public var backlog:Backlog;
-    //public-init var releaseNames = ["Internal Release 2010Q3", "Internal Release 2010Q4", "Internal Release 2011Q1", "Internal Release 2011Q2"];
     public var releases:Release[];
     public var stages:Stage[];
 
@@ -123,7 +121,7 @@ public class RallyModel extends XObject {
         packageNames[selectedPackageIndex - 1];
     }
 
-    public var mainProjectName; // = if (community) "" else if (show) "Online Store" else "Product Dev";
+    public var mainProjectName;
     public-read var mainProject:Project;
     public var waiting = 0;
 
@@ -133,7 +131,6 @@ public class RallyModel extends XObject {
     package var roadmapReleasesLoaded = false;
     def startLoading:Boolean = bind (roadmapKanbanStatesLoaded and roadmapReleasesLoaded) on replace {
         if (startLoading) {
-            println("calling loadReleases() and loadOwners()");
             loadReleases();
             loadOwners();
             processingLogin = false;
@@ -159,49 +156,29 @@ public class RallyModel extends XObject {
     public function doLogin():Void {
         try {
             processingLogin = true;
-
             createService();
- 
             loggedIn = true;
-
-            println("Attempting to load RoadmapKanbanState valid values");
-            var cfuA:CustomFieldUtil = CustomFieldUtil {
+            kanbanStatesCFU = CustomFieldUtil {
                 customFieldName: "RoadmapKanbanState"
                 username: login.userName
                 password: login.password
             };
-            def roadmapKanbanStates = bind cfuA.validValues on replace {
-                stageNames = roadmapKanbanStates;
-            };
-
-            println("Attempting to load RoadmapRelease valid values");
-            var cfuB:CustomFieldUtil = CustomFieldUtil {
+            releasesCFU = CustomFieldUtil {
                 customFieldName: "RoadmapRelease"
                 username: login.userName
                 password: login.password
             };
-            def roadmapReleases = bind cfuB.validValues on replace {
-                releasePlanNames = roadmapReleases;
-            };
-
         } catch (e:AxisFault) {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password and invoke RoadmapPlanner again.");
             FX.exit();
-        } finally {
-          //processingLogin = false;
         }
     }
 
     function loadReleases() {
-// todo - release fix
-//        def rallyReleases = rallyService.query(null, mainProject, false, false, "Release", null, null, true, 0, 100).getResults();
-//        def now = Calendar.getInstance();
         backlog = Backlog {model: this}
-//        releases = for (r in rallyReleases where (r as com.rallydev.webservice.v1_19.domain.Release).getReleaseDate().<<after>>(now)) Release {release: r as com.rallydev.webservice.v1_19.domain.Release, model: this}
         releases = for (rpn in releasePlanNames) Release {model: this, name: rpn}
         for (r in releases) {
-//            if (r.release.getReleaseStartDate().<<before>>(now) and r.release.getReleaseDate().<<after>>(now)) currentRelease = r;
             r.containerBefore = releases[indexof r - 1];
             r.containerAfter = releases[indexof r + 1];
         }
@@ -335,22 +312,6 @@ public class RallyModel extends XObject {
             println("Unable to login user");
             Alert.inform("Unable to login user");
         }
-
-        // todo - need to create a project selector dialog
-// TODO: Remove this commented logic when appropriate
-//        def projects = rallyService.query(null, "Project", null, null, true, 0, 200).getResults();
-//        for (project in projects) {
-//            def p = project as Project;
-//            if (p.getName() == mainProjectName) {
-//                mainProject = p;
-//                println("Found mainProjectName:{mainProjectName}");
-//            }
-//        }
-//        mainProject = myUserProfile.getDefaultProject();
-//        if (mainProject == null) {
-//            mainProject = projects[0] as Project;
-//        }
-//        mainProjectName = mainProject.getName();
     }
 
     public bound function convertEstimate(estimate:Double):String {

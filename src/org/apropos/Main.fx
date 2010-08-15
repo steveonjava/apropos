@@ -81,4 +81,3 @@ stage = Stage {
 println("Current runtime environment:");
 println("- javafx.version:{FX.getProperty("javafx.version")}");
 println("- javafx.java.version:{FX.getProperty("javafx.java.version")}");
-
