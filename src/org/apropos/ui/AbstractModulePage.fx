@@ -43,14 +43,11 @@ import org.jfxtras.scene.layout.XVBox;
 public abstract class AbstractModulePage extends XCustomNode {
     protected def model = RallyModel.instance;
 
-
     public var pageToolBar:PageToolBar = PageToolBar {leftNodes: Button{text:"Hello"}};
     public var pageContent:Node;
     public var pageFooter:PageFooter = PageFooter{};
 
-    public function initPage():Void {
-        println("In initPage()");
-    };
+    public abstract function initPage():Void;
 
     override function create() {
         XStack {

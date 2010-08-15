@@ -47,7 +47,7 @@ public class CustomFieldUtil {
 
     public-init var customFieldName:String on replace {
         var lowerCaseName = customFieldName.toLowerCase();
-        url = "https://rally1.rallydev.com/slm/webservice/current/defect/{lowerCaseName}/allowedvalues.js"
+        url = "{RallyModel.server}slm/webservice/current/defect/{lowerCaseName}/allowedvalues.js"
     }
 
     public-init var username:String;
@@ -72,7 +72,6 @@ public class CustomFieldUtil {
                 onEvent: function(e:Event) {
                     if (e.type == PullParser.END_VALUE) {
                         if (e.name != "null") {
-                            println("inserting {e.text} into validvalues");
                             insert e.text into validValues;
                         }
                     }
@@ -97,7 +96,6 @@ public class CustomFieldUtil {
             }
             onInput: parseResponse
             onDone: function() {
-                println("HttpRequest is done, responseCode:{httpRequest.responseCode}");
                 //TODO: Reconsider best way of doing this.  Former way didn't work on Mac w/Java 1.5
                 if (customFieldName == "RoadmapKanbanState") {
                     model.roadmapKanbanStatesLoaded = true;
@@ -105,8 +103,6 @@ public class CustomFieldUtil {
                 else if (customFieldName == "RoadmapRelease") {
                     model.roadmapReleasesLoaded = true;
                 }
-
-                //done = true;
             }
             onError: function(is:InputStream) {
                 println("In HttpRequest#onException, InputStream is:{is}");
