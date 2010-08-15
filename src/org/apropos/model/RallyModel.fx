@@ -45,7 +45,7 @@ import org.apache.axis.AxisFault;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.26";
+public def APROPOS_VERSION = "0.8.27";
 
 public var readOnly:Boolean;
 
@@ -127,6 +127,21 @@ public class RallyModel extends XObject {
     public-read var mainProject:Project;
     public var waiting = 0;
 
+    // Trigger loadReleases() and loadOwners() after the valid values for RoadmapKanbanState and
+    // RoadmapRelease have been loaded
+    package var roadmapKanbanStatesLoaded = false;
+    package var roadmapReleasesLoaded = false;
+    def startLoading:Boolean = bind (roadmapKanbanStatesLoaded and roadmapReleasesLoaded) on replace {
+        if (startLoading) {
+            println("calling loadReleases() and loadOwners()");
+            loadReleases();
+            loadOwners();
+            processingLogin = false;
+        }
+    }
+
+
+
     bound function filtersOn() {
         return selectedAllocation != null or selectedReleaseName != null or selectedOwner != null;
     }
@@ -149,15 +164,7 @@ public class RallyModel extends XObject {
  
             loggedIn = true;
 
-            def startLoading:Boolean = bind cfuA.done and cfuB.done on replace {
-                if (startLoading) {
-                    println("calling loadReleases() and loadOwners()");
-                    loadReleases();
-                    loadOwners();
-                    processingLogin = false;
-                }
-            }
-
+            println("Attempting to load RoadmapKanbanState valid values");
             var cfuA:CustomFieldUtil = CustomFieldUtil {
                 customFieldName: "RoadmapKanbanState"
                 username: login.userName
@@ -167,6 +174,7 @@ public class RallyModel extends XObject {
                 stageNames = roadmapKanbanStates;
             };
 
+            println("Attempting to load RoadmapRelease valid values");
             var cfuB:CustomFieldUtil = CustomFieldUtil {
                 customFieldName: "RoadmapRelease"
                 username: login.userName
@@ -178,7 +186,8 @@ public class RallyModel extends XObject {
 
         } catch (e:AxisFault) {
             processingLogin = false;
-            Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
+            Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password and invoke RoadmapPlanner again.");
+            FX.exit();
         } finally {
           //processingLogin = false;
         }
