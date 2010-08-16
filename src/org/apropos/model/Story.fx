@@ -29,22 +29,31 @@ package org.apropos.model;
 
 import java.lang.Comparable;
 import java.lang.StringBuilder;
-import javafx.util.Math;
-import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.domain.QueryResult;
-import org.apropos.model.RallyModel;
-import org.jfxtras.async.XWorker;
 import org.jfxtras.lang.XObject;
-import org.jfxtras.util.BrowserUtil;
-import org.jfxtras.util.SequenceUtil;
 import com.rallydev.webservice.v1_19.domain.User;
 import java.math.BigDecimal;
+import com.rallydev.webservice.v1_19.domain.Project;
+import java.lang.Boolean;
+import org.apropos.model.RallyModel;
+import org.apropos.model.Story;
+import javafx.util.Math;
+import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.domain.OperationResult;
+import com.rallydev.webservice.v1_19.domain.QueryResult;
+import java.lang.Object;
+import java.lang.String;
+import java.lang.Void;
+import org.apropos.model.Backlog;
+import org.jfxtras.async.XWorker;
+import org.jfxtras.util.BrowserUtil;
+import org.jfxtras.util.SequenceUtil;
 
 /**
  * @author Stephen Chin
  * @author Keith Combs
  * TODO: Ascertain the best way to retrieve, and hold in an instance variable,
  *       the owner's display name
+ * TODO: Consider caching Project instances, as they need to be read explicitly
  */
 public class Story extends XObject, Comparable {
     def model = bind RallyModel.instance;
@@ -105,6 +114,15 @@ public class Story extends XObject, Comparable {
         ownerDisplayName = ownerName;
     };
     public var ownerDisplayName:String;
+
+    public var project:Project on replace {
+        if (initialized) {
+            hierarchicalRequirement.setProject(project);
+            update();
+        }
+    }
+    public var projectName:String = bind project.getName();
+
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
     public var rank:BigDecimal on replace {
@@ -251,6 +269,16 @@ public class Story extends XObject, Comparable {
         release = model.getRelease(hierarchicalRequirement.getRoadmapRelease());
         rank = hierarchicalRequirement.getRank();
         owner = hierarchicalRequirement.getOwner();
+
+        def proj:Project = hierarchicalRequirement.getProject();
+        if (proj instanceof Project) {
+            project = model.rallyService.read(proj) as Project;
+        }
+        else {
+            println("proj:{proj}");
+        }
+
+
         inPackage = hierarchicalRequirement.get_package();
         if (inPackage == "") inPackage = "<missing package>";
         var desc = description.toLowerCase();
