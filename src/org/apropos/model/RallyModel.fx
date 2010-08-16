@@ -41,6 +41,8 @@ import javafx.stage.Alert;
 import com.rallydev.webservice.v1_19.domain.OperationResult;
 import org.apache.axis.AxisFault;
 import javafx.util.Sequences;
+import com.rallydev.webservice.v1_19.domain.Workspace;
+import com.rallydev.webservice.v1_19.domain.Subscription;
 
 /**
  * @author Stephen Chin
@@ -98,8 +100,15 @@ public class RallyModel extends XObject {
     public var stages:Stage[];
 
     public-read var projects:Project[];
+    public-read var workspaces:Workspace[];
 
     public var epicNames:String[];
+
+    public-read var defaultWorkspace:Workspace;
+    public var selectedWorkspaceIndex:Integer;
+    public var selectedWorkspaceName:String = bind if (selectedWorkspaceIndex == 0) null else {
+        workspaces[selectedWorkspaceIndex - 1].getName();
+    }
 
     public var allocationNames:String[];
     public var selectedAllocationIndex:Integer;
@@ -142,10 +151,9 @@ public class RallyModel extends XObject {
             loadReleases();
             loadOwners();
             loadProjects();
+            loadWorkspaces();
         }
     }
-
-
 
     bound function filtersOn() {
         return selectedAllocation != null or selectedReleaseName != null or selectedProjectName != null;
@@ -212,6 +220,19 @@ public class RallyModel extends XObject {
         insert mainProject into projects;
         getChildProjects(mainProject);
         projects = Sequences.sort(projects, new ProjectComparator()) as Project[];
+    }
+
+    function loadWorkspaces():Void {
+        delete workspaces;
+        var subscription = myUser.getSubscription();
+        subscription = rallyService.read(subscription) as Subscription;
+        workspaces = subscription.getWorkspaces();
+        for (workspace in workspaces) {
+            workspaces[indexof workspace] = rallyService.read(workspace) as Workspace;
+        }
+        workspaces = Sequences.sort(workspaces, new WorkspaceComparator()) as Workspace[];
+        println("workspaces:{for (workspace in workspaces) "{workspace.getName()}, "}");
+
     }
 
     function getChildProjects(project:Project):Project[] {
@@ -327,7 +348,10 @@ public class RallyModel extends XObject {
                 mainProject = rallyService.read(mainProject) as Project;
                 mainProjectName = mainProject.getName();
                 println("mainProjectName:{mainProjectName}");
-                println("myUserProfile.getDefaultWorkspace():{myUserProfile.getDefaultWorkspace()}");
+
+                defaultWorkspace = myUserProfile.getDefaultWorkspace();
+                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
+                println("defaultWorkspace.getName():{defaultWorkspace.getName()}");
             }
         }
         else {
