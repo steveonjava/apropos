@@ -37,10 +37,10 @@ public class KanbanModule extends AbstractModulePage {
         selectedIndex: bind model.selectedReleaseIndex with inverse
     };
 
-    def ownerFilter = Filter {
-        name: "Owner"
-        list: bind for (o in model.owners) o.getDisplayName()
-        selectedIndex: bind model.selectedOwnerIndex with inverse
+    def projectFilter = Filter {
+        name: "Team"
+        list: bind for (project in model.projects) project.getName()
+        selectedIndex: bind model.selectedProjectIndex with inverse
     };
 
     init {
@@ -48,7 +48,7 @@ public class KanbanModule extends AbstractModulePage {
             leftNodes: [
                 allocationFilter,
                 releaseFilter,
-                ownerFilter
+                projectFilter
             ]
             rightNodes: CostSelectionNode {}
         };
@@ -62,6 +62,6 @@ public class KanbanModule extends AbstractModulePage {
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
         model.selectedReleaseIndex = 0;
-        ownerFilter.selectedIndex = 0;
+        projectFilter.selectedIndex = 0;
     };
 }

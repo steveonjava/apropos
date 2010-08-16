@@ -40,6 +40,7 @@ import org.jfxtras.util.SequenceUtil;
 import javafx.stage.Alert;
 import com.rallydev.webservice.v1_19.domain.OperationResult;
 import org.apache.axis.AxisFault;
+import javafx.util.Sequences;
 
 /**
  * @author Stephen Chin
@@ -117,6 +118,11 @@ public class RallyModel extends XObject {
         owners[selectedOwnerIndex - 1].getDisplayName();
     }
 
+    public var selectedProjectIndex:Integer;
+    public var selectedProjectName:String = bind if (selectedProjectIndex == 0) null else {
+        projects[selectedProjectIndex - 1].getName();
+    }
+
     //TODO: Remove the concept of packages, in favor of Portfolio Allocations
     public var packageNames:String[];
     public var selectedPackageIndex:Integer;
@@ -143,13 +149,15 @@ public class RallyModel extends XObject {
 
 
     bound function filtersOn() {
-        return selectedAllocation != null or selectedReleaseName != null or selectedOwner != null;
+        //return selectedAllocation != null or selectedReleaseName != null or selectedOwner != null;
+        return selectedAllocation != null or selectedReleaseName != null or selectedProjectName != null;
     }
 
     bound function selected(s:Story) {
         (selectedAllocation == null or s.roadmapAllocation == selectedAllocation) and
         (selectedReleaseName == null or s.release.name == selectedReleaseName) and
-        (selectedOwner == null or s.ownerName == selectedOwner)
+        //(selectedOwner == null or s.ownerName == selectedOwner)
+        (selectedProjectName == null or s.projectName == selectedProjectName)
     }
 
     public bound function filter(stories:Story[]) {
@@ -207,6 +215,7 @@ public class RallyModel extends XObject {
         delete projects;
         insert mainProject into projects;
         getChildProjects(mainProject);
+        projects = Sequences.sort(projects, new ProjectComparator()) as Project[];
     }
 
     function getChildProjects(project:Project):Project[] {
