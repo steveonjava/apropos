@@ -85,16 +85,6 @@ public class Story extends XObject, Comparable {
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
-            //TODO: Determine if the commented lines are needed in light of the rules in the document in S19350
-//            if (release instanceof Backlog and stage == "Schedule") {
-//                stage = "Backlog"
-//            }
-//            else if ((stage == "Propose" or stage == "Backlog") and (release.name != "")) {
-//                stage = "Schedule"
-//            }
-//            else if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
-//                stage = "Schedule"
-//            }
             hierarchicalRequirement.setRoadmapRelease(release.roadmapRelease);
             update();
             if (release instanceof Backlog) {
@@ -297,9 +287,6 @@ public class Story extends XObject, Comparable {
         if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
             stage = "Schedule";
         }
-//        if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
-//            stage = "Schedule";
-//        }
         if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
             stage = "Develop";
         }

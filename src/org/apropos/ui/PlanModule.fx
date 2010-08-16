@@ -67,8 +67,6 @@ public class PlanModule extends AbstractModulePage {
 
     function calculateOwnerTotals() {
         ownerTotals = for (project in model.projects) {
-            //SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName() and story.drafted) story.estimate)
-            // TODO: Is this a correct implementation of S19374?
             SequenceUtil.sum(for (story in stories where story.projectName == project.getName()) story.estimate)
         }
     }
@@ -195,10 +193,6 @@ public class PlanModule extends AbstractModulePage {
                     text: "Own Selected Feature"
                     action: function() {
                         def story = filteredStories[table.selectedRow];
-//                        if (story.owner != owner) {
-//                            story.owner = owner;
-//                            story.ownerDisplayName = owner.getDisplayName();
-//                        }
                         if (story.project != project) {
                             story.project = project;
                             //story.projectName = project.getName();
@@ -248,7 +242,6 @@ public class PlanModule extends AbstractModulePage {
             XTableColumn {
                 displayName: "Team"
                 prefWidth: 100
-                //id: "ownerDisplayName"
                 id: "projectName"
                 renderer: TextRenderer {}
             }
