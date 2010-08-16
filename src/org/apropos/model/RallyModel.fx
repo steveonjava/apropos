@@ -170,7 +170,7 @@ public class RallyModel extends XObject {
         } catch (e:AxisFault) {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password and invoke RoadmapPlanner again.");
-            FX.exit();
+            //FX.exit();
         }
     }
 
