@@ -61,6 +61,15 @@ import org.jfxtras.scene.shape.ResizableRectangle;
 public class AproposUI extends XCustomNode {
     def model = RallyModel.instance;
 
+    var workspaceChoice:RallyPicker = RallyPicker {
+        rowWidth: 160
+        rowHeight: 20
+        items: bind for (workspace in model.workspaces) "{workspace.getName()}"
+        onIndexChange: function(index) {
+            model.selectedWorkspaceIndex = index;
+        }
+    };
+
     def toggleGroup = ToggleGroup {}
     def buttonBar = XStack {
         content: [
@@ -97,6 +106,7 @@ public class AproposUI extends XCustomNode {
                         nodeVPos: VPos.TOP
                         spacing: 5
                         content: [
+                            workspaceChoice,
                             Label {
                                 id: "app-header-title"
                                 layoutInfo: XLayoutInfo {
