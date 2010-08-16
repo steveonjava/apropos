@@ -96,9 +96,8 @@ public class RallyModel extends XObject {
     public var backlog:Backlog;
     public var releases:Release[];
     public var stages:Stage[];
-    public-read var projects:Project[] on replace {
-        println("projects is now {for (project in projects) "{project.getName()},"}");
-    };
+
+    public-read var projects:Project[];
 
     public var epicNames:String[];
 
@@ -149,14 +148,12 @@ public class RallyModel extends XObject {
 
 
     bound function filtersOn() {
-        //return selectedAllocation != null or selectedReleaseName != null or selectedOwner != null;
         return selectedAllocation != null or selectedReleaseName != null or selectedProjectName != null;
     }
 
     bound function selected(s:Story) {
         (selectedAllocation == null or s.roadmapAllocation == selectedAllocation) and
         (selectedReleaseName == null or s.release.name == selectedReleaseName) and
-        //(selectedOwner == null or s.ownerName == selectedOwner)
         (selectedProjectName == null or s.projectName == selectedProjectName)
     }
 
@@ -181,8 +178,7 @@ public class RallyModel extends XObject {
             };
         } catch (e:AxisFault) {
             processingLogin = false;
-            Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password and invoke RoadmapPlanner again.");
-            //FX.exit();
+            Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
         }
     }
 
@@ -266,8 +262,6 @@ public class RallyModel extends XObject {
 
     public bound function overSubLimit(stageIndex:Integer):Boolean {
         return false;
-//        def packagesOver = for (p in packageNames where overThemeLimit(stageIndex, indexof p, p)) p;
-//        return sizeof packagesOver > 0;
     }
 
 // causes a big performance issues - need to investigate further...
