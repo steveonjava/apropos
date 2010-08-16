@@ -95,6 +95,9 @@ public class RallyModel extends XObject {
     public var backlog:Backlog;
     public var releases:Release[];
     public var stages:Stage[];
+    public-read var projects:Project[] on replace {
+        println("projects is now {for (project in projects) "{project.getName()},"}");
+    };
 
     public var epicNames:String[];
 
@@ -133,6 +136,7 @@ public class RallyModel extends XObject {
         if (startLoading) {
             loadReleases();
             loadOwners();
+            loadProjects();
         }
     }
 
@@ -196,6 +200,38 @@ public class RallyModel extends XObject {
         owners = for (ownerName in ownerNames) {
             def results = rallyService.query(null, mainProject, false, false, "User", "(EmailAddress = \"{ownerName}\")", null, true, 0, 100).getResults();
             if (sizeof results == 0) null else results[0] as User;
+        }
+    }
+
+    function loadProjects():Void {
+        delete projects;
+        insert mainProject into projects;
+        getChildProjects(mainProject);
+    }
+
+    function getChildProjects(project:Project):Project[] {
+        println("------------------------In getChildProjects(), project:{project.getName()}, state:{project.getState()}");
+        // Only consider open projects
+        if (project.getState() == "Open") {
+            var children:Project[] = project.getChildren();
+            if (sizeof children > 0) {
+                for (child in children) {
+                    def proj = rallyService.read(child) as Project;
+                    // Only insert projects that are open, TODO: and have no open child projects,
+                    println("proj.getName():{proj.getName()}, proj.getState():{proj.getState()}");
+                    if (proj.getState() == "Open") {
+                         insert proj into projects;
+                    }
+                    getChildProjects(proj);
+                }
+
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
         }
     }
 
