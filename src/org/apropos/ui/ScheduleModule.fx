@@ -58,11 +58,11 @@ public class ScheduleModule extends AbstractModulePage {
         selectedIndex: bind selectedReleaseIndex with inverse
     };
 
-    def ownerFilter = Filter {
-        name: "Owner"
-        list: bind for (o in model.owners) o.getDisplayName()
-        selectedIndex: bind model.selectedOwnerIndex with inverse
-    }
+    def projectFilter = Filter {
+        name: "Team"
+        list: bind for (project in model.projects) project.getName()
+        selectedIndex: bind model.selectedProjectIndex with inverse
+    };
 
     def table:XTableView = XTableView {
         rowType: Story {}.getJFXClass()
@@ -123,13 +123,13 @@ public class ScheduleModule extends AbstractModulePage {
 
 
     init {
-        model.selectedAllocationIndex = 0;
-        model.selectedOwnerIndex = 0;
+//        model.selectedAllocationIndex = 0;
+//        model.selectedOwnerIndex = 0;
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
                 releaseFilter,
-                ownerFilter
+                projectFilter
             ]
             rightNodes: CostSelectionNode {}
         };
@@ -138,7 +138,8 @@ public class ScheduleModule extends AbstractModulePage {
 
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
+        model.selectedReleaseIndex = 0;
         releaseFilter.selectedIndex = 0;
-        ownerFilter.selectedIndex = 0;
+        projectFilter.selectedIndex = 0;
     };
 }

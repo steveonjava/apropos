@@ -46,7 +46,7 @@ import javafx.util.Sequences;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.28";
+public def APROPOS_VERSION = "0.8.29";
 
 public var readOnly:Boolean;
 

@@ -51,6 +51,7 @@ import javafx.geometry.Insets;
 
 /**
  * @author Stephen Chin
+ * TODO: Change rest of owner verbage to project (or team) verbage.
  */
 public class PlanModule extends AbstractModulePage {
     var stories:Story[] = bind model.releases[selectedReleaseIndex].stories;
@@ -65,10 +66,10 @@ public class PlanModule extends AbstractModulePage {
     var ownerTotals:Double[];
 
     function calculateOwnerTotals() {
-        ownerTotals = for (owner in model.owners) {
+        ownerTotals = for (project in model.projects) {
             //SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName() and story.drafted) story.estimate)
             // TODO: Is this a correct implementation of S19374?
-            SequenceUtil.sum(for (story in stories where story.ownerName == owner.getRefObjectName()) story.estimate)
+            SequenceUtil.sum(for (story in stories where story.projectName == project.getName()) story.estimate)
         }
     }
 
@@ -91,10 +92,10 @@ public class PlanModule extends AbstractModulePage {
         selectedIndex: bind selectedReleaseIndex with inverse
     };
 
-    def ownerFilter = Filter {
-        name: "Owner"
-        list: bind for (o in model.owners) o.getDisplayName()
-        selectedIndex: bind model.selectedOwnerIndex with inverse
+    def projectFilter = Filter {
+        name: "Team"
+        list: bind for (project in model.projects) project.getName()
+        selectedIndex: bind model.selectedProjectIndex with inverse
     };
 
     // TODO: Decide whether to remove this code, as these buttons are (at least
@@ -135,7 +136,7 @@ public class PlanModule extends AbstractModulePage {
         rows:
             row([
                 Label {
-                    text: "Owner";
+                    text: "Team";
                     layoutInfo: LayoutInfo {
                         width: 130
                     }
@@ -159,19 +160,19 @@ public class PlanModule extends AbstractModulePage {
     def owners:XGrid = XGrid {
         hgap: 10
         vgap: 10
-        rows: bind for (owner in model.owners) {
-            var target:String = model.initialTargets[indexof owner];
+        rows: bind for (project in model.projects) {
+            var target:String = model.initialTargets[indexof project];
             row([
                 Label {
                     styleClass: "empasized-text"
-                    text: owner.getDisplayName(); 
+                    text: project.getName();
                     layoutInfo: LayoutInfo {
                         width: 160
                     }
                 },
                 Label {
-                    text: bind "{ownerTotals[indexof owner]}"
-                    textFill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof owner]) ColorUtil.lighter(Color.RED, .3) else Color.BLACK
+                    text: bind "{ownerTotals[indexof project]}"
+                    textFill: bind if (target != "" and Double.valueOf(target) < ownerTotals[indexof project]) ColorUtil.lighter(Color.RED, .3) else Color.BLACK
                     layoutInfo: LayoutInfo {
                         width: 80
                     }
@@ -181,7 +182,7 @@ public class PlanModule extends AbstractModulePage {
                     columns: 5
                 },
                 ComplianceBarNode {
-                    numerator: bind ownerTotals[indexof owner]
+                    numerator: bind ownerTotals[indexof project]
                     denominator: bind if (target != "") Double.parseDouble(target)
                                       else 0
                     layoutInfo: XLayoutInfo {
@@ -194,9 +195,13 @@ public class PlanModule extends AbstractModulePage {
                     text: "Own Selected Feature"
                     action: function() {
                         def story = filteredStories[table.selectedRow];
-                        if (story.owner != owner) {
-                            story.owner = owner;
-                            story.ownerDisplayName = owner.getDisplayName();
+//                        if (story.owner != owner) {
+//                            story.owner = owner;
+//                            story.ownerDisplayName = owner.getDisplayName();
+//                        }
+                        if (story.project != project) {
+                            story.project = project;
+                            //story.projectName = project.getName();
                         }
                         story.drafted = true;
                         calculateOwnerTotals();
@@ -241,9 +246,10 @@ public class PlanModule extends AbstractModulePage {
                 renderer: TextRenderer {}
             }
             XTableColumn {
-                displayName: "Owner"
+                displayName: "Team"
                 prefWidth: 100
-                id: "ownerDisplayName"
+                //id: "ownerDisplayName"
+                id: "projectName"
                 renderer: TextRenderer {}
             }
             XTableColumn {
@@ -257,13 +263,13 @@ public class PlanModule extends AbstractModulePage {
 
     init {
         model.selectedAllocationIndex = 0;
-        model.selectedOwnerIndex = 0;
+        model.selectedProjectIndex = 0;
         calculateOwnerTotals();
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
                 releaseFilter,
-                ownerFilter
+                projectFilter
             ]
             rightNodes: CostSelectionNode {}
         };
@@ -305,7 +311,8 @@ public class PlanModule extends AbstractModulePage {
 
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
+        model.selectedReleaseIndex = 0;
         releaseFilter.selectedIndex = 0;
-        ownerFilter.selectedIndex = 0;
+        projectFilter.selectedIndex = 0;
     };
 }
