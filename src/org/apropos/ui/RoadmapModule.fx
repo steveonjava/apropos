@@ -44,19 +44,17 @@ public class RoadmapModule extends AbstractModulePage {
         selectedIndex: bind model.selectedAllocationIndex with inverse
     }
 
-    def ownerFilter = Filter {
-        name: "Owner"
-        list: bind for (o in model.owners) o.getDisplayName()
-        selectedIndex: bind model.selectedOwnerIndex with inverse
-    }
+    def projectFilter = Filter {
+        name: "Team"
+        list: bind for (project in model.projects) project.getName()
+        selectedIndex: bind model.selectedProjectIndex with inverse
+    };
 
     init {
-        allocationFilter.selectedIndex = 0;
-        ownerFilter.selectedIndex = 0;
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,
-                ownerFilter
+                projectFilter
             ]
             rightNodes: CostSelectionNode {}
         }
@@ -71,6 +69,6 @@ public class RoadmapModule extends AbstractModulePage {
     public override function initPage():Void {
         allocationFilter.selectedIndex = 0;
         model.selectedReleaseIndex = 0;
-        ownerFilter.selectedIndex = 0;
+        projectFilter.selectedIndex = 0;
     };
 }

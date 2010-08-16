@@ -274,10 +274,6 @@ public class Story extends XObject, Comparable {
         if (proj instanceof Project) {
             project = model.rallyService.read(proj) as Project;
         }
-        else {
-            println("proj:{proj}");
-        }
-
 
         inPackage = hierarchicalRequirement.get_package();
         if (inPackage == "") inPackage = "<missing package>";
