@@ -78,7 +78,7 @@ public class LoginScreen extends XCustomNode {
                                 model: model.login
                                 action: function() {
                                     model.processingLogin = true;
-                                    timeline.play();
+                                    timeline.playFromStart();
                                 }
                                 layoutInfo: LayoutInfo {width: 250, height: 60}
                             },
@@ -86,7 +86,7 @@ public class LoginScreen extends XCustomNode {
                                 text: "Login"
                                 action: function() {
                                     model.processingLogin = true;
-                                    timeline.play();
+                                    timeline.playFromStart();
                                 }
                                 layoutInfo: LayoutInfo {hpos: HPos.RIGHT}
                             }

@@ -50,8 +50,8 @@ stage = Stage {
     // 1366 x 768 for the 26" monitor and either 1366 x 768 or 1920 x 1080 for the 42".
     // 1280 x 800 for MacBook Air (use 1280 x 700)
     // 1024 x 768 for a projector (use 1000 x 700)
-    override var width = 1010 on replace {
-      if (width < 1010) width = 1010;
+    override var width = 1024 on replace {
+      if (width < 1024) width = 1024;
     }
     override var height = 700 on replace {
       if (height < 700) height = 700;
