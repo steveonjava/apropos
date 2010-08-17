@@ -60,8 +60,10 @@ def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme
 def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
+package def projectsManager:ProjectsManager = ProjectsManager {};
 
 public class RallyModel extends XObject {
+
     var warned = false;
     public var animateLayouts:Boolean = false;
     public var login = Login {userName: GUEST_USER, password: GUEST_PASSWORD};
@@ -246,14 +248,16 @@ public class RallyModel extends XObject {
             myUserProfile = rallyService.read(myUserProfile) as UserProfile;
             mainProject = myUserProfile.getDefaultProject();
 
-            var proj = rallyService.read(mainProject);
+            //var proj = rallyService.read(mainProject);
+            var proj = projectsManager.read(mainProject);
             if (proj instanceof OperationResult) {
                 def operRes = proj as OperationResult;
                 Alert.inform("No default project set for user.  Please set a default project in Rally");
                 println("operRes.getErrors() = {operRes.getErrors()}");
             }
             else {
-                defaultProject = rallyService.read(mainProject) as Project;
+                //defaultProject = rallyService.read(mainProject) as Project;
+                defaultProject = projectsManager.read(mainProject) as Project;
                 mainProject = defaultProject;
                 mainProjectName = mainProject.getName();
                 println("mainProjectName:{mainProjectName}");
@@ -307,7 +311,8 @@ public class RallyModel extends XObject {
         for (project in projectsInWorkspace) {
             // TODO: Change to use caching mechanism after inplementing REST, if
             //       necessary.
-            def proj = rallyService.read(project) as Project;
+            //def proj = rallyService.read(project) as Project;
+            def proj = projectsManager.read(project) as Project;
             if (proj.getState() == "Open") {
                 println("Inserting {proj} into openProjectsInWorkspace");
                 insert proj into openProjectsInWorkspace;
@@ -338,7 +343,8 @@ public class RallyModel extends XObject {
             var children:Project[] = project.getChildren();
             if (sizeof children > 0) {
                 for (child in children) {
-                    def proj = rallyService.read(child) as Project;
+                    //def proj = rallyService.read(child) as Project;
+                    def proj = projectsManager.read(child) as Project;
                     // Only insert projects that are open, TODO: and have no open child projects,
                     println("proj.getName():{proj.getName()}, proj.getState():{proj.getState()}");
                     if (proj.getState() == "Open") {
