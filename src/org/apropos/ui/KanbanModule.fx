@@ -7,7 +7,6 @@
 package org.apropos.ui;
 
 import org.jfxtras.scene.layout.XHBox;
-import javafx.scene.Cursor;
 
 /**
  * @author Stephen Chin
@@ -39,8 +38,8 @@ public class KanbanModule extends AbstractModulePage {
 
     def projectFilter = Filter {
         name: "Team"
-        list: bind for (project in model.projects) project.getName()
-        selectedIndex: bind model.selectedProjectIndex with inverse
+        list: bind for (project in model.mainProjects) project.getName()
+        selectedIndex: bind model.selectedMainProjectsIndex with inverse
     };
 
     init {

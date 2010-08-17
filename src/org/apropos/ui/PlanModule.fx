@@ -66,7 +66,7 @@ public class PlanModule extends AbstractModulePage {
     var ownerTotals:Double[];
 
     function calculateOwnerTotals() {
-        ownerTotals = for (project in model.projects) {
+        ownerTotals = for (project in model.mainProjects) {
             SequenceUtil.sum(for (story in stories where story.projectName == project.getName()) story.estimate)
         }
     }
@@ -92,8 +92,8 @@ public class PlanModule extends AbstractModulePage {
 
     def projectFilter = Filter {
         name: "Team"
-        list: bind for (project in model.projects) project.getName()
-        selectedIndex: bind model.selectedProjectIndex with inverse
+        list: bind for (project in model.mainProjects) project.getName()
+        selectedIndex: bind model.selectedMainProjectsIndex with inverse
     };
 
     // TODO: Decide whether to remove this code, as these buttons are (at least
@@ -158,7 +158,7 @@ public class PlanModule extends AbstractModulePage {
     def owners:XGrid = XGrid {
         hgap: 10
         vgap: 10
-        rows: bind for (project in model.projects) {
+        rows: bind for (project in model.mainProjects) {
             var target:String = model.initialTargets[indexof project];
             row([
                 Label {
@@ -256,7 +256,7 @@ public class PlanModule extends AbstractModulePage {
 
     init {
         model.selectedAllocationIndex = 0;
-        model.selectedProjectIndex = 0;
+        model.selectedMainProjectsIndex = 0;
         calculateOwnerTotals();
         pageToolBar = PageToolBar {
             leftNodes: [

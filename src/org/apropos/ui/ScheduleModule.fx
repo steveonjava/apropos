@@ -60,8 +60,8 @@ public class ScheduleModule extends AbstractModulePage {
 
     def projectFilter = Filter {
         name: "Team"
-        list: bind for (project in model.projects) project.getName()
-        selectedIndex: bind model.selectedProjectIndex with inverse
+        list: bind for (project in model.mainProjects) project.getName()
+        selectedIndex: bind model.selectedMainProjectsIndex with inverse
     };
 
     def table:XTableView = XTableView {
@@ -123,8 +123,6 @@ public class ScheduleModule extends AbstractModulePage {
 
 
     init {
-//        model.selectedAllocationIndex = 0;
-//        model.selectedOwnerIndex = 0;
         pageToolBar = PageToolBar {
             leftNodes: [
                 allocationFilter,

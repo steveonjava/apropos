@@ -99,13 +99,29 @@ public class RallyModel extends XObject {
     public var releases:Release[];
     public var stages:Stage[];
 
-    public-read var projects:Project[];
+    /**
+     * A sequence of the open, leaf-node projects subordinate to, and
+     * including, the currently selected project.
+     */
+    public-read var mainProjects:Project[];
+
+    public var selectedMainProjectsIndex:Integer;
+    public var selectedMainProjectsName:String = bind if (selectedMainProjectsIndex == 0) null else {
+        mainProjects[selectedMainProjectsIndex - 1].getName();
+    }
+
     public-read var workspaces:Workspace[];
 
     public var epicNames:String[];
 
     public-read var defaultWorkspace:Workspace;
-    public var selectedWorkspaceIndex:Integer;
+    public var selectedWorkspaceIndex:Integer on replace {
+        // If the workspace changes, and the default project is not in the
+        // workspace (or there is no default project), then choose the first
+        // project in the workspace in alphabetical order (see business rules
+        // in S19520)
+
+    };
     public var selectedWorkspaceName:String = bind if (selectedWorkspaceIndex == 0) null else {
         workspaces[selectedWorkspaceIndex - 1].getName();
     }
@@ -124,11 +140,6 @@ public class RallyModel extends XObject {
     public var selectedOwnerIndex:Integer;
     public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
         owners[selectedOwnerIndex - 1].getDisplayName();
-    }
-
-    public var selectedProjectIndex:Integer;
-    public var selectedProjectName:String = bind if (selectedProjectIndex == 0) null else {
-        projects[selectedProjectIndex - 1].getName();
     }
 
     //TODO: Remove the concept of packages, in favor of Portfolio Allocations
@@ -156,13 +167,13 @@ public class RallyModel extends XObject {
     }
 
     bound function filtersOn() {
-        return selectedAllocation != null or selectedReleaseName != null or selectedProjectName != null;
+        return selectedAllocation != null or selectedReleaseName != null or selectedMainProjectsName != null;
     }
 
     bound function selected(s:Story) {
         (selectedAllocation == null or s.roadmapAllocation == selectedAllocation) and
         (selectedReleaseName == null or s.release.name == selectedReleaseName) and
-        (selectedProjectName == null or s.projectName == selectedProjectName)
+        (selectedMainProjectsName == null or s.projectName == selectedMainProjectsName)
     }
 
     public bound function filter(stories:Story[]) {
@@ -216,10 +227,10 @@ public class RallyModel extends XObject {
     }
 
     function loadProjects():Void {
-        delete projects;
-        insert mainProject into projects;
+        delete mainProjects;
+        insert mainProject into mainProjects;
         getChildProjects(mainProject);
-        projects = Sequences.sort(projects, new ProjectComparator()) as Project[];
+        mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
     }
 
     function loadWorkspaces():Void {
@@ -232,6 +243,7 @@ public class RallyModel extends XObject {
         }
         workspaces = Sequences.sort(workspaces, new WorkspaceComparator()) as Workspace[];
         println("workspaces:{for (workspace in workspaces) "{workspace.getName()}, "}");
+        selectedWorkspaceIndex = Sequences.indexOf(workspaces, defaultWorkspace);
 
     }
 
@@ -246,7 +258,7 @@ public class RallyModel extends XObject {
                     // Only insert projects that are open, TODO: and have no open child projects,
                     println("proj.getName():{proj.getName()}, proj.getState():{proj.getState()}");
                     if (proj.getState() == "Open") {
-                         insert proj into projects;
+                         insert proj into mainProjects;
                     }
                     getChildProjects(proj);
                 }
