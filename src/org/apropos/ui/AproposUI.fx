@@ -61,6 +61,11 @@ import org.jfxtras.scene.shape.ResizableRectangle;
 public class AproposUI extends XCustomNode {
     def model = RallyModel.instance;
 
+    var selectedWorkspaceIndex:Integer = bind model.selectedWorkspaceIndex on replace {
+        if (workspaceChoice.selectedIndex != selectedWorkspaceIndex) {
+            workspaceChoice.select(selectedWorkspaceIndex);
+        }
+    };
     var workspaceChoice:RallyPicker = RallyPicker {
         rowWidth: 160
         rowHeight: 20

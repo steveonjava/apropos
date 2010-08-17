@@ -29,12 +29,10 @@
 
 import org.jfxtras.scene.XCustomNode;
 import javafx.scene.control.Label;
-import org.jfxtras.scene.control.XPicker;
 import org.jfxtras.scene.layout.XHBox;
-import org.jfxtras.scene.layout.XLayoutInfo;
 
 /**
- * @author Stephen Chin
+ * @author Stephen Chin, Jim Weaver
  */
 public class Filter extends XCustomNode {
     public-init var name:String;
@@ -48,24 +46,10 @@ public class Filter extends XCustomNode {
         }
     }
 
-//    var choice:XPicker = XPicker {
-//        firstLetter: true
-//        promptText: "Please choose ..."
-//        //id: "JFXtras Shapes"
-//        layoutInfo: XLayoutInfo {
-//            width: 160
-//        }
-//        items: bind ["All", list]
-//        onIndexChange: function(index) {
-//            selectedIndex = index;
-//        }
-//    };
-
     var choice:RallyPicker = RallyPicker {
         rowWidth: 160
         rowHeight: 20
         items: bind [if (all) "All" else null, list]
-        //items: ["All", list]
         onIndexChange: function(index) {
             selectedIndex = index;
         }

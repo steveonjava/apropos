@@ -46,8 +46,8 @@ public class RoadmapModule extends AbstractModulePage {
 
     def projectFilter = Filter {
         name: "Team"
-        list: bind for (project in model.projects) project.getName()
-        selectedIndex: bind model.selectedProjectIndex with inverse
+        list: bind for (project in model.mainProjects) project.getName()
+        selectedIndex: bind model.selectedMainProjectsIndex with inverse
     };
 
     init {
