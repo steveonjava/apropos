@@ -147,7 +147,7 @@ public class AnalyzeModule extends AbstractModulePage {
         }
         model.selectedAllocationIndex = 0;
         model.selectedReleaseIndex = 0;
-        model.selectedOwnerIndex = 0;
+        model.selectedMainProjectsIndex = 0;
     }
 
     public override function initPage():Void {

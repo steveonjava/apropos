@@ -54,7 +54,7 @@ public var readOnly:Boolean;
 
 def community:Boolean = false;
 def show:Boolean = false;
-public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rally1.rallydev.com/";
+public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rallytest1.rallydev.com/";
 
 def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
 def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
@@ -77,13 +77,13 @@ public class RallyModel extends XObject {
 
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
-    public-init var ownerNames:String[] =
-      if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
-      else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
-      else ["alex@rallydev.com", "lmaccherone@rallydev.com", "mringer@rallydev.com",
-            "klindholm@rallydev.com", "sstolt@rallydev.com", "mcampbell@rallydev.com",
-            "catherine@rallydev.com", "katie@rallydev.com", "james.l.weaver@gmail.com"];
-    public-init var owners:User[];
+//    public-init var ownerNames:String[] =
+//      if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
+//      else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
+//      else ["alex@rallydev.com", "lmaccherone@rallydev.com", "mringer@rallydev.com",
+//            "klindholm@rallydev.com", "sstolt@rallydev.com", "mcampbell@rallydev.com",
+//            "catherine@rallydev.com", "katie@rallydev.com", "james.l.weaver@gmail.com"];
+//    public-init var owners:User[];
     public-read var myUser:User;
     public-read var myUserProfile:UserProfile;
     public-read var myImage:Image;
@@ -98,6 +98,23 @@ public class RallyModel extends XObject {
     public var backlog:Backlog;
     public var releases:Release[];
     public var stages:Stage[];
+
+    public var mainProjectName;
+    public-read var mainProject:Project on replace {
+        //TODO: Find better way of governing when loadReleases() is invoked
+        if (mainProject != null and roadmapKanbanStatesLoaded and roadmapReleasesLoaded) {
+            loadReleases();
+        }
+    };
+    var defaultProject:Project;
+    public var waiting = 0;
+
+    /**
+     * A sequence of the open projects in the currently selected workspace.
+     * TODO: Change this to a directed graph when implementing the project
+     *       picker.
+     */
+    public-read var projectsInCurrentWorkspace:Project[];
 
     /**
      * A sequence of the open, leaf-node projects subordinate to, and
@@ -115,16 +132,32 @@ public class RallyModel extends XObject {
     public var epicNames:String[];
 
     public-read var defaultWorkspace:Workspace;
-    public var selectedWorkspaceIndex:Integer on replace {
+    public-read var selectedWorkspace:Workspace on replace {
         // If the workspace changes, and the default project is not in the
         // workspace (or there is no default project), then choose the first
         // project in the workspace in alphabetical order (see business rules
         // in S19520)
-
+        if (selectedWorkspace != null) {
+            loadProjectsForCurrentWorkspace();
+            if ((selectedWorkspace == defaultWorkspace) and (defaultProject != null)) {
+                mainProject = defaultProject;
+            }
+            else if (sizeof projectsInCurrentWorkspace > 0) {
+                mainProject = projectsInCurrentWorkspace[0];
+            }
+            else {
+                Alert.inform("No project available in workspace {selectedWorkspace.getName()}");
+            }
+        }
     };
-    public var selectedWorkspaceName:String = bind if (selectedWorkspaceIndex == 0) null else {
-        workspaces[selectedWorkspaceIndex - 1].getName();
-    }
+    public var selectedWorkspaceIndex:Integer on replace {
+        if (selectedWorkspaceIndex >= 0) {
+            selectedWorkspace = workspaces[selectedWorkspaceIndex];
+        }
+        else {
+            selectedWorkspace = null;
+        }
+    };
 
     public var allocationNames:String[];
     public var selectedAllocationIndex:Integer;
@@ -137,33 +170,16 @@ public class RallyModel extends XObject {
         releasePlanNames[selectedReleaseIndex - 1];
     }
 
-    public var selectedOwnerIndex:Integer;
-    public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
-        owners[selectedOwnerIndex - 1].getDisplayName();
-    }
+//    public var selectedOwnerIndex:Integer;
+//    public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
+//        owners[selectedOwnerIndex - 1].getDisplayName();
+//    }
 
     //TODO: Remove the concept of packages, in favor of Portfolio Allocations
     public var packageNames:String[];
     public var selectedPackageIndex:Integer;
     public var selectedPackage:String = bind if (selectedPackageIndex == 0) null else {
         packageNames[selectedPackageIndex - 1];
-    }
-
-    public var mainProjectName;
-    public-read var mainProject:Project;
-    public var waiting = 0;
-
-    // Trigger loadReleases() and loadOwners() after the valid values for RoadmapKanbanState and
-    // RoadmapRelease have been loaded
-    package var roadmapKanbanStatesLoaded = false;
-    package var roadmapReleasesLoaded = false;
-    def startLoading:Boolean = bind (roadmapKanbanStatesLoaded and roadmapReleasesLoaded) on replace {
-        if (startLoading) {
-            loadReleases();
-            loadOwners();
-            loadProjects();
-            loadWorkspaces();
-        }
     }
 
     bound function filtersOn() {
@@ -178,6 +194,18 @@ public class RallyModel extends XObject {
 
     public bound function filter(stories:Story[]) {
         if (not filtersOn()) stories else stories[s|selected(s)];
+    }
+
+    // Trigger loadReleases() and loadOwners() after the valid values for RoadmapKanbanState and
+    // RoadmapRelease have been loaded
+    package var roadmapKanbanStatesLoaded = false;
+    package var roadmapReleasesLoaded = false;
+    def startLoading:Boolean = bind (roadmapKanbanStatesLoaded and roadmapReleasesLoaded) on replace {
+        if (startLoading) {
+            loadReleases();
+            loadWorkspaces();
+            loadMainProjects();
+        }
     }
 
     public function doLogin():Void {
@@ -201,6 +229,46 @@ public class RallyModel extends XObject {
         }
     }
 
+    function createService():Void {
+        rallyService = new RallyServiceServiceLocator().getRallyService();
+
+        var stub = rallyService as Stub;
+        stub.setUsername(login.userName);
+        stub.setPassword(login.password);
+
+        stub.setMaintainSession(true);
+
+        // Get the logged-user, project, and workspace
+
+        myUser = rallyService.getCurrentUser() as User;
+        if (myUser != null) {
+            myUserProfile = myUser.getUserProfile();
+            myUserProfile = rallyService.read(myUserProfile) as UserProfile;
+            mainProject = myUserProfile.getDefaultProject();
+
+            var proj = rallyService.read(mainProject);
+            if (proj instanceof OperationResult) {
+                def operRes = proj as OperationResult;
+                Alert.inform("No default project set for user.  Please set a default project in Rally");
+                println("operRes.getErrors() = {operRes.getErrors()}");
+            }
+            else {
+                defaultProject = rallyService.read(mainProject) as Project;
+                mainProject = defaultProject;
+                mainProjectName = mainProject.getName();
+                println("mainProjectName:{mainProjectName}");
+
+                defaultWorkspace = myUserProfile.getDefaultWorkspace();
+                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
+                println("defaultWorkspace.getName():{defaultWorkspace.getName()}");
+            }
+        }
+        else {
+            println("Unable to login user");
+            Alert.inform("Unable to login user");
+        }
+    }
+
     function loadReleases() {
         backlog = Backlog {model: this}
         releases = for (rpn in releasePlanNames) Release {model: this, name: rpn}
@@ -219,18 +287,34 @@ public class RallyModel extends XObject {
         processingLogin = false;
     }
 
-    function loadOwners() {
-        owners = for (ownerName in ownerNames) {
-            def results = rallyService.query(null, mainProject, false, false, "User", "(EmailAddress = \"{ownerName}\")", null, true, 0, 100).getResults();
-            if (sizeof results == 0) null else results[0] as User;
-        }
-    }
+//    function loadOwners() {
+//        owners = for (ownerName in ownerNames) {
+//            def results = rallyService.query(null, mainProject, false, false, "User", "(EmailAddress = \"{ownerName}\")", null, true, 0, 100).getResults();
+//            if (sizeof results == 0) null else results[0] as User;
+//        }
+//    }
 
-    function loadProjects():Void {
+    function loadMainProjects():Void {
         delete mainProjects;
         insert mainProject into mainProjects;
         getChildProjects(mainProject);
         mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+    }
+
+    function loadProjectsForCurrentWorkspace():Void {
+        var openProjectsInWorkspace:Project[];
+        def projectsInWorkspace:Project[] = selectedWorkspace.getProjects();
+        for (project in projectsInWorkspace) {
+            // TODO: Change to use caching mechanism after inplementing REST, if
+            //       necessary.
+            def proj = rallyService.read(project) as Project;
+            if (proj.getState() == "Open") {
+                println("Inserting {proj} into openProjectsInWorkspace");
+                insert proj into openProjectsInWorkspace;
+            }
+        }
+        projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
+        println("projectsInCurrentWorkspace:{for (project in projectsInCurrentWorkspace) "{project.getName()}\n "}");
     }
 
     function loadWorkspaces():Void {
@@ -333,45 +417,6 @@ public class RallyModel extends XObject {
         return null;
     }
 
-    function createService():Void {
-        rallyService = new RallyServiceServiceLocator().getRallyService();
-
-        var stub = rallyService as Stub;
-        stub.setUsername(login.userName);
-        stub.setPassword(login.password);
-
-        stub.setMaintainSession(true);
-        
-        // Get the logged-user, project, and workspace
-
-        myUser = rallyService.getCurrentUser() as User;
-        if (myUser != null) {
-            myUserProfile = myUser.getUserProfile();
-            myUserProfile = rallyService.read(myUserProfile) as UserProfile;
-            mainProject = myUserProfile.getDefaultProject();
-
-            var proj = rallyService.read(mainProject);
-            if (proj instanceof OperationResult) {
-                def operRes = proj as OperationResult;
-                Alert.inform("No default project set for user.  Please set a default project in Rally");
-                println("operRes.getErrors() = {operRes.getErrors()}");
-            }
-            else {
-                mainProject = rallyService.read(mainProject) as Project;
-                mainProjectName = mainProject.getName();
-                println("mainProjectName:{mainProjectName}");
-
-                defaultWorkspace = myUserProfile.getDefaultWorkspace();
-                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
-                println("defaultWorkspace.getName():{defaultWorkspace.getName()}");
-            }
-        }
-        else {
-            println("Unable to login user");
-            Alert.inform("Unable to login user");
-        }
-    }
-
     public bound function convertEstimate(estimate:Double):String {
         return if (showInDollars) {
             def dollars = estimate * estimateToActualRatio * actualToCostRatio;
@@ -391,15 +436,15 @@ public class RallyModel extends XObject {
         }
     }
 
-    public function getOwnerDisplayName(ownerEmailAddress:String):String {
-        var displayName:String;
-        for (owner in owners) {
-            if (owner.getEmailAddress() == ownerEmailAddress) {
-                displayName = owner.getDisplayName();
-                break;
-            }
-        }
-        return displayName;
-    }
+//    public function getOwnerDisplayName(ownerEmailAddress:String):String {
+//        var displayName:String;
+//        for (owner in owners) {
+//            if (owner.getEmailAddress() == ownerEmailAddress) {
+//                displayName = owner.getDisplayName();
+//                break;
+//            }
+//        }
+//        return displayName;
+//    }
 
 }
