@@ -140,6 +140,8 @@ public class RallyModel extends XObject {
         // project in the workspace in alphabetical order (see business rules
         // in S19520)
         if (selectedWorkspace != null) {
+            //TODO: Put next line back in!!!!!!!!
+            //selectedWorkspace = rallyService.read(selectedWorkspace) as Workspace;
             loadProjectsForCurrentWorkspace();
             if ((selectedWorkspace == defaultWorkspace) and (defaultProject != null)) {
                 mainProject = defaultProject;
@@ -312,11 +314,18 @@ public class RallyModel extends XObject {
             // TODO: Change to use caching mechanism after inplementing REST, if
             //       necessary.
             //def proj = rallyService.read(project) as Project;
+            println("++ in loadProjectsForCurrentWorkspace, before read, project:{project}");
             def proj = projectsManager.read(project) as Project;
+            //def proj = rallyService.read(project) as Project;
+            println("++ in loadProjectsForCurrentWorkspace, after read, proj:{proj}, proj.getState():{proj.getState()}");
             if (proj.getState() == "Open") {
                 println("Inserting {proj} into openProjectsInWorkspace");
                 insert proj into openProjectsInWorkspace;
             }
+            else {
+                println("proj.getState():{proj.getState()}");
+            }
+
         }
         projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
         println("projectsInCurrentWorkspace:{for (project in projectsInCurrentWorkspace) "{project.getName()}\n "}");
