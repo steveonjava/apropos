@@ -39,7 +39,7 @@ public class ProjectsManager {
     package var model = RallyModel.instance;
 
     var cache = new HashMap();
-
+/*
     public function read(emptyProjectInstance:Project):WSObject {
 //        def objectId = emptyProjectInstance.getObjectID();
 //        var project:Project = cache.get(objectId) as Project;
@@ -50,8 +50,14 @@ public class ProjectsManager {
             def proj = model.rallyService.read(emptyProjectInstance) as Project;
             println("proj:{proj}");
             cache.put(emptyProjectInstance, proj);
-            println("Adding project objectId:{proj.getObjectID()}, name:{proj.getName()} to cache");
+            println("Adding project objectId:{proj.getObjectID()}, name:{proj.getName()}, state:{proj.getState()} to cache");
         }
         return project;
+    }
+*/
+
+    public function read(emptyProjectInstance:Project):WSObject {
+        def proj = model.rallyService.read(emptyProjectInstance) as Project;
+        return proj;
     }
 }
