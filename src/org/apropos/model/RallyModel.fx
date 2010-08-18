@@ -91,7 +91,8 @@ public class RallyModel extends XObject {
     public-read var myUserProfile:UserProfile;
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
-    public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10"];
+    //TODO: Make initialTargets, and other values, configurable
+    public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10"];
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 15.0, 15.0, 15.0, 0.0, 12.0, 12.0, 0.0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
@@ -143,9 +144,8 @@ public class RallyModel extends XObject {
         // project in the workspace in alphabetical order (see business rules
         // in S19520)
         if (selectedWorkspace != null) {
-            //TODO: Put next line back in!!!!!!!!
             //selectedWorkspace = rallyService.read(selectedWorkspace) as Workspace;
-            loadProjectsForCurrentWorkspace();
+            loadProjectsForCurrentWorkspaceByQuery();
             if ((selectedWorkspace.getRefObjectName() == defaultWorkspace.getRefObjectName()) and (defaultProject != null)) {
                 mainProject = defaultProject;
                 println("Switching to default project: {mainProject.getName()}");
@@ -162,6 +162,7 @@ public class RallyModel extends XObject {
     public var selectedWorkspaceIndex:Integer on replace {
         if (selectedWorkspaceIndex >= 0) {
             selectedWorkspace = workspaces[selectedWorkspaceIndex];
+            selectedWorkspace = rallyService.read(selectedWorkspace) as Workspace;
         }
         else {
             selectedWorkspace = null;
@@ -214,6 +215,7 @@ public class RallyModel extends XObject {
             loadReleases();
             loadWorkspaces();
             loadMainProjects();
+            //loadMainProjectsByQuery();
         }
     }
 
@@ -305,11 +307,71 @@ public class RallyModel extends XObject {
 //        }
 //    }
 
+    function loadMainProjectsByQuery():Void {
+        delete mainProjects;
+        insert mainProject into mainProjects;
+        def results = rallyService.query(selectedWorkspace, mainProject, false, false, "Project", "(State = \"Open\")", null, true, 0, 100).getResults() as Project[];
+        if (sizeof results > 0) {
+//            for (project in results) {
+//                insert project into mainProjects;
+//            }
+
+            mainProjects = results as Project[];
+        }
+        else {
+            println("In loadMainProjectsByQuery, no results returned");
+        }
+
+        mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+    }
+
     function loadMainProjects():Void {
         delete mainProjects;
         insert mainProject into mainProjects;
         getChildProjects(mainProject);
         mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+    }
+
+    function getChildProjects(project:Project):Project[] {
+        println("------------------------In getChildProjects(), project:{project.getName()}, state:{project.getState()}");
+        // Only consider open projects
+        if (project.getState() == "Open") {
+            var children:Project[] = project.getChildren();
+            if (sizeof children > 0) {
+                for (child in children) {
+                    //def proj = rallyService.read(child) as Project;
+                    def proj = projectsManager.read(child) as Project;
+                    // Only insert projects that are open, TODO: and have no open child projects,
+                    if (proj.getState() == "Open") {
+                         insert proj into mainProjects;
+                    }
+                    getChildProjects(proj);
+                }
+
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    function loadProjectsForCurrentWorkspaceByQuery():Void {
+        def results = rallyService.query(selectedWorkspace, "Project", "(State = \"Open\")", "Name", true, 0, 100).getResults() as Project[];
+        if (sizeof results > 0) {
+//            for (project in results) {
+//                insert project into mainProjects;
+//            }
+
+            projectsInCurrentWorkspace = results as Project[];
+        }
+        else {
+            println("In loadProjectsForCurrentWorkspaceByQuery, no results returned");
+        }
+
+        //mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
     }
 
     function loadProjectsForCurrentWorkspace():Void {
@@ -341,32 +403,6 @@ public class RallyModel extends XObject {
 //        println("workspaces:{for (workspace in workspaces) "{workspace.getName()}, "}");
         selectedWorkspaceIndex = Sequences.indexOf(workspacesNames, defaultWorkspace.getRefObjectName());
 
-    }
-
-    function getChildProjects(project:Project):Project[] {
-        println("------------------------In getChildProjects(), project:{project.getName()}, state:{project.getState()}");
-        // Only consider open projects
-        if (project.getState() == "Open") {
-            var children:Project[] = project.getChildren();
-            if (sizeof children > 0) {
-                for (child in children) {
-                    //def proj = rallyService.read(child) as Project;
-                    def proj = projectsManager.read(child) as Project;
-                    // Only insert projects that are open, TODO: and have no open child projects,
-                    if (proj.getState() == "Open") {
-                         insert proj into mainProjects;
-                    }
-                    getChildProjects(proj);
-                }
-
-            }
-            else {
-                return null;
-            }
-        }
-        else {
-            return null;
-        }
     }
 
     public function getRelease(releasePlanName:String) {
