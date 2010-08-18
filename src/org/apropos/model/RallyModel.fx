@@ -27,22 +27,22 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.domain.Project;
-import com.rallydev.webservice.v1_19.domain.User;
-import com.rallydev.webservice.v1_19.domain.UserProfile;
-import com.rallydev.webservice.v1_19.service.RallyService;
-import com.rallydev.webservice.v1_19.service.RallyServiceServiceLocator;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.UserProfile;
+import com.rallydev.webservice.v1_19.rallyworkspace.service.RallyService;
+import com.rallydev.webservice.v1_19.rallyworkspace.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
 import javafx.util.Math;
 import org.apache.axis.client.Stub;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.SequenceUtil;
 import javafx.stage.Alert;
-import com.rallydev.webservice.v1_19.domain.OperationResult;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.OperationResult;
 import org.apache.axis.AxisFault;
 import javafx.util.Sequences;
-import com.rallydev.webservice.v1_19.domain.Workspace;
-import com.rallydev.webservice.v1_19.domain.Subscription;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.Subscription;
 
 /**
  * @author Stephen Chin
@@ -223,17 +223,17 @@ public class RallyModel extends XObject {
             processingLogin = true;
             createService();
             loggedIn = true;
-            //retrieveCustomFieldValues();
-            kanbanStatesCFU = CustomFieldUtil {
-                customFieldName: "RoadmapKanbanState"
-                username: login.userName
-                password: login.password
-            };
-            releasesCFU = CustomFieldUtil {
-                customFieldName: "RoadmapRelease"
-                username: login.userName
-                password: login.password
-            };
+            retrieveCustomFieldValues();
+//            kanbanStatesCFU = CustomFieldUtil {
+//                customFieldName: "RoadmapKanbanState"
+//                username: login.userName
+//                password: login.password
+//            };
+//            releasesCFU = CustomFieldUtil {
+//                customFieldName: "RoadmapRelease"
+//                username: login.userName
+//                password: login.password
+//            };
         } catch (e:AxisFault) {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");

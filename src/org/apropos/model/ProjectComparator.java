@@ -28,7 +28,7 @@
 
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.domain.Project;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
 import java.util.Comparator;
 
 /**
