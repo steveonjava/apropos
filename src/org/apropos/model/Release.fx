@@ -32,6 +32,7 @@ import com.rallydev.webservice.v1_19.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
+import com.rallydev.webservice.v1_19.domain.Workspace;
 
 /**
  * @author Stephen Chin
@@ -81,10 +82,17 @@ public class Release extends StoryContainer {
     }
 
     function loadStories(start:Integer):Void {
+        var workspace:Workspace;
+        if (model.selectedWorkspace != null) {
+            workspace = model.rallyService.read(model.selectedWorkspace) as Workspace;
+        }
+
+        println("In loadStories, workspace.getName():{workspace.getName()},\n workspace.getRefObjectName():{workspace.getRefObjectName()}");
+        println("model.mainProject.getName():{model.mainProject.getName()},\n model.mainProject.getRefObjectName():{model.mainProject.getRefObjectName()}");
         model.waiting++;
         XWorker {
             inBackground: function() {
-                model.rallyService.query(null, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
+                model.rallyService.query(workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
             }
             onFailure: function(e) {
                 model.waiting--;
