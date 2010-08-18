@@ -25,39 +25,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.apropos.model;
-import com.rallydev.webservice.v1_19.domain.Project;
-import java.util.HashMap;
-import com.rallydev.webservice.v1_19.domain.WSObject;
+
+import com.rallydev.webservice.v1_19.domain.Workspace;
+import java.util.Comparator;
 
 /**
- * Manages the process of retrieving Project instances from the Rally server,
- * and performs caching when deemed desirable.
- * @author Jim Weaver
+ *
+ * @author jlweaver
  */
-public class ProjectsManager {
-    package var model = RallyModel.instance;
-
-    var cache = new HashMap();
-    public function read(emptyProjectInstance:Project):WSObject {
-        println("In ProjectsManager#read, emptyProjectInstance.getRef():{emptyProjectInstance.getRef()},\n    emptyProjectInstance.getRefObjectName():{emptyProjectInstance.getRefObjectName()}");
-        def ref:String = emptyProjectInstance.getRef();
-        var project:Project = cache.get(ref) as Project;
-        if (project == null) {
-            // Read the object from the server and store in the cache
-            project = model.rallyService.read(emptyProjectInstance) as Project;
-            cache.put(ref, project);
-            println("Adding project ref:{ref}, name:{project.getName()}, state:{project.getState()} to cache");
-        }
-        return project;
+public class WorkspaceRefComparator implements Comparator {
+    public int compare(Object workspaceA, Object workspaceB) {
+        Workspace workA = (Workspace)workspaceA;
+        Workspace workB = (Workspace)workspaceB;
+        return workA.getRefObjectName().compareTo(workB.getRefObjectName());
     }
-
-/*
-    public function read(emptyProjectInstance:Project):WSObject {
-        println("In ProjectsManager#read, emptyProjectInstance.getRef():{emptyProjectInstance.getRef()},\n    emptyProjectInstance.getRefObjectName():{emptyProjectInstance.getRefObjectName()}");
-
-        def proj = model.rallyService.read(emptyProjectInstance) as Project;
-        return proj;
+    public boolean equals(Object workspaceA, Object workspaceB) {
+        Workspace workA = (Workspace)workspaceA;
+        Workspace workB = (Workspace)workspaceB;
+        return workA.getRefObjectName().equals(workB.getRefObjectName());
     }
-*/
 }
