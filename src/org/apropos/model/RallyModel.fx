@@ -48,7 +48,7 @@ import com.rallydev.webservice.v1_19.rallyworkspace.domain.Subscription;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.29";
+public def APROPOS_VERSION = "0.8.30";
 
 public var readOnly:Boolean;
 
@@ -56,8 +56,8 @@ def community:Boolean = false;
 def show:Boolean = false;
 public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rallytest1.rallydev.com/";
 
-//def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
-def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
+def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
+//def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
 def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
@@ -80,13 +80,6 @@ public class RallyModel extends XObject {
 
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
-//    public-init var ownerNames:String[] =
-//      if (community) ["vaan@jfxtras.org", "ashe@jfxtras.org", "basch@jfxtras.org", "penelo@jfxtras.org", "balthier@jfxtras.org", "fran@jfxtras.org"]
-//      else if (show) ["paul@acme.com", "dave@acme.com", "srampson@rallydev.com", "peggy@acme.com", "sara@acme.com", "tara@acme.com", "tom@acme.com"]
-//      else ["alex@rallydev.com", "lmaccherone@rallydev.com", "mringer@rallydev.com",
-//            "klindholm@rallydev.com", "sstolt@rallydev.com", "mcampbell@rallydev.com",
-//            "catherine@rallydev.com", "katie@rallydev.com", "james.l.weaver@gmail.com"];
-//    public-init var owners:User[];
     public-read var myUser:User;
     public-read var myUserProfile:UserProfile;
     public-read var myImage:Image;
@@ -103,7 +96,7 @@ public class RallyModel extends XObject {
     public var releases:Release[];
     public var stages:Stage[];
 
-    public var mainProjectName;
+    public var mainProjectName:String;
     public-read var mainProject:Project on replace {
         //TODO: Find better way of governing when loadReleases() is invoked
         if (mainProject != null and roadmapKanbanStatesLoaded and roadmapReleasesLoaded) {
@@ -147,11 +140,9 @@ public class RallyModel extends XObject {
             loadProjectsForCurrentWorkspaceByQuery();
             if ((selectedWorkspace.getRefObjectName() == defaultWorkspace.getRefObjectName()) and (defaultProject != null)) {
                 mainProject = defaultProject;
-                println("Switching to default project: {mainProject.getName()}");
             }
             else if (sizeof projectsInCurrentWorkspace > 0) {
                 mainProject = projectsInCurrentWorkspace[0];
-                println("Switching to first project alphabetically: {mainProject.getName()}");
             }
             else {
                 Alert.inform("No project available in workspace {selectedWorkspace.getName()}");
@@ -178,11 +169,6 @@ public class RallyModel extends XObject {
     public var selectedReleaseName:String = bind if (selectedReleaseIndex == 0) null else {
         releasePlanNames[selectedReleaseIndex - 1];
     }
-
-//    public var selectedOwnerIndex:Integer;
-//    public var selectedOwner:String = bind if (selectedOwnerIndex == 0) null else {
-//        owners[selectedOwnerIndex - 1].getDisplayName();
-//    }
 
     //TODO: Remove the concept of packages, in favor of Portfolio Allocations
     public var packageNames:String[];
@@ -214,7 +200,6 @@ public class RallyModel extends XObject {
             loadReleases();
             loadWorkspaces();
             loadMainProjects();
-            //loadMainProjectsByQuery();
         }
     }
 
@@ -224,16 +209,6 @@ public class RallyModel extends XObject {
             createService();
             loggedIn = true;
             retrieveCustomFieldValues();
-//            kanbanStatesCFU = CustomFieldUtil {
-//                customFieldName: "RoadmapKanbanState"
-//                username: login.userName
-//                password: login.password
-//            };
-//            releasesCFU = CustomFieldUtil {
-//                customFieldName: "RoadmapRelease"
-//                username: login.userName
-//                password: login.password
-//            };
         } catch (e:AxisFault) {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
@@ -263,7 +238,6 @@ public class RallyModel extends XObject {
         stub.setMaintainSession(true);
 
         // Get the logged-user, project, and workspace
-
         myUser = rallyService.getCurrentUser() as User;
         if (myUser != null) {
             myUserProfile = myUser.getUserProfile();
@@ -278,15 +252,12 @@ public class RallyModel extends XObject {
                 println("operRes.getErrors() = {operRes.getErrors()}");
             }
             else {
-                //defaultProject = rallyService.read(mainProject) as Project;
                 defaultProject = projectsManager.read(mainProject) as Project;
                 mainProject = defaultProject;
                 mainProjectName = mainProject.getName();
-                println("mainProjectName:{mainProjectName}");
 
                 defaultWorkspace = myUserProfile.getDefaultWorkspace();
                 defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
-                println("defaultWorkspace.getName():{defaultWorkspace.getName()}");
             }
         }
         else {
@@ -313,31 +284,6 @@ public class RallyModel extends XObject {
         processingLogin = false;
     }
 
-//    function loadOwners() {
-//        owners = for (ownerName in ownerNames) {
-//            def results = rallyService.query(null, mainProject, false, false, "User", "(EmailAddress = \"{ownerName}\")", null, true, 0, 100).getResults();
-//            if (sizeof results == 0) null else results[0] as User;
-//        }
-//    }
-
-    function loadMainProjectsByQuery():Void {
-        delete mainProjects;
-        insert mainProject into mainProjects;
-        def results = rallyService.query(selectedWorkspace, mainProject, false, false, "Project", "(State = \"Open\")", null, true, 0, 100).getResults() as Project[];
-        if (sizeof results > 0) {
-//            for (project in results) {
-//                insert project into mainProjects;
-//            }
-
-            mainProjects = results as Project[];
-        }
-        else {
-            println("In loadMainProjectsByQuery, no results returned");
-        }
-
-        mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
-    }
-
     function loadMainProjects():Void {
         delete mainProjects;
         insert mainProject into mainProjects;
@@ -346,7 +292,6 @@ public class RallyModel extends XObject {
     }
 
     function getChildProjects(project:Project):Project[] {
-        println("------------------------In getChildProjects(), project:{project.getName()}, state:{project.getState()}");
         // Only consider open projects
         if (project.getState() == "Open") {
             var children:Project[] = project.getChildren();
@@ -374,34 +319,23 @@ public class RallyModel extends XObject {
     function loadProjectsForCurrentWorkspaceByQuery():Void {
         def results = rallyService.query(selectedWorkspace, "Project", "(State = \"Open\")", "Name", true, 0, 100).getResults() as Project[];
         if (sizeof results > 0) {
-//            for (project in results) {
-//                insert project into mainProjects;
-//            }
-
             projectsInCurrentWorkspace = results as Project[];
         }
         else {
             println("In loadProjectsForCurrentWorkspaceByQuery, no results returned");
         }
-
-        //mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
     }
 
     function loadProjectsForCurrentWorkspace():Void {
         var openProjectsInWorkspace:Project[];
         def projectsInWorkspace:Project[] = selectedWorkspace.getProjects();
         for (project in projectsInWorkspace) {
-            // TODO: Change to use caching mechanism after inplementing REST, if
-            //       necessary.
-            //def proj = rallyService.read(project) as Project;
             def proj = projectsManager.read(project) as Project;
-            //def proj = rallyService.read(project) as Project;
             if (proj.getState() == "Open") {
                 insert proj into openProjectsInWorkspace;
             }
         }
         projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
-        println("projectsInCurrentWorkspace:{for (project in projectsInCurrentWorkspace) "{project.getName()}\n "}");
     }
 
     function loadWorkspaces():Void {
@@ -409,11 +343,7 @@ public class RallyModel extends XObject {
         var subscription = myUser.getSubscription();
         subscription = rallyService.read(subscription) as Subscription;
         workspaces = subscription.getWorkspaces();
-//        for (workspace in workspaces) {
-//            workspaces[indexof workspace] = rallyService.read(workspace) as Workspace;
-//        }
         workspaces = Sequences.sort(workspaces, new WorkspaceRefComparator()) as Workspace[];
-//        println("workspaces:{for (workspace in workspaces) "{workspace.getName()}, "}");
         selectedWorkspaceIndex = Sequences.indexOf(workspacesNames, defaultWorkspace.getRefObjectName());
 
     }
@@ -496,16 +426,4 @@ public class RallyModel extends XObject {
             "{estimate}";
         }
     }
-
-//    public function getOwnerDisplayName(ownerEmailAddress:String):String {
-//        var displayName:String;
-//        for (owner in owners) {
-//            if (owner.getEmailAddress() == ownerEmailAddress) {
-//                displayName = owner.getDisplayName();
-//                break;
-//            }
-//        }
-//        return displayName;
-//    }
-
 }

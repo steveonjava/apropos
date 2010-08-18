@@ -51,9 +51,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.layout.Priority;
 import javafx.geometry.HPos;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import org.jfxtras.scene.shape.ResizableRectangle;
+import org.jfxtras.scene.layout.XSpacer;
 
 /**
  * @author Stephen Chin
@@ -67,6 +67,8 @@ public class AproposUI extends XCustomNode {
         }
     };
     var workspaceChoice:RallyPicker = RallyPicker {
+        placeholderText: bind model.defaultWorkspace.getName()
+        pickerStyle: "transparent"
         rowWidth: 160
         rowHeight: 20
         items: bind for (workspace in model.workspaces) "{workspace.getRefObjectName()}"
@@ -109,9 +111,23 @@ public class AproposUI extends XCustomNode {
                 content: [
                     XHBox {
                         nodeVPos: VPos.TOP
-                        spacing: 5
+                        spacing: 10
                         content: [
-                            workspaceChoice,
+                            XVBox {
+                                nodeHPos: HPos.LEFT
+                                spacing: 0
+                                content: [
+                                    workspaceChoice,
+                                    Label {
+                                        styleClass: "transparent-large-top-text"
+                                        text: bind model.mainProject.getName()
+                                    }
+
+                                ]
+                            },
+                            XSpacer {
+                                width: 40
+                            },
                             Label {
                                 id: "app-header-title"
                                 layoutInfo: XLayoutInfo {
@@ -136,8 +152,8 @@ public class AproposUI extends XCustomNode {
                     hgrow: Priority.ALWAYS
                     vgrow: Priority.NEVER
                     margin: Insets {
-                        top: 10
-                        left: 10
+                        top: 6
+                        left: 6
                     }
                 }
             }

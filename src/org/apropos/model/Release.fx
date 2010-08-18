@@ -86,9 +86,6 @@ public class Release extends StoryContainer {
         if (model.selectedWorkspace != null) {
             workspace = model.rallyService.read(model.selectedWorkspace) as Workspace;
         }
-
-        println("In loadStories, workspace.getName():{workspace.getName()},\n workspace.getRefObjectName():{workspace.getRefObjectName()}");
-        println("model.mainProject.getName():{model.mainProject.getName()},\n model.mainProject.getRefObjectName():{model.mainProject.getRefObjectName()}");
         model.waiting++;
         XWorker {
             inBackground: function() {

@@ -53,8 +53,6 @@ public class CustomFieldUtil {
     public-init var username:String;
     public-init var password:String;
 
-    //public-read var done:Boolean;
-
     var url:String;
     var httpRequest:HttpRequest;
     public var validValues:String[];
@@ -72,7 +70,6 @@ public class CustomFieldUtil {
                 onEvent: function(e:Event) {
                     if (e.type == PullParser.END_VALUE) {
                         if (e.name != "null") {
-                            println("In parseReponse, e.text:{e.text}");
                             insert e.text into validValues;
                         }
                     }

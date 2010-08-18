@@ -40,24 +40,13 @@ public class ProjectsManager {
 
     var cache = new HashMap();
     public function read(emptyProjectInstance:Project):WSObject {
-        println("In ProjectsManager#read, emptyProjectInstance.getRef():{emptyProjectInstance.getRef()},\n    emptyProjectInstance.getRefObjectName():{emptyProjectInstance.getRefObjectName()}");
         def ref:String = emptyProjectInstance.getRef();
         var project:Project = cache.get(ref) as Project;
         if (project == null) {
             // Read the object from the server and store in the cache
             project = model.rallyService.read(emptyProjectInstance) as Project;
             cache.put(ref, project);
-            println("Adding project ref:{ref}, name:{project.getName()}, state:{project.getState()} to cache");
         }
         return project;
     }
-
-/*
-    public function read(emptyProjectInstance:Project):WSObject {
-        println("In ProjectsManager#read, emptyProjectInstance.getRef():{emptyProjectInstance.getRef()},\n    emptyProjectInstance.getRefObjectName():{emptyProjectInstance.getRefObjectName()}");
-
-        def proj = model.rallyService.read(emptyProjectInstance) as Project;
-        return proj;
-    }
-*/
 }
