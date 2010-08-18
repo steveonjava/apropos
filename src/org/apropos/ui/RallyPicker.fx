@@ -37,10 +37,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
 import org.jfxtras.scene.layout.XLayoutInfo;
 import javafx.scene.input.MouseEvent;
-import org.jfxtras.scene.layout.XHBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Priority;
 import javafx.geometry.VPos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
@@ -56,13 +54,14 @@ import javafx.animation.KeyFrame;
  * @author Jim Weaver
  * This was created to have the Rally dropdown appearance and behavior, after
  * trying to do the same thing by styling existing pickers (like XPicker).
- * TODO: Provide the ability to use a style sheet for appearance.
+ * TODO: Provide more ability to use a style sheet for appearance.
  * TODO: Leverage more layout capabilities, and less positioning via bind
  * TODO: Implement/fix key events (e.g. switching values with up and down arrows)
  */
 public class RallyPicker extends XCustomNode {
 
-//    def model = RallyModel.instance;
+    public-init var pickerStyle = "normal"; // Other type is transparent
+    public var placeholderText:String;
     var itemStacks:XStack[];
 
     public var items:String[] on replace {
@@ -77,8 +76,6 @@ public class RallyPicker extends XCustomNode {
                                            (not dropdownList.hover)) rallyBlue else rallyLightBlue
                             width: bind rowWidth
                             height: bind rowHeight
-//                            width: 160
-//                            height: 20
                         },
                         Label {
                             text: bind item
@@ -92,7 +89,6 @@ public class RallyPicker extends XCustomNode {
                         showList = false;
                     }
                 }
-
             }
     };
 
@@ -113,13 +109,11 @@ public class RallyPicker extends XCustomNode {
 
     var showList:Boolean;
 
-    def rallyWhite = Color.web("#ffffff");
+    // TODO: Put in style sheet
     def rallyLightBlue = Color.web("#eff8fb");
     def rallyBlue = Color.web("#b5d8eb");
-    def rallyOutline = Color.web("#c6c6c6");
 
     def dropdownList:XVBox = XVBox {
-        //visible: bind showList
         effect: DropShadow {offsetY: 3}
         spacing: 0
         content: bind itemStacks
@@ -155,27 +149,30 @@ public class RallyPicker extends XCustomNode {
                 nodeVPos: VPos.CENTER
                 content: [
                     topRectRef = Rectangle {
+                        styleClass: "{pickerStyle}-top-text-rect"
                         width: bind rowWidth
                         height: bind rowHeight
-                        fill: rallyWhite
-                        stroke: rallyOutline
                     },
                     Group {
+                        var labelRef:Label
                         content: [
-                            Label {
-                                text: bind items[selectedIndex]
+                            labelRef = Label {
+                                text: bind if (items[selectedIndex] != null and items[selectedIndex] != "") items[selectedIndex] else placeholderText
+                                styleClass: "{pickerStyle}-top-text"
                             },
                             ImageView {
                                 // TODO: At least base this on image size,
                                 //       but better to leverage layouts
-                                layoutX: bind rowWidth - 22
+                                layoutX: bind if (pickerStyle == "transparent") labelRef.layoutBounds.width + 5 else rowWidth - 22
                                 image: Image {
-                                    url: "{__DIR__}images/down.jpg"
+                                    url: "{__DIR__}images/picker-btn.png"
                                 }
                             }
                         ]
                         layoutInfo: XLayoutInfo {
-                            margin: Insets {top: 2 left: 6}
+                            margin: bind if (pickerStyle == "transparent") 
+                                             Insets {top: 0 left: 0}
+                                         else Insets {top: 2 left: 4}
                         }
                     },
                 ]
@@ -210,8 +207,6 @@ public class RallyPicker extends XCustomNode {
                     else if (ke.code == KeyCode.VK_ENTER) {
                         showList = not showList;
                     }
-
-
                 }
             }
     }

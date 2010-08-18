@@ -378,6 +378,44 @@
 
 /*******************************************************************************
  *                                                                             *
+ * CSS Styles for the RallyPicker control                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+/* Styling for the top text Rectangle in a RallyPicker */
+.normal-top-text-rect {
+    -fx-fill: #ffffff;
+    -fx-stroke: #c6c6c6;
+}
+
+/* Styling for the top text in a RallyPicker */
+.normal-top-text {
+    -fx-text-fill: -fx-dark-text-color;
+}
+
+/* Styling for the top text Rectangle in a RallyPicker that is transparent */
+.transparent-top-text-rect {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+}
+
+/* Styling for the top text in a RallyPicker that is transparent */
+.transparent-top-text {
+    -fx-text-fill: -fx-light-text-color;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+/* Styling for the top text in a RallyPicker that is transparent and large*/
+.transparent-large-top-text {
+    -fx-text-fill: -fx-light-text-color;
+    -fx-font-size: 26;
+    -fx-font-weight: bold;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
  * ID-specific styles                                       *
  *                                                                             *
  ******************************************************************************/
