@@ -69,7 +69,7 @@ public class AproposUI extends XCustomNode {
     var workspaceChoice:RallyPicker = RallyPicker {
         rowWidth: 160
         rowHeight: 20
-        items: bind for (workspace in model.workspaces) "{workspace.getName()}"
+        items: bind for (workspace in model.workspaces) "{workspace.getRefObjectName()}"
         onIndexChange: function(index) {
             model.selectedWorkspaceIndex = index;
         }

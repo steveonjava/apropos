@@ -54,9 +54,10 @@ public var readOnly:Boolean;
 
 def community:Boolean = false;
 def show:Boolean = false;
-public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rallytest1.rallydev.com/";
+public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rally1.rallydev.com/";
 
 def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
+//def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
 def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
@@ -129,9 +130,11 @@ public class RallyModel extends XObject {
         mainProjects[selectedMainProjectsIndex - 1].getName();
     }
 
-    public-read var workspaces:Workspace[];
-
     public var epicNames:String[];
+
+    public-read var workspaces:Workspace[];
+    public-read var workspacesNames:String[] =
+        bind for (workspace in workspaces) workspace.getRefObjectName();
 
     public-read var defaultWorkspace:Workspace;
     public-read var selectedWorkspace:Workspace on replace {
@@ -143,11 +146,13 @@ public class RallyModel extends XObject {
             //TODO: Put next line back in!!!!!!!!
             //selectedWorkspace = rallyService.read(selectedWorkspace) as Workspace;
             loadProjectsForCurrentWorkspace();
-            if ((selectedWorkspace == defaultWorkspace) and (defaultProject != null)) {
+            if ((selectedWorkspace.getRefObjectName() == defaultWorkspace.getRefObjectName()) and (defaultProject != null)) {
                 mainProject = defaultProject;
+                println("Switching to default project: {mainProject.getName()}");
             }
             else if (sizeof projectsInCurrentWorkspace > 0) {
                 mainProject = projectsInCurrentWorkspace[0];
+                println("Switching to first project alphabetically: {mainProject.getName()}");
             }
             else {
                 Alert.inform("No project available in workspace {selectedWorkspace.getName()}");
@@ -314,18 +319,11 @@ public class RallyModel extends XObject {
             // TODO: Change to use caching mechanism after inplementing REST, if
             //       necessary.
             //def proj = rallyService.read(project) as Project;
-            println("++ in loadProjectsForCurrentWorkspace, before read, project:{project}");
             def proj = projectsManager.read(project) as Project;
             //def proj = rallyService.read(project) as Project;
-            println("++ in loadProjectsForCurrentWorkspace, after read, proj:{proj}, proj.getState():{proj.getState()}");
             if (proj.getState() == "Open") {
-                println("Inserting {proj} into openProjectsInWorkspace");
                 insert proj into openProjectsInWorkspace;
             }
-            else {
-                println("proj.getState():{proj.getState()}");
-            }
-
         }
         projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
         println("projectsInCurrentWorkspace:{for (project in projectsInCurrentWorkspace) "{project.getName()}\n "}");
@@ -336,12 +334,12 @@ public class RallyModel extends XObject {
         var subscription = myUser.getSubscription();
         subscription = rallyService.read(subscription) as Subscription;
         workspaces = subscription.getWorkspaces();
-        for (workspace in workspaces) {
-            workspaces[indexof workspace] = rallyService.read(workspace) as Workspace;
-        }
-        workspaces = Sequences.sort(workspaces, new WorkspaceComparator()) as Workspace[];
-        println("workspaces:{for (workspace in workspaces) "{workspace.getName()}, "}");
-        selectedWorkspaceIndex = Sequences.indexOf(workspaces, defaultWorkspace);
+//        for (workspace in workspaces) {
+//            workspaces[indexof workspace] = rallyService.read(workspace) as Workspace;
+//        }
+        workspaces = Sequences.sort(workspaces, new WorkspaceRefComparator()) as Workspace[];
+//        println("workspaces:{for (workspace in workspaces) "{workspace.getName()}, "}");
+        selectedWorkspaceIndex = Sequences.indexOf(workspacesNames, defaultWorkspace.getRefObjectName());
 
     }
 
@@ -355,7 +353,6 @@ public class RallyModel extends XObject {
                     //def proj = rallyService.read(child) as Project;
                     def proj = projectsManager.read(child) as Project;
                     // Only insert projects that are open, TODO: and have no open child projects,
-                    println("proj.getName():{proj.getName()}, proj.getState():{proj.getState()}");
                     if (proj.getState() == "Open") {
                          insert proj into mainProjects;
                     }
