@@ -27,12 +27,12 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.domain.QueryResult;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
-import com.rallydev.webservice.v1_19.domain.Workspace;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
 
 /**
  * @author Stephen Chin

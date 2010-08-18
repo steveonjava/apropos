@@ -30,16 +30,16 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import org.jfxtras.lang.XObject;
-import com.rallydev.webservice.v1_19.domain.User;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
 import java.math.BigDecimal;
-import com.rallydev.webservice.v1_19.domain.Project;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
 import java.lang.Boolean;
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_19.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.domain.OperationResult;
-import com.rallydev.webservice.v1_19.domain.QueryResult;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.OperationResult;
+import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
 import java.lang.Object;
 import java.lang.String;
 import java.lang.Void;
@@ -53,7 +53,6 @@ import org.jfxtras.util.SequenceUtil;
  * @author Keith Combs
  * TODO: Ascertain the best way to retrieve, and hold in an instance variable,
  *       the owner's display name
- * TODO: Consider caching Project instances, as they need to be read explicitly
  */
 public class Story extends XObject, Comparable {
     def model = bind RallyModel.instance;

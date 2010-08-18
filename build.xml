@@ -45,11 +45,13 @@
 
     -->
     <property name="generated.dir" value="gen_src"/>
-    <property name="local.wsdl" value="show.xml"/>
+    <property name="locala.wsdl" value="salesworkspace.xml"/>
+    <property name="localb.wsdl" value="rallyworkspace.xml"/>
 
     <target name="check-soapapi">
         <mkdir dir="${generated.dir}"/>
-        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${local.wsdl}" />
+        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${locala.wsdl}" />
+        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${localb.wsdl}" />
     </target>
 
     <target name="generate-wsdl" depends="check-soapapi" unless="soapapi.uptodate">
@@ -59,7 +61,8 @@
           </fileset>
         </path>
         <taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
-        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${local.wsdl}"/>
+        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${locala.wsdl}"/>
+        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${localb.wsdl}"/>
         <touch file="${generated.dir}/uptodate.txt"/>
     </target>
 

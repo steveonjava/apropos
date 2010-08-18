@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:rallydomain="http://rallydev.com/webservice/v1_19/rallyworkspace/domain" xmlns:rallyservice="http://rallydev.com/webservice/v1_19/rallyworkspace/service" xmlns:impl="http://rallydev.com/webservice/v1_19/rallyworkspace/service" xmlns:intf="http://rallydev.com/webservice/v1_19/rallyworkspace/service" targetNamespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:rallydomain="http://rallydev.com/webservice/v1_19/salesworkspace/domain" xmlns:rallyservice="http://rallydev.com/webservice/v1_19/salesworkspace/service" xmlns:impl="http://rallydev.com/webservice/v1_19/salesworkspace/service" xmlns:intf="http://rallydev.com/webservice/v1_19/salesworkspace/service" targetNamespace="http://rallydev.com/webservice/v1_19/salesworkspace/service">
   <wsdl:types>
-    <xsd:schema targetNamespace="http://rallydev.com/webservice/v1_19/rallyworkspace/domain">
+    <xsd:schema targetNamespace="http://rallydev.com/webservice/v1_19/salesworkspace/domain">
       <xsd:complexType name="WSObject">
         <xsd:attribute name="ref" type="xsd:string"/>
         <xsd:attribute name="objectVersion" type="xsd:long"/>
@@ -319,35 +319,6 @@
               <xsd:element name="TestCaseResult" type="rallydomain:TestCaseResult" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="TestCases" type="rallydomain:DefectTestCasesType" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="VerifiedInBuild" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="AffectedCustomers" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ALMKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="CodeArea" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Customer" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="DataMigration" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Deferred" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ExceptionEmail" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="FoundBy" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="KanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="NumberofCases" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OnPremImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OpsImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReOpenedOLD" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReleasedtoCustomer" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReOpened" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="RodsDefectCustomField" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="RodString" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="RootCause" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SalesforceCase" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TCImpact" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="test" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="testestes" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TestFile" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="test1" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TestEstes" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ULKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -451,35 +422,14 @@
               <xsd:element name="TaskRemainingTotal" type="xsd:double" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="Tasks" type="rallydomain:HierarchicalRequirementTasksType" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="TestCases" type="rallydomain:HierarchicalRequirementTestCasesType" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="AffectedCustomers" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="AffectsUserLearning" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ALMKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="APMRequirement" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="DataMigration" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="DesignKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ExternalLink" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ImplementedIn" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+              <xsd:element name="AccountType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+              <xsd:element name="Defect" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="KanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="MySuperCustomField" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="NumberofCases" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="NumberofRequests" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OnPremImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OpsImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Priority" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="RequestingCustomers" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Risk" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapAllocation" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapLevel" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapRelease" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SalesforceCase" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SalesforceFeature" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Score" type="xsd:double" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="String" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TShirt" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ULKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+              <xsd:element name="SalesforceAccount" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -715,8 +665,6 @@
               <xsd:element name="TaskIndex" type="xsd:long" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="ToDo" type="xsd:double" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="WorkProduct" type="rallydomain:Artifact" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -758,11 +706,6 @@
               <xsd:element name="ValidationExpectedResult" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="ValidationInput" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="WorkProduct" type="rallydomain:Artifact" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="CodeArea" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReleasedtoCustomer" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SpecFilename" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -1176,90 +1119,90 @@
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="createRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="createResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="update">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="updateRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="updateResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="read">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="readOriginalRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="readOriginalResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="read">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="readWorkspaceScopedRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="readWorkspaceScopedResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="query">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="queryOriginalRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="queryOriginalResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="query">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="queryProjectScopedRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="queryProjectScopedResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="delete">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="deleteRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="deleteResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="getCurrentSubscription">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="getCurrentSubscriptionRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="getCurrentSubscriptionResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="getCurrentUser">
       <wsdlsoap:operation soapAction=""/>
       <wsdl:input name="getCurrentUserRequest">
         <wsdlsoap:header use="literal" message="impl:rallyIntegrationHeaderMessage" part="request_header_RallyIntegrationName"/>
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:input>
       <wsdl:output name="getCurrentUserResponse">
-        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/rallyworkspace/service"/>
+        <wsdlsoap:body use="literal" namespace="http://rallydev.com/webservice/v1_19/salesworkspace/service"/>
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
