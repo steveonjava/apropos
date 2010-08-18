@@ -65,7 +65,6 @@ public class RallyPicker extends XCustomNode {
 //    def model = RallyModel.instance;
     var itemStacks:XStack[];
 
-
     public var items:String[] on replace {
             itemStacks = for (item in items) {
                 XStack {

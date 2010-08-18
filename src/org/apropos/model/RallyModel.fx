@@ -54,10 +54,10 @@ public var readOnly:Boolean;
 
 def community:Boolean = false;
 def show:Boolean = false;
-public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rally1.rallydev.com/";
+public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rallytest1.rallydev.com/";
 
-def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
-//def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
+//def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
+def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
 def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
@@ -144,7 +144,6 @@ public class RallyModel extends XObject {
         // project in the workspace in alphabetical order (see business rules
         // in S19520)
         if (selectedWorkspace != null) {
-            //selectedWorkspace = rallyService.read(selectedWorkspace) as Workspace;
             loadProjectsForCurrentWorkspaceByQuery();
             if ((selectedWorkspace.getRefObjectName() == defaultWorkspace.getRefObjectName()) and (defaultProject != null)) {
                 mainProject = defaultProject;
@@ -224,6 +223,7 @@ public class RallyModel extends XObject {
             processingLogin = true;
             createService();
             loggedIn = true;
+            //retrieveCustomFieldValues();
             kanbanStatesCFU = CustomFieldUtil {
                 customFieldName: "RoadmapKanbanState"
                 username: login.userName
@@ -238,6 +238,19 @@ public class RallyModel extends XObject {
             processingLogin = false;
             Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
         }
+    }
+
+    public function retrieveCustomFieldValues():Void {
+        kanbanStatesCFU = CustomFieldUtil {
+            customFieldName: "RoadmapKanbanState"
+            username: login.userName
+            password: login.password
+        };
+        releasesCFU = CustomFieldUtil {
+            customFieldName: "RoadmapRelease"
+            username: login.userName
+            password: login.password
+        };
     }
 
     function createService():Void {

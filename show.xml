@@ -319,33 +319,6 @@
               <xsd:element name="TestCaseResult" type="rallydomain:TestCaseResult" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="TestCases" type="rallydomain:DefectTestCasesType" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="VerifiedInBuild" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="AffectedCustomers" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ALMKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="CodeArea" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Customer" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="DataMigration" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Deferred" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ExceptionEmail" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="FoundBy" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="KanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="NumberofCases" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OnPremImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OpsImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReOpenedOLD" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReleasedtoCustomer" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReOpened" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="RootCause" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SalesforceCase" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TCImpact" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="test" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="testestes" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TestFile" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="test1" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TestEstes" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ULKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -449,34 +422,14 @@
               <xsd:element name="TaskRemainingTotal" type="xsd:double" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="Tasks" type="rallydomain:HierarchicalRequirementTasksType" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="TestCases" type="rallydomain:HierarchicalRequirementTestCasesType" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="AffectedCustomers" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="AffectsUserLearning" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ALMKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="APMRequirement" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="DataMigration" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="DesignKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ExternalLink" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ImplementedIn" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+              <xsd:element name="AccountType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+              <xsd:element name="Defect" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="KanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="NumberofCases" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="NumberofRequests" type="xsd:long" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OnPremImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="OpsImpact" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Priority" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="RequestingCustomers" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Risk" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapAllocation" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapLevel" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="RoadmapRelease" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SalesforceCase" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SalesforceFeature" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Score" type="xsd:double" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="String" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="TShirt" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ULKanbanState" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+              <xsd:element name="SalesforceAccount" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -712,8 +665,6 @@
               <xsd:element name="TaskIndex" type="xsd:long" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="ToDo" type="xsd:double" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="WorkProduct" type="rallydomain:Artifact" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -755,11 +706,6 @@
               <xsd:element name="ValidationExpectedResult" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="ValidationInput" type="xsd:string" minOccurs="0" maxOccurs="1"/>
               <xsd:element name="WorkProduct" type="rallydomain:Artifact" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="CodeArea" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="ReleasedtoCustomer" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="SpecFilename" type="rallydomain:WebLink" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="Text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="WatchList" type="xsd:string" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
           </xsd:extension>
         </xsd:complexContent>
@@ -1262,7 +1208,7 @@
   </wsdl:binding>
   <wsdl:service name="RallyServiceService">
     <wsdl:port binding="impl:RallyServiceSoapBinding" name="RallyService">
-      <wsdlsoap:address location="https://rally1.rallydev.com/slm/webservice/1.19/rallyservice"/>
+      <wsdlsoap:address location="https://rallytest1.rallydev.com/slm/webservice/1.19/rallyservice"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
