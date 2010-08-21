@@ -28,66 +28,14 @@
 package org.apropos.model.domain;
 
 /**
- * The base class for all domain objects
- * TODO: Try making this class abstract
+ * The results of a query
  * @author Jim Weaver
  */
-public class DomainObject extends OperationResult {
+public class QueryResult {
 
     /**
-     *
+     * 
      */
-    public var _ref:String;
+    public var results:DomainObject[];
 
-    /**
-     *
-     */
-    public var _objectVersion:String;
-
-    /**
-     *
-     */
-    public var _type:String;
-
-    /**
-     *
-     */
-    public var _refObjectName:String;
-
-    /**
-     *
-     */
-    public var _rallyAPIMajor:String;
-
-    /**
-     *
-     */
-    public var _rallyAPIMinor:String;
-
-    /**
-     *
-     */
-    public var CreationDate:String;
-
-    /**
-     * TODO: Decide if this variable belongs in this class
-     */
-    public var _CreatedAt:String;
-
-    /**
-     *
-     */
-    public var ObjectID:Integer;
-
-    /**
-     *
-     */
-    public var Subscription:RefObject;
-
-    /**
-     *
-     */
-    override public function toString () {
-        return "_refObjectName:{_refObjectName}";
-    }
 }

@@ -9,7 +9,10 @@ package org.apropos.model.domain;
  * @author Jim Weaver
  */
 
-public class UserWrapper {
+public class DomainObjectWrapper {
 
   public var User: User;
+
+  public var Project: Project;
+
 }

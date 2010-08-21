@@ -25,69 +25,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.apropos.model.domain;
+package org.apropos.model.service;
+
+//import org.apropos.model.RallyModel;
 
 /**
- * The base class for all domain objects
- * TODO: Try making this class abstract
+ * Contains functions that create and return an object such as QueryRequest for
+ * query, ReadRequest for read, and UpdateRequest for update.
  * @author Jim Weaver
  */
-public class DomainObject extends OperationResult {
+public class AbstractRequest {
+    //package var model = RallyModel.instance;
 
     /**
      *
      */
-    public var _ref:String;
+    public-init var username:String;
 
     /**
      *
      */
-    public var _objectVersion:String;
-
-    /**
-     *
-     */
-    public var _type:String;
-
-    /**
-     *
-     */
-    public var _refObjectName:String;
-
-    /**
-     *
-     */
-    public var _rallyAPIMajor:String;
-
-    /**
-     *
-     */
-    public var _rallyAPIMinor:String;
-
-    /**
-     *
-     */
-    public var CreationDate:String;
-
-    /**
-     * TODO: Decide if this variable belongs in this class
-     */
-    public var _CreatedAt:String;
-
-    /**
-     *
-     */
-    public var ObjectID:Integer;
-
-    /**
-     *
-     */
-    public var Subscription:RefObject;
-
-    /**
-     *
-     */
-    override public function toString () {
-        return "_refObjectName:{_refObjectName}";
-    }
+    public-init var password:String;
 }
