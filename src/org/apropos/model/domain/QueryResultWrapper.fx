@@ -9,7 +9,7 @@ package org.apropos.model.domain;
  * @author Jim Weaver
  */
 
-public class ProjectWrapper {
+public class QueryResultWrapper {
 
-  public var Project: Project;
+  public var QueryResult: QueryResult;
 }

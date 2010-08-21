@@ -56,9 +56,9 @@ def community:Boolean = false;
 def show:Boolean = false;
 public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rallytest1.rallydev.com/";
 
-def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
+public def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
 //def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
-def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
+public def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
 package def projectsManager:ProjectsManager = ProjectsManager {};
@@ -255,6 +255,7 @@ public class RallyModel extends XObject {
                 defaultProject = projectsManager.read(mainProject) as Project;
                 mainProject = defaultProject;
                 mainProjectName = mainProject.getName();
+                println("mainProject.getRef():{mainProject.getRef()}");
 
                 defaultWorkspace = myUserProfile.getDefaultWorkspace();
                 defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
@@ -292,6 +293,7 @@ public class RallyModel extends XObject {
     }
 
     function getChildProjects(project:Project):Project[] {
+        //TODO: Implement "https://rallytest1.rallydev.com/slm/webservice/1.20/project/334329159.js?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
         // Only consider open projects
         if (project.getState() == "Open") {
             var children:Project[] = project.getChildren();
