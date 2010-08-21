@@ -74,8 +74,6 @@ public class ReadRequest extends AbstractRequest {
     public function gotResult(obj:Object):Void {
         var wrapper: DomainObjectWrapper = obj as DomainObjectWrapper;
         onResponse(wrapper);
-        //println ("I got result: {wrapper.User}");
-        //result = wrapper.User.toString();
     }
 
     public function gotError(obj:Object):Void {
@@ -83,8 +81,8 @@ public class ReadRequest extends AbstractRequest {
     }
 
     var request: RestRequest = RestRequest {
-        username: model.GUEST_USER
-        password: model.GUEST_PASSWORD
+        username: model.login.userName
+        password: model.login.password
         uri: endPoint
         clazz: "org.apropos.model.domain.DomainObjectWrapper"
         onResult: gotResult

@@ -43,6 +43,8 @@ import org.apache.axis.AxisFault;
 import javafx.util.Sequences;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.Subscription;
+import org.apropos.model.domain.DomainObjectWrapper;
+import org.apropos.model.service.ReadRequest;
 
 /**
  * @author Stephen Chin
@@ -286,10 +288,20 @@ public class RallyModel extends XObject {
     }
 
     function loadMainProjects():Void {
-        delete mainProjects;
-        insert mainProject into mainProjects;
-        getChildProjects(mainProject);
-        mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+        var readRequest:ReadRequest = ReadRequest {
+            endPoint: "{mainProject.getRef()}.js?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
+            onResponse: function(wrapper:DomainObjectWrapper):Void {
+                println("In ReadRequest#onResponse, wrapper.Project:{wrapper.Project}");
+                delete mainProjects;
+                insert mainProject into mainProjects;
+                //getChildProjects(mainProject);
+                //mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+            }
+            onError: function(obj:Object):Void {
+                println("In onError, obj:{obj}");
+            }
+        }
+        readRequest.start();
     }
 
     function getChildProjects(project:Project):Project[] {
@@ -317,6 +329,39 @@ public class RallyModel extends XObject {
             return null;
         }
     }
+
+//    function loadMainProjects():Void {
+//        delete mainProjects;
+//        insert mainProject into mainProjects;
+//        getChildProjects(mainProject);
+//        mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+//    }
+
+//    function getChildProjects(project:Project):Project[] {
+//        //TODO: Implement "https://rallytest1.rallydev.com/slm/webservice/1.20/project/334329159.js?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
+//        // Only consider open projects
+//        if (project.getState() == "Open") {
+//            var children:Project[] = project.getChildren();
+//            if (sizeof children > 0) {
+//                for (child in children) {
+//                    //def proj = rallyService.read(child) as Project;
+//                    def proj = projectsManager.read(child) as Project;
+//                    // Only insert projects that are open, TODO: and have no open child projects,
+//                    if (proj.getState() == "Open") {
+//                         insert proj into mainProjects;
+//                    }
+//                    getChildProjects(proj);
+//                }
+//
+//            }
+//            else {
+//                return null;
+//            }
+//        }
+//        else {
+//            return null;
+//        }
+//    }
 
     function loadProjectsForCurrentWorkspaceByQuery():Void {
         def results = rallyService.query(selectedWorkspace, "Project", "(State = \"Open\")", "Name", true, 0, 100).getResults() as Project[];
