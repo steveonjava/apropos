@@ -27,7 +27,7 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.UserProfile;
 import com.rallydev.webservice.v1_19.rallyworkspace.service.RallyService;
@@ -38,13 +38,14 @@ import org.apache.axis.client.Stub;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.SequenceUtil;
 import javafx.stage.Alert;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.OperationResult;
 import org.apache.axis.AxisFault;
 import javafx.util.Sequences;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.Subscription;
 import org.apropos.model.domain.DomainObjectWrapper;
 import org.apropos.model.service.ReadRequest;
+import org.apropos.model.domain.Project;
+import org.apropos.model.domain.ProjectComparator;
 
 /**
  * @author Stephen Chin
@@ -123,7 +124,8 @@ public class RallyModel extends XObject {
 
     public var selectedMainProjectsIndex:Integer;
     public var selectedMainProjectsName:String = bind if (selectedMainProjectsIndex == 0) null else {
-        mainProjects[selectedMainProjectsIndex - 1].getName();
+        //TODO: Modify RedFX to allow converting case (and perhaps names) of instance variables
+        mainProjects[selectedMainProjectsIndex - 1].Name;
     }
 
     public var epicNames:String[];
@@ -139,7 +141,7 @@ public class RallyModel extends XObject {
         // project in the workspace in alphabetical order (see business rules
         // in S19520)
         if (selectedWorkspace != null) {
-            loadProjectsForCurrentWorkspaceByQuery();
+            //loadProjectsForCurrentWorkspaceByQuery(); //TODO: Replace this functionality
             if ((selectedWorkspace.getRefObjectName() == defaultWorkspace.getRefObjectName()) and (defaultProject != null)) {
                 mainProject = defaultProject;
             }
@@ -201,7 +203,7 @@ public class RallyModel extends XObject {
         if (startLoading) {
             loadReleases();
             loadWorkspaces();
-            loadMainProjects();
+            //loadMainProjects();
         }
     }
 
@@ -244,24 +246,40 @@ public class RallyModel extends XObject {
         if (myUser != null) {
             myUserProfile = myUser.getUserProfile();
             myUserProfile = rallyService.read(myUserProfile) as UserProfile;
-            mainProject = myUserProfile.getDefaultProject();
 
+            def mainProjectWsdl = myUserProfile.getDefaultProject();
+
+            var readRequest:ReadRequest = ReadRequest {
+                endPoint: "{mainProjectWsdl.getRef()}.js?fetch=name,children"
+                onResponse: function(wrapper:DomainObjectWrapper):Void {
+                    println("In ReadRequest#onResponse for mainProjectWsdl, wrapper.Project:{wrapper.Project}");
+                    mainProject = wrapper.Project;
+                    defaultProject = mainProject;
+                    loadMainProjects();
+                }
+                onError: function(obj:Object):Void {
+                    println("In onError, obj:{obj}");
+                }
+            }
+            readRequest.start();
+
+            //TODO: Handle case where default project isn't set
             //var proj = rallyService.read(mainProject);
-            var proj = projectsManager.read(mainProject);
-            if (proj instanceof OperationResult) {
-                def operRes = proj as OperationResult;
-                Alert.inform("No default project set for user.  Please set a default project in Rally");
-                println("operRes.getErrors() = {operRes.getErrors()}");
-            }
-            else {
-                defaultProject = projectsManager.read(mainProject) as Project;
-                mainProject = defaultProject;
-                mainProjectName = mainProject.getName();
-                println("mainProject.getRef():{mainProject.getRef()}");
-
-                defaultWorkspace = myUserProfile.getDefaultWorkspace();
-                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
-            }
+            //var proj = projectsManager.read(mainProject);
+//            if (proj instanceof OperationResult) {
+//                def operRes = proj as OperationResult;
+//                Alert.inform("No default project set for user.  Please set a default project in Rally");
+//                println("operRes.getErrors() = {operRes.getErrors()}");
+//            }
+//            else {
+//                defaultProject = projectsManager.read(mainProject) as Project;
+//                mainProject = defaultProject;
+//                mainProjectName = mainProject.getName();
+//                println("mainProject.getRef():{mainProject.getRef()}");
+//
+//                defaultWorkspace = myUserProfile.getDefaultWorkspace();
+//                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
+//            }
         }
         else {
             println("Unable to login user");
@@ -289,12 +307,13 @@ public class RallyModel extends XObject {
 
     function loadMainProjects():Void {
         var readRequest:ReadRequest = ReadRequest {
-            endPoint: "{mainProject.getRef()}.js?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
+            endPoint: "{mainProject._ref}?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
                 println("In ReadRequest#onResponse, wrapper.Project:{wrapper.Project}");
                 delete mainProjects;
                 insert mainProject into mainProjects;
-                //getChildProjects(mainProject);
+                getChildProjects(mainProject);
+                //TODO: Put back in
                 //mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
             }
             onError: function(obj:Object):Void {
@@ -305,29 +324,14 @@ public class RallyModel extends XObject {
     }
 
     function getChildProjects(project:Project):Project[] {
-        //TODO: Implement "https://rallytest1.rallydev.com/slm/webservice/1.20/project/334329159.js?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
-        // Only consider open projects
-        if (project.getState() == "Open") {
-            var children:Project[] = project.getChildren();
-            if (sizeof children > 0) {
-                for (child in children) {
-                    //def proj = rallyService.read(child) as Project;
-                    def proj = projectsManager.read(child) as Project;
-                    // Only insert projects that are open, TODO: and have no open child projects,
-                    if (proj.getState() == "Open") {
-                         insert proj into mainProjects;
-                    }
-                    getChildProjects(proj);
-                }
-
-            }
-            else {
-                return null;
+        var children:Project[] = project.Children;
+        if (sizeof children > 0) {
+            for (child in children) {
+                insert child into mainProjects;
+                getChildProjects(child);
             }
         }
-        else {
-            return null;
-        }
+        else return null;
     }
 
 //    function loadMainProjects():Void {
@@ -363,27 +367,27 @@ public class RallyModel extends XObject {
 //        }
 //    }
 
-    function loadProjectsForCurrentWorkspaceByQuery():Void {
-        def results = rallyService.query(selectedWorkspace, "Project", "(State = \"Open\")", "Name", true, 0, 100).getResults() as Project[];
-        if (sizeof results > 0) {
-            projectsInCurrentWorkspace = results as Project[];
-        }
-        else {
-            println("In loadProjectsForCurrentWorkspaceByQuery, no results returned");
-        }
-    }
-
-    function loadProjectsForCurrentWorkspace():Void {
-        var openProjectsInWorkspace:Project[];
-        def projectsInWorkspace:Project[] = selectedWorkspace.getProjects();
-        for (project in projectsInWorkspace) {
-            def proj = projectsManager.read(project) as Project;
-            if (proj.getState() == "Open") {
-                insert proj into openProjectsInWorkspace;
-            }
-        }
-        projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
-    }
+//    function loadProjectsForCurrentWorkspaceByQuery():Void {
+//        def results = rallyService.query(selectedWorkspace, "Project", "(State = \"Open\")", "Name", true, 0, 100).getResults() as Project[];
+//        if (sizeof results > 0) {
+//            projectsInCurrentWorkspace = results as Project[];
+//        }
+//        else {
+//            println("In loadProjectsForCurrentWorkspaceByQuery, no results returned");
+//        }
+//    }
+//
+//    function loadProjectsForCurrentWorkspace():Void {
+//        var openProjectsInWorkspace:Project[];
+//        def projectsInWorkspace:Project[] = selectedWorkspace.getProjects();
+//        for (project in projectsInWorkspace) {
+//            def proj = projectsManager.read(project) as Project;
+//            if (proj.getState() == "Open") {
+//                insert proj into openProjectsInWorkspace;
+//            }
+//        }
+//        projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
+//    }
 
     function loadWorkspaces():Void {
         delete workspaces;

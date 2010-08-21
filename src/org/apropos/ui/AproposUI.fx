@@ -120,7 +120,7 @@ public class AproposUI extends XCustomNode {
                                     workspaceChoice,
                                     Label {
                                         styleClass: "transparent-large-top-text"
-                                        text: bind model.mainProject.getName()
+                                        text: bind model.mainProject.Name
                                     }
 
                                 ]
