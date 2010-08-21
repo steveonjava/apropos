@@ -76,11 +76,27 @@ public abstract class DomainObject {
     /**
      *
      */
-    public var ObjectID:String;
+    public var ObjectID:Integer;
 
     /**
      *
      */
-    public var Subscription:String;
+    public var Subscription:RefObject;
 
+    /**
+     * TODO: Keep here?
+     */
+    public var Errors:String[];
+
+    /**
+     * TODO: Keep here?
+     */
+    public var Warnings:String[];
+
+    /**
+     *
+     */
+    override public function toString () {
+        return "_refObjectName:{_refObjectName}";
+    }
 }
