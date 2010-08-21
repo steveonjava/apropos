@@ -34,9 +34,9 @@ package org.apropos.model.domain;
 public class User extends DomainObject {
 
     /**
-     * 
+     *
      */
-    public var Disabled:String;
+    public var Disabled:Boolean;
 
     /**
      *
@@ -71,7 +71,7 @@ public class User extends DomainObject {
     /**
      *
      */
-    public var RevisionHistory:String;
+    public var RevisionHistory:RefObject;
 
     /**
      *
@@ -84,13 +84,24 @@ public class User extends DomainObject {
     public var ShortDisplayName:String;
 
     /**
-     * TODO: Decide whether this is needed, and if so, what type?
+     * 
      */
     public var TeamMemberships:RefObject[];
 
     /**
-     * TODO: Decide whether this is needed, and if so, what type?
+     *
      */
-    public var UserProfile:RefObject[];
+    public var UserName:String;
+
+    /**
+     *
+     */
+    public var UserPermissions:RefObject[];
+
+    /**
+     * 
+     */
+    public var UserProfile:RefObject;
+
 
 }

@@ -32,31 +32,6 @@ package org.apropos.model.domain;
  * TODO: Needed for holding reference objects, or just use the type returned?
  * @author Jim Weaver
  */
-public abstract class RefObject {
-
-    /**
-     *
-     */
-    public var _rallyAPIMajor:String;
-
-    /**
-     *
-     */
-    public var _rallyAPIMinor:String;
-
-    /**
-     *
-     */
-    public var _ref:String;
-
-    /**
-     *
-     */
-    public var _objectVersion:String;
-
-    /**
-     *
-     */
-    public var _refObjectName:String;
+public class RefObject extends DomainObject {
 
 }
