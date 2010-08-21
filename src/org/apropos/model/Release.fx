@@ -74,75 +74,75 @@ public class Release extends StoryContainer {
 
     public function refresh() {
         delete stories;
-        loadStories(1);
+        //loadStories(1); //TODO: Put back in
     }
 
     init {
-        loadStories(1);
+        //loadStories(1); //TODO: Put back in
     }
-
-    function loadStories(start:Integer):Void {
-        var workspace:Workspace;
-        if (model.selectedWorkspace != null) {
-            workspace = model.rallyService.read(model.selectedWorkspace) as Workspace;
-        }
-        model.waiting++;
-        XWorker {
-            inBackground: function() {
-                model.rallyService.query(workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
-            }
-            onFailure: function(e) {
-                model.waiting--;
-                println("Unable to load release {name} due to the following exception:");
-                e.printStackTrace();
-            }
-            onDone: function(result) {
-                model.waiting--;
-                var queryResult = result as QueryResult;
-                if (sizeof queryResult.getErrors() > 0) {
-                    println("Unable to load release {name} due to the following errors:");
-                    for (error in queryResult.getErrors()) println('ERROR: {error}"');
-                } else {
-                    def results = queryResult.getResults();
-
-                    def newStories = for (domainObject in results) {
-                        def hierarchicalRequirement = domainObject as HierarchicalRequirement;
-                        Story {
-                           hierarchicalRequirement: hierarchicalRequirement
-                        };
-                    }
-                    insert newStories into stories;
-                    for (story in newStories) {
-                        def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
-                        if (insertionPoint < 0) {
-                            insert story.inPackage before model.packageNames[-insertionPoint - 1];
-                        }
-                    }
-                    for (story in newStories) {
-                        def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
-                        if (insertionPoint < 0) {
-                            insert story.parentName before model.epicNames[-insertionPoint - 1];
-                        }
-                    }
-                    for (story in newStories) {
-                        if (story.roadmapAllocation.trim() != "") {
-                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
-                            if (insertionPoint < 0) {
-                                insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
-                            }
-                        }
-                    }
-                    for (stage in model.stages) {
-                        def stageStories = newStories[s|s.stage == stage.name];
-                        insert stageStories into stage.stories;
-                    }
-                    def noStage = newStories[s|s.stage == null];
-                    insert noStage into model.stages[0].stories;
-                    if (results.length == 100) {
-                        loadStories(start + 100);
-                    }
-                }
-            }
-        }
-    }
+// TODO: Replace this functionality
+//    function loadStories(start:Integer):Void {
+//        var workspace:Workspace;
+//        if (model.selectedWorkspace != null) {
+//            workspace = model.rallyService.read(model.selectedWorkspace) as Workspace;
+//        }
+//        model.waiting++;
+//        XWorker {
+//            inBackground: function() {
+//                model.rallyService.query(workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
+//            }
+//            onFailure: function(e) {
+//                model.waiting--;
+//                println("Unable to load release {name} due to the following exception:");
+//                e.printStackTrace();
+//            }
+//            onDone: function(result) {
+//                model.waiting--;
+//                var queryResult = result as QueryResult;
+//                if (sizeof queryResult.getErrors() > 0) {
+//                    println("Unable to load release {name} due to the following errors:");
+//                    for (error in queryResult.getErrors()) println('ERROR: {error}"');
+//                } else {
+//                    def results = queryResult.getResults();
+//
+//                    def newStories = for (domainObject in results) {
+//                        def hierarchicalRequirement = domainObject as HierarchicalRequirement;
+//                        Story {
+//                           hierarchicalRequirement: hierarchicalRequirement
+//                        };
+//                    }
+//                    insert newStories into stories;
+//                    for (story in newStories) {
+//                        def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
+//                        if (insertionPoint < 0) {
+//                            insert story.inPackage before model.packageNames[-insertionPoint - 1];
+//                        }
+//                    }
+//                    for (story in newStories) {
+//                        def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
+//                        if (insertionPoint < 0) {
+//                            insert story.parentName before model.epicNames[-insertionPoint - 1];
+//                        }
+//                    }
+//                    for (story in newStories) {
+//                        if (story.roadmapAllocation.trim() != "") {
+//                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
+//                            if (insertionPoint < 0) {
+//                                insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
+//                            }
+//                        }
+//                    }
+//                    for (stage in model.stages) {
+//                        def stageStories = newStories[s|s.stage == stage.name];
+//                        insert stageStories into stage.stories;
+//                    }
+//                    def noStage = newStories[s|s.stage == null];
+//                    insert noStage into model.stages[0].stories;
+//                    if (results.length == 100) {
+//                        loadStories(start + 100);
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

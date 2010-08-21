@@ -67,7 +67,7 @@ public class PlanModule extends AbstractModulePage {
 
     function calculateOwnerTotals() {
         ownerTotals = for (project in model.mainProjects) {
-            SequenceUtil.sum(for (story in stories where story.projectName == project.getName()) story.estimate)
+            SequenceUtil.sum(for (story in stories where story.projectName == project.Name) story.estimate)
         }
     }
 
@@ -92,7 +92,7 @@ public class PlanModule extends AbstractModulePage {
 
     def projectFilter = Filter {
         name: "Team"
-        list: bind for (project in model.mainProjects) project.getName()
+        list: bind for (project in model.mainProjects) project.Name
         selectedIndex: bind model.selectedMainProjectsIndex with inverse
     };
 
@@ -163,7 +163,7 @@ public class PlanModule extends AbstractModulePage {
             row([
                 Label {
                     styleClass: "empasized-text"
-                    text: project.getName();
+                    text: project.Name;
                     layoutInfo: LayoutInfo {
                         width: 160
                     }
@@ -193,10 +193,11 @@ public class PlanModule extends AbstractModulePage {
                     text: "Own Selected Feature"
                     action: function() {
                         def story = filteredStories[table.selectedRow];
-                        if (story.project != project) {
-                            story.project = project;
-                            //story.projectName = project.getName();
-                        }
+//TODO: Put back in
+//                        if (story.project != project) {
+//                            story.project = project;
+//                            //story.projectName = project.getName();
+//                        }
                         story.drafted = true;
                         calculateOwnerTotals();
                     }

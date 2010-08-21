@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.apropos.model;
+package org.apropos.model.domain;
 
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
 import java.util.Comparator;
