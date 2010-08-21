@@ -41,7 +41,7 @@ public class Project extends WorkspaceDomainObject {
     /**
      *
      */
-    public var Children:RefObject[];
+    public var Children:Project[];
 
     /**
      *
