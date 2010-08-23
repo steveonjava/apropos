@@ -26,20 +26,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.apropos.model.service;
-import org.apropos.model.domain.DomainObjectWrapper;
+import org.apropos.model.domain.QueryResultWrapper;
 import org.jfxtras.redfx.client.rest.RestRequest;
 import org.apropos.model.RallyModel;
 
-//import org.apropos.model.RallyModel;
-
 /**
- * Represents and executes a Rally read
+ * Represents and executes a Rally query
  *
  * TODO: Push the common instance variables into the AbstractRequest class
  * TODO: Append the workspaceRef and projectRef to the endpoint
  * @author Jim Weaver
  */
-public class ReadRequest extends AbstractRequest {
+public class QueryRequest extends AbstractRequest {
     package var model = RallyModel.instance;
 
 //TODO: Implement these in this class, and/or the super class
@@ -62,7 +60,7 @@ public class ReadRequest extends AbstractRequest {
         }
     };
 
-    public var onResponse:function(domainObjectWrapper:DomainObjectWrapper);
+    public var onResponse:function(queryResultWrapper:QueryResultWrapper);
 
     public var onError:function(obj:Object);
 
@@ -71,7 +69,7 @@ public class ReadRequest extends AbstractRequest {
     }
 
     public function gotResult(obj:Object):Void {
-        var wrapper: DomainObjectWrapper = obj as DomainObjectWrapper;
+        var wrapper: QueryResultWrapper = obj as QueryResultWrapper;
         onResponse(wrapper);
     }
 
@@ -83,7 +81,7 @@ public class ReadRequest extends AbstractRequest {
         username: model.login.userName
         password: model.login.password
         uri: endPoint
-        clazz: "org.apropos.model.domain.DomainObjectWrapper"
+        clazz: "org.apropos.model.domain.QueryResultWrapper"
         onResult: gotResult
         onError: gotError
     }

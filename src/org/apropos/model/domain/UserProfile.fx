@@ -51,7 +51,7 @@ public class UserProfile extends DomainObject {
     /**
      *
      */
-    public var DefaultWorkspace:RefObject;
+    public var DefaultWorkspace:Workspace;
 
     /**
      *
