@@ -53,27 +53,31 @@ public class QueryRequest extends AbstractRequest {
 //    public-init var projectScopeDown:Boolean = true;
 
     public-init var endPoint:String;
-
-    var workspaceRef:String = model.selectedWorkspace._ref on replace {
-        if (workspaceRef != null) {
-            println("In ReadRequest#workspaceRef trigger, workspaceRef:{workspaceRef}");
-        }
-    };
+    
+//TODO: Implement in some manner
+//    var workspaceRef:String = model.selectedWorkspace._ref on replace {
+//        if (workspaceRef != null) {
+//            println("In ReadRequest#workspaceRef trigger, workspaceRef:{workspaceRef}");
+//        }
+//    };
 
     public var onResponse:function(queryResultWrapper:QueryResultWrapper);
 
     public var onError:function(obj:Object);
 
     public function start():Void {
+        println("^ Starting QueryRequest, endPoint:{endPoint}");
         request.start();
     }
 
     public function gotResult(obj:Object):Void {
+        println("v Ending QueryRequest, endPoint:{endPoint}");
         var wrapper: QueryResultWrapper = obj as QueryResultWrapper;
         onResponse(wrapper);
     }
 
     public function gotError(obj:Object):Void {
+        println("x Error QueryRequest, endPoint:{endPoint}");
         onError(obj);
     }
 

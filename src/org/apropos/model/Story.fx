@@ -264,7 +264,10 @@ public class Story extends XObject, Comparable {
         name = removeTags(hierarchicalRequirement._refObjectName);
         id = hierarchicalRequirement.FormattedID;
         description = removeTags(hierarchicalRequirement.Description);
-        textDescription = removeTags(description);
+        //textDescription = removeTags(description);
+        //TODO: Why textDescription and description? Remove one?
+        textDescription = description;
+
         parentName = removeTags(hierarchicalRequirement.Parent._refObjectName);
         roadmapAllocation = hierarchicalRequirement.RoadmapAllocation;
         release = model.getRelease(hierarchicalRequirement.RoadmapRelease);
@@ -281,6 +284,7 @@ public class Story extends XObject, Comparable {
 //        inPackage = hierarchicalRequirement.get_package();
 //        if (inPackage == "") inPackage = "<missing package>";
 
+        //TODO: Replace this text-search-based way of determining state with a more determisitic way?
         var desc = description.toLowerCase();
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
         stage = hierarchicalRequirement.RoadmapKanbanState;
