@@ -57,7 +57,7 @@ public class ReadRequest extends AbstractRequest {
 
     public-init var endPoint:String;
 
-    var workspaceRef:String = model.selectedWorkspace.getRef() on replace {
+    var workspaceRef:String = model.selectedWorkspace._ref on replace {
         if (workspaceRef != null) {
             println("In ReadRequest#workspaceRef trigger, workspaceRef:{workspaceRef}");
         }

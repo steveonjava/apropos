@@ -15,4 +15,6 @@ public class DomainObjectWrapper {
 
   public var Project: Project;
 
+  public var UserProfile: UserProfile;
+
 }
