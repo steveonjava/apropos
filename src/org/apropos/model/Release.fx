@@ -31,6 +31,7 @@ package org.apropos.model;
 //import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.util.SequenceUtil;
+import org.apropos.model.domain.HierarchicalRequirement;
 import org.apropos.model.domain.Workspace;
 import org.apropos.model.domain.QueryResultWrapper;
 import org.apropos.model.service.QueryRequest;
@@ -86,6 +87,7 @@ public class Release extends StoryContainer {
     function loadStories(start:Integer):Void {
         var workspace:Workspace;
         println("In loadStories, selectedWorkspace._refObjectName is:{model.selectedWorkspace._refObjectName}");
+        model.waiting++;
         var readRequest:QueryRequest = QueryRequest {
              //workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100
             endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
@@ -99,14 +101,64 @@ public class Release extends StoryContainer {
                       "?pagesize=100"
             //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.20/hierarchicalrequirement.js"
             onResponse: function(wrapper:QueryResultWrapper):Void {
-                println("In onResponse, sizeof wrapper.QueryResult.Results:{sizeof wrapper.QueryResult.Results}");
-                for (result in wrapper.QueryResult.Results) {
-                    println("Hier{indexof result}: {result._refObjectName}");
+                model.waiting--;
+                var queryResult = wrapper.QueryResult;
+                if (sizeof queryResult.Errors > 0) {
+                    println("Unable to load release {name} due to the following errors:");
+                    for (error in queryResult.Errors) println('ERROR: {error}"');
                 }
+                else {
+                    def results = queryResult.Results;
+
+                    def newStories = for (domainObject in results) {
+                        def hierarchicalRequirement = domainObject as HierarchicalRequirement;
+                        Story {
+                           hierarchicalRequirement: hierarchicalRequirement
+                        };
+                    }
+                    insert newStories into stories;
+                    for (story in newStories) {
+                        def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
+                        if (insertionPoint < 0) {
+                            insert story.inPackage before model.packageNames[-insertionPoint - 1];
+                        }
+                    }
+                    for (story in newStories) {
+                        def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
+                        if (insertionPoint < 0) {
+                            insert story.parentName before model.epicNames[-insertionPoint - 1];
+                        }
+                    }
+                    for (story in newStories) {
+                        if (story.roadmapAllocation.trim() != "") {
+                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
+                            if (insertionPoint < 0) {
+                                insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
+                            }
+                        }
+                    }
+                    for (stage in model.stages) {
+                        def stageStories = newStories[s|s.stage == stage.name];
+                        insert stageStories into stage.stories;
+                    }
+                    def noStage = newStories[s|s.stage == null];
+                    insert noStage into model.stages[0].stories;
+                    if (sizeof results == 100) {
+                        loadStories(start + 100);
+                    }
+                }
+
+
+
+//                println("In onResponse, sizeof wrapper.QueryResult.Results:{sizeof wrapper.QueryResult.Results}");
+//                for (result in wrapper.QueryResult.Results) {
+//                    println("Hier{indexof result}: {result._refObjectName}");
+//                }
 
             }
             onError: function(obj:Object):Void {
-                println("In onError, obj:{obj}");
+                model.waiting--;
+                println("Unable to load release {name} due to the following exception:{obj}");
             }
         }
         readRequest.start();
