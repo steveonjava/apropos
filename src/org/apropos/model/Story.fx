@@ -30,20 +30,29 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import org.jfxtras.lang.XObject;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
 import java.math.BigDecimal;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
 import java.lang.Boolean;
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
+import java.lang.String;
+import org.jfxtras.async.XWorker;
+import org.apropos.model.domain.HierarchicalRequirement;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.OperationResult;
 import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
+import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
 import java.lang.Void;
+import java.math.BigDecimal;
 import org.apropos.model.Backlog;
+import org.apropos.model.RallyModel;
+import org.apropos.model.Story;
+import org.apropos.model.domain.HierarchicalRequirement;
+import org.apropos.model.domain.Project;
+import org.apropos.model.domain.User;
 import org.jfxtras.async.XWorker;
 import org.jfxtras.util.BrowserUtil;
 import org.jfxtras.util.SequenceUtil;
@@ -70,7 +79,7 @@ public class Story extends XObject, Comparable {
     public var roadmapAllocation:String;
     public var stage:String on replace oldStage=newStage {
         if (initialized) {
-            hierarchicalRequirement.setRoadmapKanbanState(stage);
+            hierarchicalRequirement.RoadmapKanbanState = stage;
             update();
             if (stage == "Schedule" and release instanceof Backlog) {
                 release = model.currentRelease;
@@ -84,7 +93,7 @@ public class Story extends XObject, Comparable {
     }
     public var release:Release on replace oldRelease=newRelease {
         if (initialized) {
-            hierarchicalRequirement.setRoadmapRelease(release.roadmapRelease);
+            hierarchicalRequirement.RoadmapRelease = release.roadmapRelease;
             update();
             if (release instanceof Backlog) {
                 stage = "Backlog"
@@ -95,29 +104,29 @@ public class Story extends XObject, Comparable {
     }
     public var owner:User on replace {
         if (initialized) {
-            hierarchicalRequirement.setOwner(owner);
+            hierarchicalRequirement.Owner = owner;
             update();
         }
     }
-    public var ownerName:String = bind owner.getRefObjectName() on replace {
+    public var ownerName:String = bind owner._refObjectName on replace {
         ownerDisplayName = ownerName;
     };
     public var ownerDisplayName:String;
 
     public var project:Project on replace {
         if (initialized) {
-            hierarchicalRequirement.setProject(project);
+            hierarchicalRequirement.Project = project;
             update();
         }
     }
-    public var projectName:String = bind project.getName();
+    public var projectName:String = bind project.Name;
 
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
     public var rank:BigDecimal on replace {
         if (initialized) {
             var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
-            hierarchicalRequirement.setRank(new BigDecimal(rank3));
+            hierarchicalRequirement.Rank = new BigDecimal(rank3);
             update();
         }
     }
@@ -132,19 +141,21 @@ public class Story extends XObject, Comparable {
     public var overflow:String;
 
     public function browse():Void {
-        BrowserUtil.browse("{RallyModel.server}slm/detail/ar/{hierarchicalRequirement.getObjectID()}");
+        BrowserUtil.browse("{RallyModel.server}slm/detail/ar/{hierarchicalRequirement.ObjectID}");
     }
 
     function reapply():Void {
         // todo - find a cleaner way to do this
-        hierarchicalRequirement.setRoadmapRelease(release.roadmapRelease);
-        hierarchicalRequirement.setRoadmapKanbanState(stage);
+        hierarchicalRequirement.RoadmapRelease = release.roadmapRelease;
+        hierarchicalRequirement.RoadmapKanbanState = stage;
         var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
-        hierarchicalRequirement.setRank(new BigDecimal(rank3));
-        hierarchicalRequirement.setOwner(owner);
+        hierarchicalRequirement.Rank = new BigDecimal(rank3);
+        hierarchicalRequirement.Owner = owner;
     }
 
     package function update():Void {
+        //TODO: Implement with REST update
+        /*
         if (not model.requestAccess()) {
             return;
         }
@@ -177,6 +188,7 @@ public class Story extends XObject, Comparable {
                 }
             }
         }
+        */
     }
 
     init {
@@ -249,53 +261,61 @@ public class Story extends XObject, Comparable {
 
     function initialize() {
         initialized = false;
-        name = removeTags(hierarchicalRequirement.getRefObjectName());
-        id = hierarchicalRequirement.getFormattedID();
-        description = removeTags(hierarchicalRequirement.getDescription());
+        name = removeTags(hierarchicalRequirement._refObjectName);
+        id = hierarchicalRequirement.FormattedID;
+        description = removeTags(hierarchicalRequirement.Description);
         textDescription = removeTags(description);
-        parentName = removeTags(hierarchicalRequirement.getParent().getRefObjectName());
-        roadmapAllocation = hierarchicalRequirement.getRoadmapAllocation();
-        release = model.getRelease(hierarchicalRequirement.getRoadmapRelease());
-        rank = hierarchicalRequirement.getRank();
-        owner = hierarchicalRequirement.getOwner();
+        parentName = removeTags(hierarchicalRequirement.Parent._refObjectName);
+        roadmapAllocation = hierarchicalRequirement.RoadmapAllocation;
+        release = model.getRelease(hierarchicalRequirement.RoadmapRelease);
+        rank = hierarchicalRequirement.Rank;
+        owner = hierarchicalRequirement.Owner;
 
-        def proj:Project = hierarchicalRequirement.getProject();
+        def proj:Project = hierarchicalRequirement.Project;
         if (proj instanceof Project) {
-            project = model.rallyService.read(proj) as Project;
+            //TODO: Determine if necessary to perform a ReadRequest
+            //project = model.rallyService.read(proj) as Project;
         }
 
-        inPackage = hierarchicalRequirement.get_package();
-        if (inPackage == "") inPackage = "<missing package>";
+        //TODO: Determine if necessary to do the following two lines
+//        inPackage = hierarchicalRequirement.get_package();
+//        if (inPackage == "") inPackage = "<missing package>";
+
         var desc = description.toLowerCase();
         acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
-        stage = hierarchicalRequirement.getRoadmapKanbanState();
-        def children = hierarchicalRequirement.getChildren();
-        if (children == null or children.length == 0) {
-            estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
-        } else {
-            loadEstimate(hierarchicalRequirement, true);
-        }
+        stage = hierarchicalRequirement.RoadmapKanbanState;
+
+        //TODO: Implement with REST
+//        def children = hierarchicalRequirement.getChildren();
+//        if (children == null or children.length == 0) {
+//            estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
+//        } else {
+//            loadEstimate(hierarchicalRequirement, true);
+//        }
+
         initialized = true;
         promoteStage();
     }
 
     function promoteStage() {
-        if (stage == "" and hierarchicalRequirement.getScheduleState() == "Defined") {
+        if (stage == "" and hierarchicalRequirement.ScheduleState == "Defined") {
             stage = "Propose";
         }
         if ((stage == "Propose" or stage == "Backlog") and not (release instanceof Backlog)) {
             stage = "Schedule";
         }
-        if (stage == "Schedule" and hierarchicalRequirement.getScheduleState() == "In-Progress") {
+        if (stage == "Schedule" and hierarchicalRequirement.ScheduleState == "In-Progress") {
             stage = "Develop";
         }
-        if ((stage == "Develop" or stage == "Schedule") and hierarchicalRequirement.getScheduleState() == "Accepted") {
+        if ((stage == "Develop" or stage == "Schedule") and hierarchicalRequirement.ScheduleState == "Accepted") {
             stage = "Deploy";
         }
     }
 
 
     function loadEstimate(parent:HierarchicalRequirement, top:Boolean):Void {
+        //TODO: Implement with REST
+        /*
         model.waiting++;
         XWorker {
             inBackground: function() {
@@ -345,6 +365,7 @@ public class Story extends XObject, Comparable {
                 }
             }
         }
+        */
     }
 
     function maybeAppend(base:String, addition:String):String {

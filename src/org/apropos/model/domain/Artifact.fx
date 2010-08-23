@@ -66,12 +66,12 @@ public abstract class Artifact extends WorkspaceDomainObject {
     /**
      *
      */
-    public var Owner:RefObject;
+    public var Owner:User;
 
     /**
      *
      */
-    public var Project:RefObject;
+    public var Project:Project;
 
     /**
      *

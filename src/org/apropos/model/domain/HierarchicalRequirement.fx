@@ -26,12 +26,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.apropos.model.domain;
+import java.math.BigDecimal;
 
 /**
  * Represents a Rally Workspace object via REST
  * @author Jim Weaver
  */
-public class HierarchicalRequirement extends DomainObject {
+public class HierarchicalRequirement extends Artifact {
 
     /**
      * 
@@ -81,7 +82,7 @@ public class HierarchicalRequirement extends DomainObject {
     /**
      *
      */
-    public var Rank:Number;
+    public var Rank:BigDecimal;
 
     /**
      *
