@@ -99,6 +99,17 @@ public class Release extends StoryContainer {
                       "?fetch=true"
                       "?start=1"
                       "?pagesize=100"
+//            endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
+//                      //"?workspace=\"https://rallytest1.rallydev.com/slm/webservice/1.19/workspace/41529001.js\""
+//                      "?query=((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))"
+//                      "&projectScopeUp=false"
+//                      "&projectScopeDown=true"
+//                      "&order=Rank"
+//                      //"&fetch=false"
+//                      //TODO: Implement ability to read array of elements when using fetch
+//                      "&fetch=FormattedID,Description,Parent,RoadmapAllocation,RoadmapRelease,Rank,Owner,Project,ScheduleState"
+//                      "&start=1"
+//                      "&pagesize=100"
             //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.20/hierarchicalrequirement.js"
             onResponse: function(wrapper:QueryResultWrapper):Void {
                 model.waiting--;
@@ -109,9 +120,11 @@ public class Release extends StoryContainer {
                 }
                 else {
                     def results = queryResult.Results;
+                    println("In loadStories, sizeof results:{sizeof results}");
 
                     def newStories = for (domainObject in results) {
                         def hierarchicalRequirement = domainObject as HierarchicalRequirement;
+                        println("hierarchicalRequirement._ref:{hierarchicalRequirement._ref}");
                         Story {
                            hierarchicalRequirement: hierarchicalRequirement
                         };

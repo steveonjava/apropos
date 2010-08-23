@@ -109,9 +109,9 @@ public class RallyModel extends XObject {
     public var mainProjectName:String;
     public-read var mainProject:Project on replace {
         //TODO: Find better way of governing when loadReleases() is invoked
-        if (mainProject != null and roadmapKanbanStatesLoaded and roadmapReleasesLoaded) {
-            loadReleases();
-        }
+//        if (mainProject != null and roadmapKanbanStatesLoaded and roadmapReleasesLoaded) {
+//            loadReleases();
+//        }
     };
     var defaultProject:Project;
     public var waiting = 0;
@@ -251,20 +251,20 @@ public class RallyModel extends XObject {
 
 //TODO:Remove
         wsdlUser = rallyService.getCurrentUser() as com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
-        println("wsdlUser.getRef():{wsdlUser.getRef()}");
+//        println("wsdlUser.getRef():{wsdlUser.getRef()}");
 
         if (wsdlUser != null) {
         // Get the logged-user, project, and workspace
         var userReadRequest:ReadRequest = ReadRequest {
             endPoint: "{wsdlUser.getRef()}.js?fetch=subscription,userprofile"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-                println("In ReadRequest#onResponse, wrapper.User:{wrapper.User}");
+//                println("In ReadRequest#onResponse, wrapper.User:{wrapper.User}");
                 myUser = wrapper.User;
                 loadUserProfile();
                 //loadMainProjects();
             }
             onError: function(obj:Object):Void {
-                println("In onError, obj:{obj}");
+//                println("In onError, obj:{obj}");
             }
         }
         userReadRequest.start();
@@ -314,7 +314,7 @@ public class RallyModel extends XObject {
         var readRequest:ReadRequest = ReadRequest {
             endPoint: "{myUser.UserProfile._ref}?fetch=defaultproject,defaultworkspace"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-                println("In ReadRequest#onResponse, wrapper.UserProfile:{wrapper.UserProfile}");
+//                println("In ReadRequest#onResponse, wrapper.UserProfile:{wrapper.UserProfile}");
                 myUserProfile = wrapper.UserProfile;
                 
                 mainProject = myUserProfile.DefaultProject;
@@ -326,7 +326,7 @@ public class RallyModel extends XObject {
                 loadMainProjects();
             }
             onError: function(obj:Object):Void {
-                println("In onError, obj:{obj}");
+//                println("In onError, obj:{obj}");
             }
         }
         readRequest.start();
@@ -356,7 +356,7 @@ public class RallyModel extends XObject {
         var readRequest:ReadRequest = ReadRequest {
             endPoint: "{mainProject._ref}?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-                println("In ReadRequest#onResponse, wrapper.Project:{wrapper.Project}");
+//                println("In ReadRequest#onResponse, wrapper.Project:{wrapper.Project}");
                 mainProject = wrapper.Project;
                 delete mainProjects;
                 insert mainProject into mainProjects;
@@ -365,7 +365,7 @@ public class RallyModel extends XObject {
                 //mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
             }
             onError: function(obj:Object):Void {
-                println("In onError, obj:{obj}");
+//                println("In onError, obj:{obj}");
             }
         }
         readRequest.start();
