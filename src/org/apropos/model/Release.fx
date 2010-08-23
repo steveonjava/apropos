@@ -27,12 +27,14 @@
  */
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
 import javafx.util.Sequences;
-import org.jfxtras.async.XWorker;
 import org.jfxtras.util.SequenceUtil;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
+import org.apropos.model.domain.Workspace;
+import org.apropos.model.domain.QueryResultWrapper;
+import org.apropos.model.service.QueryRequest;
+//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
 
 /**
  * @author Stephen Chin
@@ -74,12 +76,46 @@ public class Release extends StoryContainer {
 
     public function refresh() {
         delete stories;
-        //loadStories(1); //TODO: Put back in
+        loadStories(1);
     }
 
     init {
-        //loadStories(1); //TODO: Put back in
+        loadStories(1);
     }
+
+    function loadStories(start:Integer):Void {
+        var workspace:Workspace;
+        println("In loadStories, selectedWorkspace._refObjectName is:{model.selectedWorkspace._refObjectName}");
+        var readRequest:QueryRequest = QueryRequest {
+             //workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100
+            endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
+                      //"?workspace=\"https://rallytest1.rallydev.com/slm/webservice/1.19/workspace/41529001.js\""
+                      "?projectScopeUp=false"
+                      "?projectScopeDown=true"
+                      "?query=((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))"
+                      "?order=\"Rank\""
+                      "?fetch=true"
+                      "?start=1"
+                      "?pagesize=100"
+            //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.20/hierarchicalrequirement.js"
+            onResponse: function(wrapper:QueryResultWrapper):Void {
+                println("In onResponse, sizeof wrapper.QueryResult.Results:{sizeof wrapper.QueryResult.Results}");
+                for (result in wrapper.QueryResult.Results) {
+                    println("Hier{indexof result}: {result._refObjectName}");
+                }
+
+            }
+            onError: function(obj:Object):Void {
+                println("In onError, obj:{obj}");
+            }
+        }
+        readRequest.start();
+
+
+        //model.rallyService.query(workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
+   }
+
+
 // TODO: Replace this functionality
 //    function loadStories(start:Integer):Void {
 //        var workspace:Workspace;

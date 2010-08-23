@@ -31,11 +31,12 @@ package org.apropos.model.domain;
  * The results of a query
  * @author Jim Weaver
  */
-public class QueryResult {
+public class QueryResult extends DomainObject {
 
     /**
      * 
      */
-    public var results:DomainObject[];
+    //public var Results:HierarchicalRequirement[];
+    public var Results:DomainObject[];
 
 }
