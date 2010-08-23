@@ -31,32 +31,32 @@ package org.apropos.model.domain;
  * Represents a Rally User object via REST
  * @author Jim Weaver
  */
-public class UserProfile extends DomainObject {
-
-    /**
-     * 
-     */
-    public var DateFormat:String;
+public class Subscription extends DomainObject {
 
     /**
      *
      */
-    public var DateTimeFormat:String;
+    public var Modules:String;
 
     /**
      *
      */
-    public var DefaultProject:Project;
+    public var Name:String;
 
     /**
      *
      */
-    public var DefaultWorkspace:RefObject;
+    public var PasswordExpirationDays:Integer;
 
     /**
      *
      */
-    public var EmailNotificationEnabled:Boolean;
+    public var PreviousPasswordCount:Integer;
+
+    /**
+     *
+     */
+    public var RevisionHistory:RefObject;
 
     /**
      *
@@ -66,16 +66,12 @@ public class UserProfile extends DomainObject {
     /**
      *
      */
-    public var SessionTimeoutWarning:Boolean;
+    public var SubscriptionID:Integer;
 
     /**
      *
      */
-    public var TimeZone:String;
+    public var Workspaces:RefObject[];
 
-    /**
-     *
-     */
-    public var WelcomePageHidden:Boolean;
 
 }

@@ -88,6 +88,6 @@ public class DomainObject extends OperationResult {
      *
      */
     override public function toString () {
-        return "_refObjectName:{_refObjectName}";
+        return "_ref:{_ref}";
     }
 }
