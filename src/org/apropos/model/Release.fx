@@ -33,8 +33,10 @@ import javafx.util.Sequences;
 import org.jfxtras.util.SequenceUtil;
 import org.apropos.model.domain.HierarchicalRequirement;
 import org.apropos.model.domain.Workspace;
-import org.apropos.model.domain.QueryResultWrapper;
-import org.apropos.model.service.QueryRequest;
+import org.apropos.model.domain.HierQueryResultWrapper;
+import org.apropos.model.service.HierQueryRequest;
+import java.net.URLEncoder;
+//import org.apropos.model.service.QueryRequest;
 //import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
 
 /**
@@ -86,45 +88,37 @@ public class Release extends StoryContainer {
 
     function loadStories(start:Integer):Void {
         var workspace:Workspace;
-        println("In loadStories, selectedWorkspace._refObjectName is:{model.selectedWorkspace._refObjectName}");
         model.waiting++;
-        var readRequest:QueryRequest = QueryRequest {
-             //workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100
+        var query = "query=((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))";
+        query = query.replaceAll(" ", "%20");
+
+        var readRequest:HierQueryRequest = HierQueryRequest {
             endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
                       //"?workspace=\"https://rallytest1.rallydev.com/slm/webservice/1.19/workspace/41529001.js\""
-                      "?projectScopeUp=false"
-                      "?projectScopeDown=true"
-                      "?query=((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))"
-                      "?order=\"Rank\""
-                      "?fetch=true"
-                      "?start=1"
-                      "?pagesize=100"
-//            endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
-//                      //"?workspace=\"https://rallytest1.rallydev.com/slm/webservice/1.19/workspace/41529001.js\""
-//                      "?query=((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))"
-//                      "&projectScopeUp=false"
-//                      "&projectScopeDown=true"
-//                      "&order=Rank"
-//                      //"&fetch=false"
-//                      //TODO: Implement ability to read array of elements when using fetch
-//                      "&fetch=FormattedID,Description,Parent,RoadmapAllocation,RoadmapRelease,Rank,Owner,Project,ScheduleState"
-//                      "&start=1"
-//                      "&pagesize=100"
-            //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.20/hierarchicalrequirement.js"
-            onResponse: function(wrapper:QueryResultWrapper):Void {
+                      "?{query}"
+                      "&projectScopeUp=false"
+                      "&projectScopeDown=true"
+                      "&order=Rank"
+                      //"&fetch=false"
+                      //TODO: Implement ability to read array of elements when using fetch
+                      "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapRelease,Rank,ScheduleState" //,Owner,Project,Parent"
+                      "&start=1"
+                      "&pagesize=100"
+            //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.19/hierarchicalrequirement.js?query=%28%28RoadmapRelease%20=%20%22Q3%202010%22%29%20and%20%28RoadmapLevel%20=%20%22Feature%22%29%29&projectScopeUp=false&projectScopeDown=true&order=Rank&fetch=FormattedID,Description,Parent,RoadmapAllocation,RoadmapRelease,Rank,Owner,Project,ScheduleState&start=1&pagesize=100"
+
+            onResponse: function(wrapper:HierQueryResultWrapper):Void {
                 model.waiting--;
-                var queryResult = wrapper.QueryResult;
+                var queryResult = wrapper.HierQueryResult;
                 if (sizeof queryResult.Errors > 0) {
+                    //TODO: Implement the Errors and Warnings elements
                     println("Unable to load release {name} due to the following errors:");
                     for (error in queryResult.Errors) println('ERROR: {error}"');
                 }
                 else {
                     def results = queryResult.Results;
-                    println("In loadStories, sizeof results:{sizeof results}");
 
                     def newStories = for (domainObject in results) {
                         def hierarchicalRequirement = domainObject as HierarchicalRequirement;
-                        println("hierarchicalRequirement._ref:{hierarchicalRequirement._ref}");
                         Story {
                            hierarchicalRequirement: hierarchicalRequirement
                         };

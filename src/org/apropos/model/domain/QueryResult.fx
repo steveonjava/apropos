@@ -37,6 +37,7 @@ public class QueryResult extends DomainObject {
      * 
      */
     public var Results:HierarchicalRequirement[];
+    //public var Results:HierarchicalRequirement[];
     //public var Results:DomainObject[];
 
 }

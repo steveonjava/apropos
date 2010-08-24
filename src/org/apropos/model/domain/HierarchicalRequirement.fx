@@ -33,6 +33,7 @@ import java.math.BigDecimal;
  * @author Jim Weaver
  */
 public class HierarchicalRequirement extends Artifact {
+//public class HierarchicalRequirement extends WorkspaceDomainObject {
 
     /**
      * 
@@ -67,7 +68,7 @@ public class HierarchicalRequirement extends Artifact {
     /**
      *
      */
-    public var Parent:RefObject;
+    public var Parent:HierarchicalRequirement;
 
     /**
      *
@@ -82,7 +83,8 @@ public class HierarchicalRequirement extends Artifact {
     /**
      *
      */
-    public var Rank:BigDecimal;
+    //public var Rank:BigDecimal;
+    public var Rank:Number;
 
     /**
      *
@@ -148,4 +150,5 @@ public class HierarchicalRequirement extends Artifact {
      *
      */
     public var RoadmapRelease:String;
+
 }
