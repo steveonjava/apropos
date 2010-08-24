@@ -26,126 +26,71 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.apropos.model.domain;
-import java.math.BigDecimal;
 
 /**
- * Represents a Rally Workspace object via REST
+ * The results of a query
  * @author Jim Weaver
  */
-public class Results extends Artifact {
+public class HierQueryResult {
+
+    /**
+     *
+     */
+    public var Errors:String[];
+
+    /**
+     *
+     */
+    public var Warnings:String[];
+
+    /**
+     *
+     */
+    public var TotalResultCount:Integer;
+
+    /**
+     *
+     */
+    public var StartIndex:Integer;
+
+    /**
+     *
+     */
+    public var PageSize:Integer;
+
+    /**
+     *
+     */
+    public var _ref:String;
+
+    /**
+     *
+     */
+    public var _objectVersion:String;
+
+    /**
+     *
+     */
+    public var _type:String;
+
+    /**
+     *
+     */
+    public var _refObjectName:String;
+
+    /**
+     *
+     */
+    public var _rallyAPIMajor:String;
+
+    /**
+     *
+     */
+    public var _rallyAPIMinor:String;
 
     /**
      * 
      */
-    public var AcceptedDate:String;
+    public var Results:HierarchicalRequirement[];
 
-    /**
-     *
-     */
-    public var Blocked:Boolean;
-
-    /**
-     *
-     */
-    public var Blocker:RefObject;
-
-    /**
-     *
-     */
-    public var Children:RefObject[];
-
-    /**
-     *
-     */
-    public var Defects:RefObject[];
-
-    /**
-     *
-     */
-    public var Iteration:RefObject;
-
-    /**
-     *
-     */
-    public var Parent:RefObject;
-
-    /**
-     *
-     */
-    public var PlanEstimate:Number;
-
-    /**
-     *
-     */
-    public var Predecessors:RefObject[];
-
-    /**
-     *
-     */
-    public var Rank:BigDecimal;
-
-    /**
-     *
-     */
-    public var Release:RefObject;
-
-    /**
-     *
-     */
-    public var ScheduleState:String;
-
-    /**
-     *
-     */
-    public var Successors:RefObject[];
-
-    /**
-     *
-     */
-    public var TaskActualTotal:Number;
-
-    /**
-     *
-     */
-    public var TaskEstimateTotal:Number;
-
-    /**
-     *
-     */
-    public var TaskRemainingTotal:Number;
-
-    /**
-     *
-     */
-    public var Tasks:RefObject[];
-
-    /**
-     *
-     */
-    public var TestCases:RefObject[];
-
-    /**
-     * TODO: Need a WebLink class?
-     */
-    //public var APMRequirement:WebLink;
-
-    /**
-     *
-     */
-    public var RoadmapAllocation:String;
-
-    /**
-     *
-     */
-    public var RoadmapKanbanState:String;
-
-    /**
-     *
-     */
-    public var RoadmapLevel:String;
-
-    /**
-     *
-     */
-    public var RoadmapRelease:String;
 }

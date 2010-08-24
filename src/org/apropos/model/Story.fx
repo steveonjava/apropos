@@ -123,10 +123,13 @@ public class Story extends XObject, Comparable {
 
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
+
     public var rank:BigDecimal on replace {
         if (initialized) {
             var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
-            hierarchicalRequirement.Rank = new BigDecimal(rank3);
+            //TODO: Is BigDecimal required? If so, revisit RedFX JSON types capability
+            //hierarchicalRequirement.Rank = new BigDecimal(rank3);
+            hierarchicalRequirement.Rank = rank3;
             update();
         }
     }
@@ -149,7 +152,9 @@ public class Story extends XObject, Comparable {
         hierarchicalRequirement.RoadmapRelease = release.roadmapRelease;
         hierarchicalRequirement.RoadmapKanbanState = stage;
         var rank3 = Math.floor(rank.doubleValue() * 1000) / 1000;
-        hierarchicalRequirement.Rank = new BigDecimal(rank3);
+        //TODO: Is BigDecimal required? If so, revisit RedFX JSON types capability
+        //hierarchicalRequirement.Rank = new BigDecimal(rank3);
+        hierarchicalRequirement.Rank = rank3;
         hierarchicalRequirement.Owner = owner;
     }
 
@@ -271,7 +276,7 @@ public class Story extends XObject, Comparable {
         parentName = removeTags(hierarchicalRequirement.Parent._refObjectName);
         roadmapAllocation = hierarchicalRequirement.RoadmapAllocation;
         release = model.getRelease(hierarchicalRequirement.RoadmapRelease);
-        rank = hierarchicalRequirement.Rank;
+        rank = new BigDecimal(hierarchicalRequirement.Rank);
         owner = hierarchicalRequirement.Owner;
 
         def proj:Project = hierarchicalRequirement.Project;

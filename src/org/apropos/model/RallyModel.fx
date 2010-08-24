@@ -61,7 +61,7 @@ public var readOnly:Boolean;
 def community:Boolean = false;
 def show:Boolean = false;
 public def server = bind if (community) "https://community.rallydev.com/" else if (show) "https://show.rallydev.com/" else "https://rallytest1.rallydev.com/";
-public def endpointPath = "slm/webservice/1.20/";
+public def endpointPath = "slm/webservice/1.19/";
 
 public def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
 //def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";

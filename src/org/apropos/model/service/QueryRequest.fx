@@ -73,6 +73,7 @@ public class QueryRequest extends AbstractRequest {
     public function gotResult(obj:Object):Void {
         println("v Ending QueryRequest, endPoint:{endPoint}");
         var wrapper: QueryResultWrapper = obj as QueryResultWrapper;
+        println("In QueryRequest#gotResult, sizeof sizeof wrapper.QueryResult.Results:{sizeof wrapper.QueryResult.Results}");
         onResponse(wrapper);
     }
 

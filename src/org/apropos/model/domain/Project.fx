@@ -66,12 +66,12 @@ public class Project extends WorkspaceDomainObject {
     /**
      *
      */
-    public var Owner:RefObject;
+    public var Owner:User;
 
     /**
      *
      */
-    public var Parent:RefObject;
+    public var Parent:Project;
 
     /**
      *
