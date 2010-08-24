@@ -95,7 +95,7 @@ public class HierQueryRequest extends AbstractRequest {
                 input: is
                 documentType: PullParser.JSON;
                 onEvent: function( e:Event ) {
-                    println("Event:{e}");
+                    //println("Event:{e}");
                     if (e.type == PullParser.START_VALUE) {
                         if (e.level == 3) {
                             if (e.name == "Owner") {
@@ -286,7 +286,7 @@ public class HierQueryRequest extends AbstractRequest {
             }
             onInput: parseResponse
             onDone: function() {
-                println("HttpRequest is done, responseCode:{httpRequest.responseCode}");
+                //println("HttpRequest is done, responseCode:{httpRequest.responseCode}");
             }
         }
         httpRequest.start();
