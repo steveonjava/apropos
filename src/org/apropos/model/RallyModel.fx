@@ -132,7 +132,7 @@ public class RallyModel extends XObject {
     public var selectedMainProjectsIndex:Integer;
     public var selectedMainProjectsName:String = bind if (selectedMainProjectsIndex == 0) null else {
         //TODO: Modify RedFX to allow converting case (and perhaps names) of instance variables
-        mainProjects[selectedMainProjectsIndex - 1].Name;
+        mainProjects[selectedMainProjectsIndex - 1]._refObjectName;
     }
 
     public var epicNames:String[];
