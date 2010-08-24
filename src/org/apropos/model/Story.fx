@@ -119,7 +119,7 @@ public class Story extends XObject, Comparable {
             update();
         }
     }
-    public var projectName:String = bind project.Name;
+    public var projectName:String = bind project._refObjectName;
 
     public var estimate:Double;
     public var estimateDisplay = bind model.convertEstimate(estimate);
@@ -279,11 +279,12 @@ public class Story extends XObject, Comparable {
         rank = new BigDecimal(hierarchicalRequirement.Rank);
         owner = hierarchicalRequirement.Owner;
 
-        def proj:Project = hierarchicalRequirement.Project;
-        if (proj instanceof Project) {
-            //TODO: Determine if necessary to perform a ReadRequest
-            //project = model.rallyService.read(proj) as Project;
-        }
+        project = hierarchicalRequirement.Project;
+        //TODO: Determine if next three lines are necessary
+//        def proj:Project = hierarchicalRequirement.Project;
+//        if (proj instanceof Project) {
+//            project = model.rallyService.read(proj) as Project;
+//        }
 
         //TODO: Determine if necessary to do the following two lines
 //        inPackage = hierarchicalRequirement.get_package();

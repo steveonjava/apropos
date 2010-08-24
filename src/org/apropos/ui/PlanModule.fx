@@ -50,7 +50,7 @@ import org.jfxtras.scene.layout.XLayoutInfo;
 import javafx.geometry.Insets;
 
 /**
- * @author Stephen Chin
+ * @author Stephen Chin, Jim Weaver
  * TODO: Change rest of owner verbage to project (or team) verbage.
  */
 public class PlanModule extends AbstractModulePage {
@@ -94,38 +94,6 @@ public class PlanModule extends AbstractModulePage {
         name: "Team"
         list: bind for (project in model.mainProjects) project._refObjectName
         selectedIndex: bind model.selectedMainProjectsIndex with inverse
-    };
-
-    // TODO: Decide whether to remove this code, as these buttons are (at least
-    //       temporarily) not desired in the UI
-    def buttons = XHBox {
-        spacing: 8
-        content: [
-//            Button {
-//                text: "Auto Assign Features to Owners"
-//                action: function() {
-//                    for (story in stories) {
-//                        story.drafted = true;
-//                    }
-//                    calculateOwnerTotals();
-//                }
-//            },
-//            Button {
-//                text: "Clear Assignments"
-//                action: function() {
-//                    for (story in stories) {
-//                        story.drafted = false;
-//                    }
-//                    calculateOwnerTotals();
-//                }
-//            },
-            Button {
-                text: "update totals"
-                action: function() {
-                    calculateOwnerTotals();
-                }
-            }
-        ]
     };
 
     def ownersHeader:XGrid = XGrid {
