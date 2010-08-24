@@ -17,4 +17,6 @@ public class DomainObjectWrapper {
 
   public var UserProfile: UserProfile;
 
+  public var Subscription: Subscription;
+
 }
