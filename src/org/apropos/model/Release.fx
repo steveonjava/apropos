@@ -101,7 +101,7 @@ public class Release extends StoryContainer {
                       "&order=Rank"
                       //"&fetch=false"
                       //TODO: Implement ability to read array of elements when using fetch
-                      "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapRelease,Rank,ScheduleState" //,Owner,Project,Parent"
+                      "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapRelease,Rank,ScheduleState,Owner,Project,Parent"
                       "&start=1"
                       "&pagesize=100"
             //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.19/hierarchicalrequirement.js?query=%28%28RoadmapRelease%20=%20%22Q3%202010%22%29%20and%20%28RoadmapLevel%20=%20%22Feature%22%29%29&projectScopeUp=false&projectScopeDown=true&order=Rank&fetch=FormattedID,Description,Parent,RoadmapAllocation,RoadmapRelease,Rank,Owner,Project,ScheduleState&start=1&pagesize=100"
