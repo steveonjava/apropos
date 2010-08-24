@@ -26,8 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.apropos.model.service;
-import javafx.data.pull.Event;
-import javafx.data.pull.PullParser;
 import javafx.io.http.HttpRequest;
 import java.io.InputStream;
 import javafx.io.http.HttpHeader;
@@ -35,7 +33,10 @@ import org.apropos.model.domain.HierQueryResultWrapper;
 import org.apropos.model.domain.HierQueryResult;
 import org.apropos.model.domain.HierarchicalRequirement;
 import org.apropos.model.RallyModel;
-import java.net.URLEncoder;
+import org.apropos.model.domain.User;
+import javafx.data.pull.Event;
+import javafx.data.pull.PullParser;
+import org.apropos.model.domain.Project;
 //import org.apropos.model.RallyModel;
 
 //import org.apropos.model.RallyModel;
@@ -68,6 +69,14 @@ public class HierQueryRequest extends AbstractRequest {
     var wrapper:HierQueryResultWrapper;
     var curHierReq:HierarchicalRequirement;
 
+    var curOwner:User;
+    var curParent:HierarchicalRequirement;
+    var curProject:Project;
+
+    var processingOwner:Boolean;
+    var processingParent:Boolean;
+    var processingProject:Boolean;
+
     public function start():Void {
         createHttpRequest();
     }
@@ -86,7 +95,24 @@ public class HierQueryRequest extends AbstractRequest {
                 input: is
                 documentType: PullParser.JSON;
                 onEvent: function( e:Event ) {
-                    if (e.type == PullParser.END_VALUE) {
+                    println("Event:{e}");
+                    if (e.type == PullParser.START_VALUE) {
+                        if (e.level == 3) {
+                            if (e.name == "Owner") {
+                                processingOwner = true;
+                                curOwner = User {};
+                            }
+                            else if (e.name == "Parent") {
+                                processingParent = true;
+                                curParent = HierarchicalRequirement {};
+                            }
+                            else if (e.name == "Project") {
+                                processingProject = true;
+                                curProject = Project {};
+                            }
+                        }
+                    }
+                    else if (e.type == PullParser.END_VALUE) {
                         if (e.level == 1) {
                             if (e.name == "_rallyAPIMajor") {
                                 wrapper.HierQueryResult._rallyAPIMajor = e.text;
@@ -100,6 +126,82 @@ public class HierQueryRequest extends AbstractRequest {
                             }
                             else if (e.name == "StartIndex") {
                                 wrapper.HierQueryResult.StartIndex = e.integerValue;
+                            }
+                        }
+                        if (e.level == 3) {
+                            if (e.name == "Owner") {
+                                processingOwner = false;
+                                curHierReq.Owner = curOwner;
+                            }
+                            else if (e.name == "Parent") {
+                                processingParent = false;
+                                curHierReq.Parent = curParent;
+                            }
+                            else if (e.name == "Project") {
+                                processingProject = false;
+                                curHierReq.Project = curProject;
+                            }
+                        }
+                        else if (e.level == 4) {
+                            if (processingOwner) {
+                                if (e.name == "_rallyAPIMajor") {
+                                    curOwner._rallyAPIMajor = e.text;
+                                }
+                                else if (e.name == "_rallyAPIMinor") {
+                                    curOwner._rallyAPIMinor = e.text;
+                                }
+                                else if (e.name == "_ref") {
+                                    curOwner._ref = e.text;
+                                }
+                                else if (e.name == "_objectVersion") {
+                                    curOwner._objectVersion = e.text;
+                                }
+                                else if (e.name == "_refObjectName") {
+                                    curOwner._refObjectName = e.text;
+                                }
+                                else if (e.name == "_type") {
+                                    curOwner._type = e.text;
+                                }
+                            }
+                            else if (processingParent) {
+                                if (e.name == "_rallyAPIMajor") {
+                                    curParent._rallyAPIMajor = e.text;
+                                }
+                                else if (e.name == "_rallyAPIMinor") {
+                                    curParent._rallyAPIMinor = e.text;
+                                }
+                                else if (e.name == "_ref") {
+                                    curParent._ref = e.text;
+                                }
+                                else if (e.name == "_objectVersion") {
+                                    curParent._objectVersion = e.text;
+                                }
+                                else if (e.name == "_refObjectName") {
+                                    curParent._refObjectName = e.text;
+                                }
+                                else if (e.name == "_type") {
+                                    curParent._type = e.text;
+                                }
+                            }
+                            else if (processingProject) {
+                                if (e.name == "_rallyAPIMajor") {
+                                    curProject._rallyAPIMajor = e.text;
+                                }
+                                else if (e.name == "_rallyAPIMinor") {
+                                    curProject._rallyAPIMinor = e.text;
+                                }
+                                else if (e.name == "_ref") {
+                                    curProject._ref = e.text;
+                                }
+                                else if (e.name == "_objectVersion") {
+                                    curProject._objectVersion = e.text;
+                                }
+                                else if (e.name == "_refObjectName") {
+                                    curProject._refObjectName = e.text;
+                                }
+                                else if (e.name == "_type") {
+                                    curProject._type = e.text;
+                                }
                             }
                         }
                         else if (curHierReq != null) {
