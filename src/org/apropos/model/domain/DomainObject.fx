@@ -82,7 +82,7 @@ public class DomainObject extends OperationResult {
     /**
      *
      */
-    public var Subscription:RefObject;
+    public var Subscription:Subscription;
 
     /**
      *

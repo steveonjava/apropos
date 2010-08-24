@@ -71,7 +71,7 @@ public class Subscription extends DomainObject {
     /**
      *
      */
-    public var Workspaces:RefObject[];
+    public var Workspaces:Workspace[];
 
 
 }

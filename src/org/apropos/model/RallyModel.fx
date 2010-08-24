@@ -440,13 +440,24 @@ public class RallyModel extends XObject {
     function loadWorkspaces():Void {
         delete workspaces;
         //TODO: Put back in
-        //var subscription:Subscription = myUser.Subscription as Subscription;
-        //subscription = rallyService.read(subscription) as Subscription;
+        var subscription:Subscription = myUser.Subscription as Subscription;
 
-        //TODO: Load the workspaces
-//        workspaces = subscription.Workspaces as Workspaces[];
-//        workspaces = Sequences.sort(workspaces, new WorkspaceRefComparator()) as Workspace[];
-//        selectedWorkspaceIndex = Sequences.indexOf(workspacesNames, defaultWorkspace.getRefObjectName());
+        var readRequest:ReadRequest = ReadRequest {
+            endPoint: "{subscription._ref}?fetch=Workspaces"
+            onResponse: function(wrapper:DomainObjectWrapper):Void {
+                println("In ReadRequest#onResponse, wrapper.Subscription:{wrapper.Subscription}");
+                subscription = wrapper.Subscription;
+
+                workspaces = subscription.Workspaces;
+                workspaces = Sequences.sort(workspaces, new WorkspaceNameComparator()) as Workspace[];
+                selectedWorkspaceIndex = Sequences.indexOf(workspacesNames, defaultWorkspace._refObjectName);
+            }
+            onError: function(obj:Object):Void {
+                println("In onError, obj:{obj}");
+            }
+        }
+        readRequest.start();
+
 
     }
 
