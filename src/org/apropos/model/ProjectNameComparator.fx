@@ -25,25 +25,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.apropos.model;
 
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
+import java.lang.Object;
+import java.lang.Object;
 import java.util.Comparator;
+import org.apropos.model.domain.Project;
 
 /**
  *
  * @author jlweaver
  */
-public class WorkspaceComparator implements Comparator {
-    public int compare(Object workspaceA, Object workspaceB) {
-        Workspace workA = (Workspace)workspaceA;
-        Workspace workB = (Workspace)workspaceB;
-        return workA.getName().compareTo(workB.getName());
-    }
-    public boolean equals(Object workspaceA, Object workspaceB) {
-        Workspace workA = (Workspace)workspaceA;
-        Workspace workB = (Workspace)workspaceB;
-        return workA.getName().equals(workB.getName());
+public class ProjectNameComparator extends Comparator {
+    public override function compare(projectA:Object, projectB:Object):Integer {
+        var projA:Project = projectA as Project;
+        var projB:Project = projectB as Project;
+        return projA._refObjectName.compareTo(projB._refObjectName);
     }
 }

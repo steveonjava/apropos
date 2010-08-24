@@ -92,7 +92,7 @@ public class PlanModule extends AbstractModulePage {
 
     def projectFilter = Filter {
         name: "Team"
-        list: bind for (project in model.mainProjects) project.Name
+        list: bind for (project in model.mainProjects) project._refObjectName
         selectedIndex: bind model.selectedMainProjectsIndex with inverse
     };
 
@@ -163,7 +163,7 @@ public class PlanModule extends AbstractModulePage {
             row([
                 Label {
                     styleClass: "empasized-text"
-                    text: project.Name;
+                    text: project._refObjectName;
                     layoutInfo: LayoutInfo {
                         width: 160
                     }

@@ -314,14 +314,15 @@ public class RallyModel extends XObject {
         var readRequest:ReadRequest = ReadRequest {
             endPoint: "{myUser.UserProfile._ref}?fetch=defaultproject,defaultworkspace"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-//                println("In ReadRequest#onResponse, wrapper.UserProfile:{wrapper.UserProfile}");
+                println("In ReadRequest#onResponse, wrapper.UserProfile:{wrapper.UserProfile}");
                 myUserProfile = wrapper.UserProfile;
                 
                 mainProject = myUserProfile.DefaultProject;
                 defaultProject = mainProject;
 
-                selectedWorkspace = myUserProfile.DefaultWorkspace;
-                defaultWorkspace = selectedWorkspace;
+                defaultWorkspace = myUserProfile.DefaultWorkspace;
+                selectedWorkspace = defaultWorkspace;
+                println("defaultWorkspace._refObjectName:{defaultWorkspace._refObjectName}");
 
                 loadMainProjects();
             }
@@ -361,8 +362,7 @@ public class RallyModel extends XObject {
                 delete mainProjects;
                 insert mainProject into mainProjects;
                 getChildProjects(mainProject);
-                //TODO: Put back in
-                //mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
+                mainProjects = Sequences.sort(mainProjects, new ProjectNameComparator()) as Project[];
             }
             onError: function(obj:Object):Void {
 //                println("In onError, obj:{obj}");
