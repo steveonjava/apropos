@@ -54,7 +54,7 @@ import org.apropos.model.domain.Workspace;
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.31";
+public def APROPOS_VERSION = "0.8.32";
 
 public var readOnly:Boolean;
 
