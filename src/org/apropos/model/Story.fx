@@ -152,59 +152,20 @@ public class Story extends XObject, Comparable {
     }
 
     package function update():Void {
-        if (true) { //TODO: Remove
-        //if (not model.requestAccess()) {
+        if (not model.requestAccess()) {
             return;
         }
-        model.waiting++;
-        var updateRequest:HierUpdateRequest = HierUpdateRequest {
-            hierarchicalRequirement: hierarchicalRequirement
-            onDone: function():Void {
-                model.waiting--;
-                var readRequest:ReadRequest = ReadRequest {
-                    //TODO: Put the fetch string in a variable to avoid DRY (the same fetch string is used in Release.fx?)
-                    endPoint: "{hierarchicalRequirement._ref}?fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,Rank,ScheduleState,Owner,Project,Parent,ObjectID"
-                    onResponse: function(wrapper:DomainObjectWrapper):Void {
-                        println("In onResponse, wrapper.HierarchicalRequirement:{wrapper.HierarchicalRequirement}");
-                        hierarchicalRequirement = wrapper.HierarchicalRequirement;
-                        initialize();
-                    }
-                    onError: function(obj:Object):Void {
-                        println("In onError, obj:{obj}");
-                    }
-                }
-                readRequest.start();
-                println("HierUpdateRequest is done");
-            }
-            onErrors: function(errors:String[]):Void {
-                model.waiting--;
-                println("In onErrors, errors: [{for (error in errors)"\n  {error}"}\n]");
-            }
-        }
-        updateRequest.start();
-
-        //TODO: Implement other necessary concepts from the code below in
-        //      the REST update() function above (like dirty/executing/reapply).
-        /*
         dirty = true;
         if (not executing) {
             executing = true;
             dirty = false;
             model.waiting++;
-            XWorker {
-                inBackground: function() {
-                    var result = model.rallyService.update(hierarchicalRequirement);
-                    for (error in result.getErrors()) println("ERROR: {error}");
-                    model.rallyService.read(hierarchicalRequirement) as HierarchicalRequirement;
-                }
-                onFailure: function(e) {
+            var updateRequest:HierUpdateRequest = HierUpdateRequest {
+                hierarchicalRequirement: hierarchicalRequirement
+                onDone: function():Void {
+                    //TODO: Keep println in while validating functionality
+                    println("------2: updateRequest DONE");
                     model.waiting--;
-                    println("Unable to update Story \"{name}\" due to the following exception:");
-                    e.printStackTrace();
-                }
-                onDone: function(result) {
-                    model.waiting--;
-                    hierarchicalRequirement = result as HierarchicalRequirement;
                     executing = false;
                     if (dirty) {
                         reapply();
@@ -213,9 +174,15 @@ public class Story extends XObject, Comparable {
                         initialize();
                     }
                 }
+                onErrors: function(errors:String[]):Void {
+                    model.waiting--;
+                   println("In onErrors, errors: [{for (error in errors)"\n  {error}"}\n]");
+                   println("hierarchicalRequirement._ref: {hierarchicalRequirement._ref}");
+                }
             }
+            println("------1: updateRequest STARTED");
+            updateRequest.start();
         }
-        */
     }
 
     init {
