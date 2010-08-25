@@ -240,8 +240,14 @@ public class HierQueryRequest extends AbstractRequest {
                                 else if (e.name == "RoadmapAllocation") {
                                     curHierReq.RoadmapAllocation = e.text;
                                 }
+                                else if (e.name == "RoadmapKanbanState") {
+                                    curHierReq.RoadmapKanbanState = e.text;
+                                }
                                 else if (e.name == "RoadmapRelease") {
                                     curHierReq.RoadmapRelease = e.text;
+                                }
+                                else if (e.name == "ObjectID") {
+                                    curHierReq.ObjectID = e.integerValue;
                                 }
                                 else if (e.name == "_type") {
                                     curHierReq._type = e.text;
