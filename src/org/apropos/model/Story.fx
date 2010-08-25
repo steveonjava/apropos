@@ -33,29 +33,22 @@ import org.jfxtras.lang.XObject;
 //import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
 import java.math.BigDecimal;
 //import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
-import java.lang.Boolean;
-import org.apropos.model.RallyModel;
-import org.apropos.model.Story;
 //import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
-import java.lang.String;
-import org.jfxtras.async.XWorker;
-import org.apropos.model.domain.HierarchicalRequirement;
 import javafx.util.Math;
-import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
 import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
 import java.lang.Void;
-import java.math.BigDecimal;
 import org.apropos.model.Backlog;
 import org.apropos.model.RallyModel;
 import org.apropos.model.Story;
 import org.apropos.model.domain.HierarchicalRequirement;
 import org.apropos.model.domain.Project;
 import org.apropos.model.domain.User;
-import org.jfxtras.async.XWorker;
 import org.jfxtras.util.BrowserUtil;
-import org.jfxtras.util.SequenceUtil;
+import org.apropos.model.service.HierUpdateRequest;
+import org.apropos.model.domain.DomainObjectWrapper;
+import org.apropos.model.service.ReadRequest;
 
 /**
  * @author Stephen Chin
@@ -159,11 +152,40 @@ public class Story extends XObject, Comparable {
     }
 
     package function update():Void {
-        //TODO: Implement with REST update
-        /*
-        if (not model.requestAccess()) {
+        if (true) { //TODO: Remove
+        //if (not model.requestAccess()) {
             return;
         }
+        model.waiting++;
+        var updateRequest:HierUpdateRequest = HierUpdateRequest {
+            hierarchicalRequirement: hierarchicalRequirement
+            onDone: function():Void {
+                model.waiting--;
+                var readRequest:ReadRequest = ReadRequest {
+                    //TODO: Put the fetch string in a variable to avoid DRY (the same fetch string is used in Release.fx?)
+                    endPoint: "{hierarchicalRequirement._ref}?fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,Rank,ScheduleState,Owner,Project,Parent,ObjectID"
+                    onResponse: function(wrapper:DomainObjectWrapper):Void {
+                        println("In onResponse, wrapper.HierarchicalRequirement:{wrapper.HierarchicalRequirement}");
+                        hierarchicalRequirement = wrapper.HierarchicalRequirement;
+                        initialize();
+                    }
+                    onError: function(obj:Object):Void {
+                        println("In onError, obj:{obj}");
+                    }
+                }
+                readRequest.start();
+                println("HierUpdateRequest is done");
+            }
+            onErrors: function(errors:String[]):Void {
+                model.waiting--;
+                println("In onErrors, errors: [{for (error in errors)"\n  {error}"}\n]");
+            }
+        }
+        updateRequest.start();
+
+        //TODO: Implement other necessary concepts from the code below in
+        //      the REST update() function above (like dirty/executing/reapply).
+        /*
         dirty = true;
         if (not executing) {
             executing = true;

@@ -11,12 +11,13 @@ package org.apropos.model.domain;
 
 public class DomainObjectWrapper {
 
-  public var User: User;
+    public var User: User;
 
-  public var Project: Project;
+    public var Project: Project;
 
-  public var UserProfile: UserProfile;
+    public var UserProfile: UserProfile;
 
-  public var Subscription: Subscription;
+    public var Subscription: Subscription;
 
+    public var HierarchicalRequirement: HierarchicalRequirement;
 }
