@@ -151,4 +151,15 @@ public class HierarchicalRequirement extends Artifact {
      */
     public var RoadmapRelease:String;
 
+    /**
+     *
+     */
+    public override function toString():String {
+        "_refObjectName:{_refObjectName}\n"
+        "RoadmapAllocation:{RoadmapAllocation}\n"
+        "RoadmapKanbanState:{RoadmapKanbanState}\n"
+        "RoadmapLevel:{RoadmapLevel}\n"
+        "RoadmapRelease:{RoadmapRelease}\n"
+        "{super.toString()}"
+    }
 }

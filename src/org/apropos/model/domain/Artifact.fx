@@ -83,4 +83,12 @@ public abstract class Artifact extends WorkspaceDomainObject {
      */
     public var Tags:RefObject[];
 
+    /**
+     *
+     */
+    public override function toString():String {
+        "Name:{Name}\n"
+        "Project._refObjectName:{Project._refObjectName}\n"
+    }
+    
 }
