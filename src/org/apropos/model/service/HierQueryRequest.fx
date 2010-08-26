@@ -76,6 +76,13 @@ public class HierQueryRequest extends AbstractRequest {
     var processingOwner:Boolean;
     var processingParent:Boolean;
     var processingProject:Boolean;
+    
+    function resetProcessingFlags():Void {
+        processingOwner = false;
+        processingParent = false;
+        processingProject = false;
+    }
+    
 
     public function start():Void {
         createHttpRequest();
@@ -95,18 +102,22 @@ public class HierQueryRequest extends AbstractRequest {
                 input: is
                 documentType: PullParser.JSON;
                 onEvent: function( e:Event ) {
+                    //TODO: Keep this prinln in while validating the SOAP to REST Conversion iteration
                     //println("Event:{e}");
                     if (e.type == PullParser.START_VALUE) {
-                        if (e.level == 3) {
+                        if (e.level == 2) {
                             if (e.name == "Owner") {
+                                resetProcessingFlags();
                                 processingOwner = true;
                                 curOwner = User {};
                             }
                             else if (e.name == "Parent") {
+                                resetProcessingFlags();
                                 processingParent = true;
                                 curParent = HierarchicalRequirement {};
                             }
                             else if (e.name == "Project") {
+                                resetProcessingFlags();
                                 processingProject = true;
                                 curProject = Project {};
                             }
@@ -128,21 +139,68 @@ public class HierQueryRequest extends AbstractRequest {
                                 wrapper.HierQueryResult.StartIndex = e.integerValue;
                             }
                         }
-                        if (e.level == 3) {
-                            if (e.name == "Owner") {
-                                processingOwner = false;
-                                curHierReq.Owner = curOwner;
-                            }
-                            else if (e.name == "Parent") {
-                                processingParent = false;
-                                curHierReq.Parent = curParent;
-                            }
-                            else if (e.name == "Project") {
-                                processingProject = false;
-                                curHierReq.Project = curProject;
+                        if (e.level == 2) {
+                            if (curHierReq != null) {
+                                if (e.name == "Owner") {
+                                    processingOwner = false;
+                                    curHierReq.Owner = curOwner;
+                                }
+                                else if (e.name == "Parent") {
+                                    processingParent = false;
+                                    curHierReq.Parent = curParent;
+                                }
+                                else if (e.name == "Project") {
+                                    processingProject = false;
+                                    curHierReq.Project = curProject;
+                                }
+                                else if (e.name == "_rallyAPIMajor") {
+                                    curHierReq._rallyAPIMajor = e.text;
+                                }
+                                else if (e.name == "_rallyAPIMinor") {
+                                    curHierReq._rallyAPIMinor = e.text;
+                                }
+                                else if (e.name == "_ref") {
+                                    curHierReq._ref = e.text;
+                                }
+                                else if (e.name == "_objectVersion") {
+                                    curHierReq._objectVersion = e.text;
+                                }
+                                else if (e.name == "_refObjectName") {
+                                    curHierReq._refObjectName = e.text;
+                                }
+                                else if (e.name == "Description") {
+                                    curHierReq.Description = e.text;
+                                }
+                                else if (e.name == "FormattedID") {
+                                    curHierReq.FormattedID = e.text;
+                                }
+                                else if (e.name == "Rank") {
+                                    curHierReq.Rank = e.numberValue;
+                                }
+                                else if (e.name == "ScheduleState") {
+                                    curHierReq.ScheduleState = e.text;
+                                }
+                                else if (e.name == "Blocked") {
+                                    curHierReq.Blocked = e.booleanValue;
+                                }
+                                else if (e.name == "RoadmapAllocation") {
+                                    curHierReq.RoadmapAllocation = e.text;
+                                }
+                                else if (e.name == "RoadmapKanbanState") {
+                                    curHierReq.RoadmapKanbanState = e.text;
+                                }
+                                else if (e.name == "RoadmapRelease") {
+                                    curHierReq.RoadmapRelease = e.text;
+                                }
+                                else if (e.name == "ObjectID") {
+                                    curHierReq.ObjectID = e.integerValue;
+                                }
+                                else if (e.name == "_type") {
+                                    curHierReq._type = e.text;
+                                }
                             }
                         }
-                        else if (e.level == 4) {
+                        else if (e.level == 3) {
                             if (processingOwner) {
                                 if (e.name == "_rallyAPIMajor") {
                                     curOwner._rallyAPIMajor = e.text;
@@ -201,56 +259,6 @@ public class HierQueryRequest extends AbstractRequest {
                                 }
                                 else if (e.name == "_type") {
                                     curProject._type = e.text;
-                                }
-                            }
-                        }
-                        else if (curHierReq != null) {
-                            if (e.level == 2) {
-                                if (e.name == "_rallyAPIMajor") {
-                                    curHierReq._rallyAPIMajor = e.text;
-                                }
-                                else if (e.name == "_rallyAPIMinor") {
-                                    curHierReq._rallyAPIMinor = e.text;
-                                }
-                                else if (e.name == "_ref") {
-                                    curHierReq._ref = e.text;
-                                }
-                                else if (e.name == "_objectVersion") {
-                                    curHierReq._objectVersion = e.text;
-                                }
-                                else if (e.name == "_refObjectName") {
-                                    curHierReq._refObjectName = e.text;
-                                }
-                                else if (e.name == "Description") {
-                                    curHierReq.Description = e.text;
-                                }
-                                else if (e.name == "FormattedID") {
-                                    curHierReq.FormattedID = e.text;
-                                }
-                                //TODO: Handle Owner, Project, Parent
-                                else if (e.name == "Rank") {
-                                    curHierReq.Rank = e.numberValue;
-                                }
-                                else if (e.name == "ScheduleState") {
-                                    curHierReq.ScheduleState = e.text;
-                                }
-                                else if (e.name == "Blocked") {
-                                    curHierReq.Blocked = e.booleanValue;
-                                }
-                                else if (e.name == "RoadmapAllocation") {
-                                    curHierReq.RoadmapAllocation = e.text;
-                                }
-                                else if (e.name == "RoadmapKanbanState") {
-                                    curHierReq.RoadmapKanbanState = e.text;
-                                }
-                                else if (e.name == "RoadmapRelease") {
-                                    curHierReq.RoadmapRelease = e.text;
-                                }
-                                else if (e.name == "ObjectID") {
-                                    curHierReq.ObjectID = e.integerValue;
-                                }
-                                else if (e.name == "_type") {
-                                    curHierReq._type = e.text;
                                 }
                             }
                         }

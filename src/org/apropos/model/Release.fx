@@ -27,17 +27,12 @@
  */
 package org.apropos.model;
 
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.QueryResult;
 import javafx.util.Sequences;
 import org.jfxtras.util.SequenceUtil;
 import org.apropos.model.domain.HierarchicalRequirement;
 import org.apropos.model.domain.Workspace;
 import org.apropos.model.domain.HierQueryResultWrapper;
 import org.apropos.model.service.HierQueryRequest;
-import java.net.URLEncoder;
-//import org.apropos.model.service.QueryRequest;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
 
 /**
  * @author Stephen Chin
@@ -94,7 +89,6 @@ public class Release extends StoryContainer {
 
         var readRequest:HierQueryRequest = HierQueryRequest {
             endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
-                      //"?workspace=\"https://rallytest1.rallydev.com/slm/webservice/1.19/workspace/41529001.js\""
                       "?{query}"
                       "&projectScopeUp=false"
                       "&projectScopeDown=true"
@@ -103,7 +97,6 @@ public class Release extends StoryContainer {
                       "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,RoadmapLevel,Rank,ScheduleState,Owner,Project,Parent,ObjectID"
                       "&start=1"
                       "&pagesize=100"
-            //endPoint: "https://rallytest1.rallydev.com/slm/webservice/1.19/hierarchicalrequirement.js?query=%28%28RoadmapRelease%20=%20%22Q3%202010%22%29%20and%20%28RoadmapLevel%20=%20%22Feature%22%29%29&projectScopeUp=false&projectScopeDown=true&order=Rank&fetch=FormattedID,Description,Parent,RoadmapAllocation,RoadmapRelease,Rank,Owner,Project,ScheduleState&start=1&pagesize=100"
 
             onResponse: function(wrapper:HierQueryResultWrapper):Void {
                 model.waiting--;
@@ -153,14 +146,6 @@ public class Release extends StoryContainer {
                         loadStories(start + 100);
                     }
                 }
-
-
-
-//                println("In onResponse, sizeof wrapper.QueryResult.Results:{sizeof wrapper.QueryResult.Results}");
-//                for (result in wrapper.QueryResult.Results) {
-//                    println("Hier{indexof result}: {result._refObjectName}");
-//                }
-
             }
             onError: function(obj:Object):Void {
                 model.waiting--;
@@ -168,75 +153,5 @@ public class Release extends StoryContainer {
             }
         }
         readRequest.start();
-
-
-        //model.rallyService.query(workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
    }
-
-
-// TODO: Replace this functionality
-//    function loadStories(start:Integer):Void {
-//        var workspace:Workspace;
-//        if (model.selectedWorkspace != null) {
-//            workspace = model.rallyService.read(model.selectedWorkspace) as Workspace;
-//        }
-//        model.waiting++;
-//        XWorker {
-//            inBackground: function() {
-//                model.rallyService.query(workspace, model.mainProject, false, true, "HierarchicalRequirement", "((RoadmapRelease = \"{roadmapRelease}\") and (RoadmapLevel = \"Feature\"))", "Rank", true, start, 100);
-//            }
-//            onFailure: function(e) {
-//                model.waiting--;
-//                println("Unable to load release {name} due to the following exception:");
-//                e.printStackTrace();
-//            }
-//            onDone: function(result) {
-//                model.waiting--;
-//                var queryResult = result as QueryResult;
-//                if (sizeof queryResult.getErrors() > 0) {
-//                    println("Unable to load release {name} due to the following errors:");
-//                    for (error in queryResult.getErrors()) println('ERROR: {error}"');
-//                } else {
-//                    def results = queryResult.getResults();
-//
-//                    def newStories = for (domainObject in results) {
-//                        def hierarchicalRequirement = domainObject as HierarchicalRequirement;
-//                        Story {
-//                           hierarchicalRequirement: hierarchicalRequirement
-//                        };
-//                    }
-//                    insert newStories into stories;
-//                    for (story in newStories) {
-//                        def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
-//                        if (insertionPoint < 0) {
-//                            insert story.inPackage before model.packageNames[-insertionPoint - 1];
-//                        }
-//                    }
-//                    for (story in newStories) {
-//                        def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
-//                        if (insertionPoint < 0) {
-//                            insert story.parentName before model.epicNames[-insertionPoint - 1];
-//                        }
-//                    }
-//                    for (story in newStories) {
-//                        if (story.roadmapAllocation.trim() != "") {
-//                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
-//                            if (insertionPoint < 0) {
-//                                insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
-//                            }
-//                        }
-//                    }
-//                    for (stage in model.stages) {
-//                        def stageStories = newStories[s|s.stage == stage.name];
-//                        insert stageStories into stage.stories;
-//                    }
-//                    def noStage = newStories[s|s.stage == null];
-//                    insert noStage into model.stages[0].stories;
-//                    if (results.length == 100) {
-//                        loadStories(start + 100);
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
