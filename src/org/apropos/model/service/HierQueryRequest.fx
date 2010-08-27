@@ -72,15 +72,18 @@ public class HierQueryRequest extends AbstractRequest {
     var curOwner:User;
     var curParent:HierarchicalRequirement;
     var curProject:Project;
+    var curChild:HierarchicalRequirement;
 
     var processingOwner:Boolean;
     var processingParent:Boolean;
     var processingProject:Boolean;
-    
+    var processingChildren:Boolean;
+
     function resetProcessingFlags():Void {
         processingOwner = false;
         processingParent = false;
         processingProject = false;
+        processingChildren = false;
     }
     
 
@@ -104,7 +107,22 @@ public class HierQueryRequest extends AbstractRequest {
                 onEvent: function( e:Event ) {
                     //TODO: Keep this prinln in while validating the SOAP to REST Conversion iteration
                     //println("Event:{e}");
-                    if (e.type == PullParser.START_VALUE) {
+                    if (e.type == PullParser.START_ARRAY) {
+                        if (e.level == 2) {
+                            if (e.name == "Children") {
+                                resetProcessingFlags();
+                                processingChildren = true;
+                            }
+                        }
+                    }
+                    else if (e.type == PullParser.END_ARRAY) {
+                        if (e.level == 2) {
+                            if (e.name == "Children") {
+                                processingChildren = false;
+                            }
+                        }
+                    }
+                    else if (e.type == PullParser.START_VALUE) {
                         if (e.level == 2) {
                             if (e.name == "Owner") {
                                 resetProcessingFlags();
@@ -173,6 +191,9 @@ public class HierQueryRequest extends AbstractRequest {
                                 }
                                 else if (e.name == "FormattedID") {
                                     curHierReq.FormattedID = e.text;
+                                }
+                                else if (e.name == "PlanEstimate") {
+                                    curHierReq.PlanEstimate = e.numberValue;
                                 }
                                 else if (e.name == "Rank") {
                                     curHierReq.Rank = e.numberValue;
@@ -261,16 +282,39 @@ public class HierQueryRequest extends AbstractRequest {
                                     curProject._type = e.text;
                                 }
                             }
+                            else if (processingChildren) {
+                                if (e.name == "_rallyAPIMajor") {
+                                    curChild._rallyAPIMajor = e.text;
+                                }
+                                else if (e.name == "_rallyAPIMinor") {
+                                    curChild._rallyAPIMinor = e.text;
+                                }
+                                else if (e.name == "_ref") {
+                                    curChild._ref = e.text;
+                                }
+                                else if (e.name == "_refObjectName") {
+                                    curChild._refObjectName = e.text;
+                                }
+                                else if (e.name == "_type") {
+                                    curChild._type = e.text;
+                                }
+                            }
                         }
                     }
                     else if (e.type == PullParser.START_ARRAY_ELEMENT) {
                         if (e.name == "Results") {
                             curHierReq = HierarchicalRequirement {};
                         }
+                        else if (e.name == "Children") { //TODO: Use level, etc., to distinguish which element these Children belong to
+                            curChild = HierarchicalRequirement {};
+                        }
                     }
                     else if (e.type == PullParser.END_ARRAY_ELEMENT) {
                         if (e.name == "Results") {
                             insert curHierReq into wrapper.HierQueryResult.Results;
+                        }
+                        else if (e.name == "Children") { //TODO: Use level, etc., to distinguish which element these Children belong to
+                            insert curChild into curHierReq.Children;
                         }
                     }
                 }
@@ -280,10 +324,10 @@ public class HierQueryRequest extends AbstractRequest {
             is.close();
             gotResult(wrapper);
         }
-      }
+    }
 
     function createHttpRequest():Void {
-        println("endPoint:{endPoint}");
+        //println("endPoint:{endPoint}");
         def username = model.login.userName;
         def password = model.login.password;
         wrapper = HierQueryResultWrapper {};
@@ -299,9 +343,6 @@ public class HierQueryRequest extends AbstractRequest {
                 e.printStackTrace();
             }
             onInput: parseResponse
-            onDone: function() {
-                //println("HttpRequest is done, responseCode:{httpRequest.responseCode}");
-            }
         }
         httpRequest.start();
     }

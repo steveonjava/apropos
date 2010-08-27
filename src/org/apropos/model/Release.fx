@@ -94,7 +94,8 @@ public class Release extends StoryContainer {
                       "&projectScopeDown=true"
                       "&order=Rank"
                       //TODO: Implement ability to read array of elements when using fetch
-                      "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,RoadmapLevel,Rank,ScheduleState,Owner,Project,Parent,ObjectID"
+                      //"&fetch=fetch"
+                      "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,RoadmapLevel,Rank,ScheduleState,Owner,Project,Parent,PlanEstimate,ObjectID"
                       "&start=1"
                       "&pagesize=100"
 

@@ -47,8 +47,9 @@ import org.apropos.model.domain.Project;
 import org.apropos.model.domain.User;
 import org.jfxtras.util.BrowserUtil;
 import org.apropos.model.service.HierUpdateRequest;
-import org.apropos.model.domain.DomainObjectWrapper;
-import org.apropos.model.service.ReadRequest;
+import org.apropos.model.domain.HierQueryResultWrapper;
+import org.apropos.model.service.HierQueryRequest;
+import org.jfxtras.util.SequenceUtil;
 
 /**
  * @author Stephen Chin
@@ -127,14 +128,6 @@ public class Story extends XObject, Comparable {
         }
     }
     public var inPackage:String;
-    public var acceptanceTest:String;
-    public var iteration1:String;
-    public var iteration2:String;
-    public var iteration3:String;
-    public var iteration4:String;
-    public var iteration5:String;
-    public var iteration6:String;
-    public var overflow:String;
 
     public function browse():Void {
         BrowserUtil.browse("{RallyModel.server}slm/detail/ar/{hierarchicalRequirement.ObjectID}");
@@ -279,18 +272,9 @@ public class Story extends XObject, Comparable {
 //        inPackage = hierarchicalRequirement.get_package();
 //        if (inPackage == "") inPackage = "<missing package>";
 
-        //TODO: Replace this text-search-based way of determining state with a more determisitic way?
-        var desc = description.toLowerCase();
-        acceptanceTest = if (desc.contains("acceptance") or desc.contains("criteria")) "Y" else "N";
         stage = hierarchicalRequirement.RoadmapKanbanState;
 
-        //TODO: Implement with REST
-//        def children = hierarchicalRequirement.getChildren();
-//        if (children == null or children.length == 0) {
-//            estimate = if (hierarchicalRequirement.getPlanEstimate() == null) 0 else hierarchicalRequirement.getPlanEstimate();
-//        } else {
-//            loadEstimate(hierarchicalRequirement, true);
-//        }
+        loadEstimate(hierarchicalRequirement, true);
 
         initialized = true;
         promoteStage();
@@ -313,7 +297,44 @@ public class Story extends XObject, Comparable {
 
 
     function loadEstimate(parent:HierarchicalRequirement, top:Boolean):Void {
-        //TODO: Implement with REST
+        var query = "query=(Parent = \"{parent._ref}\")";
+        query = query.replaceAll(" ", "%20");
+
+        var readRequest:HierQueryRequest = HierQueryRequest {
+            endPoint: "{model.server}{model.endpointPath}hierarchicalrequirement.js"
+                      "?{query}"
+                      //"&projectScopeUp=false"
+                      //"&projectScopeDown=true"
+                      "&order=Rank"
+                      //TODO: Implement ability to read array of elements when using fetch
+                      "&fetch=true"
+                      //"&fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,RoadmapLevel,Rank,ScheduleState,Owner,Project,Parent,ObjectID"
+                      "&start=0"
+                      "&pagesize=100"
+
+            onResponse: function(wrapper:HierQueryResultWrapper):Void {
+                model.waiting--;
+                var queryResult = wrapper.HierQueryResult;
+                if (sizeof queryResult.Errors > 0) {
+                    //TODO: Implement the Errors and Warnings elements
+                    println("Unable to load release {name} due to the following errors:");
+                    for (error in queryResult.Errors) println('ERROR: {error}"');
+                }
+                else {
+                    var fetchedChildren = for (do in queryResult.Results) do as HierarchicalRequirement;
+                    if (top) {
+                        estimate = SequenceUtil.sum(for (child in fetchedChildren where child.ScheduleState != "Accepted") child.PlanEstimate);
+                    }
+                }
+            }
+            onError: function(obj:Object):Void {
+                model.waiting--;
+                println("Unable to load release {name} due to the following exception:{obj}");
+            }
+        }
+        readRequest.start();
+
+        //TODO: Analyze the original logic to make sure that it was represented correctly in the REST conversion above
         /*
         model.waiting++;
         XWorker {
