@@ -53,7 +53,7 @@ public class HierarchicalRequirement extends Artifact {
     /**
      *
      */
-    public var Children:RefObject[];
+    public var Children:HierarchicalRequirement[];
 
     /**
      *
