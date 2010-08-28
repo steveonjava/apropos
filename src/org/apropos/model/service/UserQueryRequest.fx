@@ -269,7 +269,7 @@ public class UserQueryRequest extends AbstractRequest {
             location: endPoint
             method: HttpRequest.GET
             onException: function(e) {
-                e.printStackTrace();
+                insert "Exception: {e.getClass()} {e.getMessage()}" into errors;
             }
             onInput: parseResponse
             onDone: function() {
