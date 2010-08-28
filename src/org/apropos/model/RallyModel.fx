@@ -27,21 +27,12 @@
  */
 package org.apropos.model;
 
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.UserProfile;
-import com.rallydev.webservice.v1_19.rallyworkspace.service.RallyService;
-import com.rallydev.webservice.v1_19.rallyworkspace.service.RallyServiceServiceLocator;
 import javafx.scene.image.Image;
 import javafx.util.Math;
-import org.apache.axis.client.Stub;
 import org.jfxtras.lang.XObject;
 import org.jfxtras.util.SequenceUtil;
 import javafx.stage.Alert;
-import org.apache.axis.AxisFault;
 import javafx.util.Sequences;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Workspace;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Subscription;
 import org.apropos.model.domain.DomainObjectWrapper;
 import org.apropos.model.service.ReadRequest;
 import org.apropos.model.domain.Project;
@@ -55,8 +46,9 @@ import org.apropos.model.service.UserQueryRequest;
 /**
  * @author Stephen Chin
  * @author Keith Combs
+ * @author Jim Weaver
  */
-public def APROPOS_VERSION = "0.8.36";
+public def APROPOS_VERSION = "0.8.37";
 
 public var readOnly:Boolean;
 
@@ -66,11 +58,9 @@ public def server = bind if (community) "https://community.rallydev.com/" else i
 public def endpointPath = "slm/webservice/1.19/";
 
 public def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "catherine@rallydev.com";
-//def GUEST_USER = if (community) "apropos@jfxtras.org" else if (show) "peggy@acme.com" else "james.l.weaver@gmail.com";
 public def GUEST_PASSWORD = if (community) "AproposFX" else if (show) "4apropos" else "";
 
 public def instance = RallyModel {}
-package def projectsManager:ProjectsManager = ProjectsManager {};
 
 public class RallyModel extends XObject {
 
@@ -90,7 +80,6 @@ public class RallyModel extends XObject {
     public-init var currentRelease:Release;
     public-init var iterations = ["Iteration 5 (R2)", "Iteration 6 (R2)", "Iteration 7 (R2)", "Iteration 8 (R3)", "Iteration 9 (R3)", "Iteration 10 (R3)"];
     
-    public-read var wsdlUser:com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
     public-read var myUser:User;
 
     public-read var myUserProfile:UserProfile;
@@ -103,17 +92,12 @@ public class RallyModel extends XObject {
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
     public-init var estimateToActualRatio = 4.53;
     public-init var actualToCostRatio = 66.5;
-    public-read var rallyService:RallyService;
     public var backlog:Backlog;
     public var releases:Release[];
     public var stages:Stage[];
 
     public var mainProjectName:String;
     public-read var mainProject:Project on replace {
-        //TODO: Find better way of governing when loadReleases() is invoked
-//        if (mainProject != null and roadmapKanbanStatesLoaded and roadmapReleasesLoaded) {
-//            loadReleases();
-//        }
     };
     var defaultProject:Project;
     public var waiting = 0;
@@ -212,22 +196,15 @@ public class RallyModel extends XObject {
     def startLoading:Boolean = bind (roadmapKanbanStatesLoaded and roadmapReleasesLoaded) on replace {
         if (startLoading) {
             loadReleases();
-
-            //TODO: Put back in when workspaces are to be selectable in dropdown
             loadWorkspaces();
         }
     }
 
     public function doLogin():Void {
-        try {
-            processingLogin = true;
-            createService();
-            loggedIn = true;
-            retrieveCustomFieldValues();
-        } catch (e:AxisFault) {
-            processingLogin = false;
-            Alert.inform("Login Failed", "Login failed to Rally.  Please double check your username and password.");
-        }
+        processingLogin = true;
+        createService();
+        loggedIn = true;
+        retrieveCustomFieldValues();
     }
 
     public function retrieveCustomFieldValues():Void {
@@ -243,6 +220,9 @@ public class RallyModel extends XObject {
         };
     }
 
+    /**
+     * TODO: Consider renaming this function, as a service is no longer being created
+     */
     function createService():Void {
         var query = "query=(Name = \"{login.userName}\")";
         query = query.replaceAll(" ", "%20");
@@ -282,81 +262,12 @@ public class RallyModel extends XObject {
             }
         }
         readRequest.start();
-
-//        rallyService = new RallyServiceServiceLocator().getRallyService();
-//
-//        var stub = rallyService as Stub;
-//        stub.setUsername(login.userName);
-//        stub.setPassword(login.password);
-//
-//        stub.setMaintainSession(true);
-
-//TODO:Remove
-//        wsdlUser = rallyService.getCurrentUser() as com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
-//        println("wsdlUser.getRef():{wsdlUser.getRef()}");
-
-//        if (wsdlUser != null) {
-        // Get the logged-user, project, and workspace
-//        var userReadRequest:ReadRequest = ReadRequest {
-//            endPoint: "{wsdlUser.getRef()}.js?fetch=subscription,userprofile"
-//            onResponse: function(wrapper:DomainObjectWrapper):Void {
-////                println("In ReadRequest#onResponse, wrapper.User:{wrapper.User}");
-//                myUser = wrapper.User;
-//                loadUserProfile();
-//                //loadMainProjects();
-//            }
-//            onError: function(obj:Object):Void {
-////                println("In onError, obj:{obj}");
-//            }
-//        }
-//        userReadRequest.start();
-            //myUserProfile = myUser.getUserProfile();
-            //myUserProfile = rallyService.read(myUserProfile) as UserProfile;
-            //def mainProjectWsdl = myUserProfile.getDefaultProject();
-
-//            var readRequest:ReadRequest = ReadRequest {
-//                endPoint: "{mainProjectWsdl.getRef()}.js?fetch=name,children"
-//                onResponse: function(wrapper:DomainObjectWrapper):Void {
-//                    println("In ReadRequest#onResponse for mainProjectWsdl, wrapper.Project:{wrapper.Project}");
-//                    mainProject = wrapper.Project;
-//                    defaultProject = mainProject;
-//                    loadMainProjects();
-//                }
-//                onError: function(obj:Object):Void {
-//                    println("In onError, obj:{obj}");
-//                }
-//            }
-//            readRequest.start();
-
-            //TODO: Handle case where default project isn't set
-            //var proj = rallyService.read(mainProject);
-            //var proj = projectsManager.read(mainProject);
-//            if (proj instanceof OperationResult) {
-//                def operRes = proj as OperationResult;
-//                Alert.inform("No default project set for user.  Please set a default project in Rally");
-//                println("operRes.getErrors() = {operRes.getErrors()}");
-//            }
-//            else {
-//                defaultProject = projectsManager.read(mainProject) as Project;
-//                mainProject = defaultProject;
-//                mainProjectName = mainProject.getName();
-//                println("mainProject.getRef():{mainProject.getRef()}");
-//
-//                defaultWorkspace = myUserProfile.getDefaultWorkspace();
-//                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
-//            }
-//        }
-//        else {
-//            println("Unable to login user");
-//            Alert.inform("Unable to login user");
-//        }
     }
 
     function loadUserProfile():Void {
         var readRequest:ReadRequest = ReadRequest {
             endPoint: "{myUser.UserProfile._ref}?fetch=defaultproject,defaultworkspace"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-                println("In ReadRequest#onResponse, wrapper.UserProfile:{wrapper.UserProfile}");
                 myUserProfile = wrapper.UserProfile;
                 
                 mainProject = myUserProfile.DefaultProject;
@@ -369,12 +280,11 @@ public class RallyModel extends XObject {
                 loadMainProjects();
             }
             onError: function(obj:Object):Void {
-//                println("In onError, obj:{obj}");
+                println("In loadUserProfile#onError, obj:{obj}");
             }
         }
         readRequest.start();
     }
-
 
     function loadReleases() {
         backlog = Backlog {model: this}
@@ -395,11 +305,9 @@ public class RallyModel extends XObject {
     }
 
     function loadMainProjects():Void {
-        println("In loadMainProjects, mainProject._refObjectName:{mainProject._refObjectName}");
         var readRequest:ReadRequest = ReadRequest {
             endPoint: "{mainProject._ref}?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-//                println("In ReadRequest#onResponse, wrapper.Project:{wrapper.Project}");
                 mainProject = wrapper.Project;
                 delete mainProjects;
                 insert mainProject into mainProjects;
@@ -407,7 +315,7 @@ public class RallyModel extends XObject {
                 mainProjects = Sequences.sort(mainProjects, new ProjectNameComparator()) as Project[];
             }
             onError: function(obj:Object):Void {
-//                println("In onError, obj:{obj}");
+                println("In loadMainProjects#onError, obj:{obj}");
             }
         }
         readRequest.start();
@@ -424,61 +332,6 @@ public class RallyModel extends XObject {
         else return null;
     }
 
-//    function loadMainProjects():Void {
-//        delete mainProjects;
-//        insert mainProject into mainProjects;
-//        getChildProjects(mainProject);
-//        mainProjects = Sequences.sort(mainProjects, new ProjectComparator()) as Project[];
-//    }
-
-//    function getChildProjects(project:Project):Project[] {
-//        //TODO: Implement "https://rallytest1.rallydev.com/slm/webservice/1.20/project/334329159.js?fetch=Children&query=%28Name%20=%20%22Product%20Dev%22%29&State=Open"
-//        // Only consider open projects
-//        if (project.getState() == "Open") {
-//            var children:Project[] = project.getChildren();
-//            if (sizeof children > 0) {
-//                for (child in children) {
-//                    //def proj = rallyService.read(child) as Project;
-//                    def proj = projectsManager.read(child) as Project;
-//                    // Only insert projects that are open, TODO: and have no open child projects,
-//                    if (proj.getState() == "Open") {
-//                         insert proj into mainProjects;
-//                    }
-//                    getChildProjects(proj);
-//                }
-//
-//            }
-//            else {
-//                return null;
-//            }
-//        }
-//        else {
-//            return null;
-//        }
-//    }
-
-//    function loadProjectsForCurrentWorkspaceByQuery():Void {
-//        def results = rallyService.query(selectedWorkspace, "Project", "(State = \"Open\")", "Name", true, 0, 100).getResults() as Project[];
-//        if (sizeof results > 0) {
-//            projectsInCurrentWorkspace = results as Project[];
-//        }
-//        else {
-//            println("In loadProjectsForCurrentWorkspaceByQuery, no results returned");
-//        }
-//    }
-//
-//    function loadProjectsForCurrentWorkspace():Void {
-//        var openProjectsInWorkspace:Project[];
-//        def projectsInWorkspace:Project[] = selectedWorkspace.getProjects();
-//        for (project in projectsInWorkspace) {
-//            def proj = projectsManager.read(project) as Project;
-//            if (proj.getState() == "Open") {
-//                insert proj into openProjectsInWorkspace;
-//            }
-//        }
-//        projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
-//    }
-
     /**
      * TODO: Consider migrating this from RedFX to pure JSON parser after measuring performance differences
      */
@@ -490,7 +343,6 @@ public class RallyModel extends XObject {
         var readRequest:ReadRequest = ReadRequest {
             endPoint: "{subscription._ref}?fetch=Workspaces"
             onResponse: function(wrapper:DomainObjectWrapper):Void {
-                println("In ReadRequest#onResponse, wrapper.Subscription:{wrapper.Subscription}");
                 subscription = wrapper.Subscription;
 
                 workspaces = subscription.Workspaces;
@@ -498,7 +350,7 @@ public class RallyModel extends XObject {
                 selectedWorkspaceIndex = Sequences.indexOf(workspacesNames, defaultWorkspace._refObjectName);
             }
             onError: function(obj:Object):Void {
-                println("In onError, obj:{obj}");
+                println("In loadWorkspaces#onError, obj:{obj}");
             }
         }
         readRequest.start();
@@ -527,19 +379,6 @@ public class RallyModel extends XObject {
     public bound function overSubLimit(stageIndex:Integer):Boolean {
         return false;
     }
-
-// causes a big performance issues - need to investigate further...
-//    bound function overThemeLimit(stageIndex:Integer, themeIndex:Integer, theme:String) {
-//        def limitByCount = wipLimitByCount[stageIndex];
-//        def stageLimit = wipLimits[stageIndex];
-//        def stage = stages[stageIndex];
-//        def themeLimit = stageLimit * themeRatios[themeIndex];
-//        def filteredStories = stage.stories[s|s.inPackage == theme];
-//        def filteredCount = sizeof filteredStories;
-//        def filteredSize = SequenceUtil.sum(for (story in filteredStories) story.estimate);
-//        def themeTotal = if (limitByCount) filteredCount else filteredSize;
-//        themeTotal > themeLimit;
-//    }
 
     public function requestAccess():Boolean {
         if (readOnly and not warned) {

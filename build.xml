@@ -44,34 +44,12 @@
     nbproject/build-impl.xml file. 
 
     -->
-    <property name="generated.dir" value="gen_src"/>
-    <property name="locala.wsdl" value="salesworkspace.xml"/>
-    <property name="localb.wsdl" value="rallyworkspace.xml"/>
-
-    <target name="check-soapapi">
-        <mkdir dir="${generated.dir}"/>
-        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${locala.wsdl}" />
-        <uptodate property="soapapi.uptodate" targetfile="${generated.dir}/uptodate.txt" srcfile="${localb.wsdl}" />
-    </target>
-
-    <target name="generate-wsdl" depends="check-soapapi" unless="soapapi.uptodate">
-        <path id="axis.classpath">
-          <fileset dir="lib">
-            <include name="**/*.jar" />
-          </fileset>
-        </path>
-        <taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
-        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${locala.wsdl}"/>
-        <axis-wsdl2java output="${generated.dir}" nowrapped="true" verbose="true" url="${localb.wsdl}"/>
-        <touch file="${generated.dir}/uptodate.txt"/>
-    </target>
-
-    <target name="-pre-compile" depends="generate-wsdl"/>
+    <target name="-pre-compile"/>
 
     <target depends="init,deps-jar,-pre-compile" name="-do-compile">
         <exec executable="${platform.fxhome}/bin/javafxpackager${binary.extension}" failonerror="true" logerror="true">
             <arg value="-src"/>
-            <arg value="${src.gen_src.dir};${src.dir}"/>
+            <arg value="${src.dir}"/>
             <arg value="-workdir"/>
             <arg file="${build.dir}"/>
             <arg value="-d"/>

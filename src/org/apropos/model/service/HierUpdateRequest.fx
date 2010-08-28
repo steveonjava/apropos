@@ -110,8 +110,8 @@ public class HierUpdateRequest extends AbstractRequest {
         def password = model.login.password;
 
         //TODO: Keep the print statements in while validating functionality
-        println("In HierUpdateRequest#createHttpRequest, hierarchicalRequirement.toString():");
-        println(hierarchicalRequirement.toString());
+//        println("In HierUpdateRequest#createHttpRequest, hierarchicalRequirement.toString():");
+//        println(hierarchicalRequirement.toString());
 
         httpRequest = HttpRequest {
             headers: [
