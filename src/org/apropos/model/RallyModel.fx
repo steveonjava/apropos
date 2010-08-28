@@ -202,9 +202,8 @@ public class RallyModel extends XObject {
 
     public function doLogin():Void {
         processingLogin = true;
+        loggedIn = false;
         createService();
-        loggedIn = true;
-        retrieveCustomFieldValues();
     }
 
     public function retrieveCustomFieldValues():Void {
@@ -222,6 +221,7 @@ public class RallyModel extends XObject {
 
     /**
      * TODO: Consider renaming this function, as a service is no longer being created
+     * TODO: Make the error paths more straightforward
      */
     function createService():Void {
         var query = "query=(Name = \"{login.userName}\")";
@@ -234,28 +234,36 @@ public class RallyModel extends XObject {
             onResponse: function(wrapper:UserQueryResultWrapper):Void {
                 var queryResult = wrapper.UserQueryResult;
                 if (sizeof queryResult.Errors > 0) {
-                    println("Unable to load user {login.userName} due to the following errors:");
+                    processingLogin = false;
+                    Alert.inform("Unable to login user");
                     for (error in queryResult.Errors) println('ERROR: {error}"');
+                    return;
                 }
                 else {
                     def results = queryResult.Results;
 
                     if (sizeof results > 0) {
+                        loggedIn = true;
                         myUser = results[0];
                         loadUserProfile();
+                        retrieveCustomFieldValues();
                     }
                     else {
+                        processingLogin = false;
                         Alert.inform("Unable to login user");
                         println("User {login.userName} not found");
+                        return;
                     }
                 }
             }
             //TODO: Consolidate onError and onErrors
             onError: function(obj:Object):Void {
+                 processingLogin = false;
                  Alert.inform("Unable to login user");
                  println("Unable to load user {login.userName} due to the following exception:{obj}");
             }
             onErrors: function(errors:String[]):Void {
+                processingLogin = false;
                 Alert.inform("Unable to login user");
                 println("Unable to load user {login.userName} due to the following errors:");
                 for (error in errors) println('ERROR: {error}"');
