@@ -63,8 +63,13 @@ public class HierQueryRequest extends AbstractRequest {
 
     public var onResponse:function(hierQueryResultWrapper:HierQueryResultWrapper);
 
+    //TODO: Consolidate these
     public var onError:function(obj:Object);
+    public var onErrors:function(:String[]);
 
+    var errors:String[];
+    var warnings:String[];
+    
     var httpRequest:HttpRequest;
     var wrapper:HierQueryResultWrapper;
     var curHierReq:HierarchicalRequirement;
@@ -310,6 +315,14 @@ public class HierQueryRequest extends AbstractRequest {
                         }
                     }
                     else if (e.type == PullParser.END_ARRAY_ELEMENT) {
+                        if (e.level == 1) {
+                            if (e.name == "Errors") {
+                                insert e.text into errors;
+                            }
+                            else if (e.name == "Warnings") {
+                                insert e.text into warnings;
+                            }
+                        }
                         if (e.name == "Results") {
                             insert curHierReq into wrapper.HierQueryResult.Results;
                         }
@@ -340,9 +353,14 @@ public class HierQueryRequest extends AbstractRequest {
             location: endPoint
             method: HttpRequest.GET
             onException: function(e) {
-                e.printStackTrace();
+                insert "Exception: {e.getClass()} {e.getMessage()}" into errors;
             }
             onInput: parseResponse
+            onDone: function() {
+                if (sizeof errors > 0) {
+                    onErrors(errors);
+                }
+            }
         }
         httpRequest.start();
     }

@@ -260,6 +260,7 @@ public class Story extends XObject, Comparable {
         release = model.getRelease(hierarchicalRequirement.RoadmapRelease);
         rank = new BigDecimal(hierarchicalRequirement.Rank);
         owner = hierarchicalRequirement.Owner;
+        estimate = hierarchicalRequirement.PlanEstimate;
 
         project = hierarchicalRequirement.Project;
         //TODO: Determine if next three lines are necessary
@@ -274,7 +275,8 @@ public class Story extends XObject, Comparable {
 
         stage = hierarchicalRequirement.RoadmapKanbanState;
 
-        loadEstimate(hierarchicalRequirement, true);
+        //TODO: Remove when sure it's not required, and use in S19376
+        //loadEstimate(hierarchicalRequirement, true);
 
         initialized = true;
         promoteStage();
@@ -295,7 +297,7 @@ public class Story extends XObject, Comparable {
         }
     }
 
-
+    /* Use much of this code for S19376
     function loadEstimate(parent:HierarchicalRequirement, top:Boolean):Void {
         var query = "query=(Parent = \"{parent._ref}\")";
         query = query.replaceAll(" ", "%20");
@@ -333,70 +335,8 @@ public class Story extends XObject, Comparable {
             }
         }
         readRequest.start();
-
-        //TODO: Analyze the original logic to make sure that it was represented correctly in the REST conversion above
-        /*
-        model.waiting++;
-        XWorker {
-            inBackground: function() {
-                model.rallyService.query(null, "HierarchicalRequirement", "(Parent = \"{parent.getRef()}\")", "Rank", true, 0, 100);
-            }
-            onFailure: function(e) {
-                model.waiting--;
-                println("Unable to load estimate for Story \"{name}\" due to the following exception:");
-                e.printStackTrace();
-            }
-            onDone: function(result) {
-                model.waiting--;
-                def queryResult = result as QueryResult;
-                for (error in queryResult.getErrors()) println('ERROR: {error}"');
-                if (sizeof queryResult.getErrors() > 0) 0 else {
-                    var fetchedChildren = for (do in queryResult.getResults()) do as HierarchicalRequirement;
-                    if (top) {
-                        estimate = SequenceUtil.sum(for (child in fetchedChildren where child.getScheduleState() != "Accepted") if (child.getPlanEstimate() == null) 0 else child.getPlanEstimate());
-                    }
-                    for (child in fetchedChildren) {
-                        def name = child.getIteration().getRefObjectName();
-                        for (iteration in model.iterations where iteration == name) {
-                            if (indexof iteration == 0) {
-                                iteration1 = maybeAppend(iteration1, child.getProject().getRefObjectName());
-                                scheduled = true;
-                            } else if (indexof iteration == 1) {
-                                iteration2 = maybeAppend(iteration2, child.getProject().getRefObjectName());
-                                scheduled = true;
-                            } else if (indexof iteration == 2) {
-                                iteration3 = maybeAppend(iteration3, child.getProject().getRefObjectName());
-                                scheduled = true;
-                            } else if (indexof iteration == 3) {
-                                iteration4 = maybeAppend(iteration4, child.getProject().getRefObjectName());
-                                scheduled = true;
-                            } else if (indexof iteration == 4) {
-                                iteration5 = maybeAppend(iteration5, child.getProject().getRefObjectName());
-                                scheduled = true;
-                            } else if (indexof iteration == 5) {
-                                iteration6 = maybeAppend(iteration6, child.getProject().getRefObjectName());
-                                scheduled = true;
-                            } else {
-                                overflow = child.getProject().getRefObjectName();
-                            }
-                        }
-                        loadEstimate(child, false);
-                    }
-                }
-            }
-        }
-        */
     }
-
-    function maybeAppend(base:String, addition:String):String {
-        if (base.contains(addition)) {
-            return base;
-        } else if (base == "") {
-            return addition;
-        } else {
-            return "{base}, {addition}";
-        }
-    }
+    */
 
     override function compareTo(obj:Object) {
         return rank.compareTo((obj as Story).rank);
