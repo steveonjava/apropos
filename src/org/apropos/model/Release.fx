@@ -93,7 +93,6 @@ public class Release extends StoryContainer {
                       "&projectScopeUp=false"
                       "&projectScopeDown=true"
                       "&order=Rank"
-                      //TODO: Implement ability to read array of elements when using fetch
                       //"&fetch=fetch"
                       "&fetch=FormattedID,Description,RoadmapAllocation,RoadmapKanbanState,RoadmapRelease,RoadmapLevel,Rank,ScheduleState,Owner,Project,Parent,PlanEstimate,ObjectID"
                       "&start=1"
@@ -148,9 +147,14 @@ public class Release extends StoryContainer {
                     }
                 }
             }
+            //TODO: Consolidate onError and onErrors
             onError: function(obj:Object):Void {
                 model.waiting--;
                 println("Unable to load release {name} due to the following exception:{obj}");
+            }
+            onErrors: function(errors:String[]):Void {
+                model.waiting--;
+                println("Unable to load release {name} due to the following errors: [{for (error in errors)"\n  {error}"}\n]");
             }
         }
         readRequest.start();

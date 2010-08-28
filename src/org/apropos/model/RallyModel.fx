@@ -49,12 +49,14 @@ import org.apropos.model.domain.User;
 import org.apropos.model.domain.UserProfile;
 import org.apropos.model.domain.Subscription;
 import org.apropos.model.domain.Workspace;
+import org.apropos.model.domain.UserQueryResultWrapper;
+import org.apropos.model.service.UserQueryRequest;
 
 /**
  * @author Stephen Chin
  * @author Keith Combs
  */
-public def APROPOS_VERSION = "0.8.35";
+public def APROPOS_VERSION = "0.8.36";
 
 public var readOnly:Boolean;
 
@@ -210,8 +212,9 @@ public class RallyModel extends XObject {
     def startLoading:Boolean = bind (roadmapKanbanStatesLoaded and roadmapReleasesLoaded) on replace {
         if (startLoading) {
             loadReleases();
+
+            //TODO: Put back in when workspaces are to be selectable in dropdown
             loadWorkspaces();
-            //loadMainProjects();
         }
     }
 
@@ -241,33 +244,72 @@ public class RallyModel extends XObject {
     }
 
     function createService():Void {
-        rallyService = new RallyServiceServiceLocator().getRallyService();
+        var query = "query=(Name = \"{login.userName}\")";
+        query = query.replaceAll(" ", "%20");
+        var readRequest:UserQueryRequest = UserQueryRequest {
+            endPoint: "{server}{endpointPath}user.js"
+                      "?{query}"
+                      "&fetch=userprofile,subscription"
 
-        var stub = rallyService as Stub;
-        stub.setUsername(login.userName);
-        stub.setPassword(login.password);
+            onResponse: function(wrapper:UserQueryResultWrapper):Void {
+                var queryResult = wrapper.UserQueryResult;
+                if (sizeof queryResult.Errors > 0) {
+                    println("Unable to load user {login.userName} due to the following errors:");
+                    for (error in queryResult.Errors) println('ERROR: {error}"');
+                }
+                else {
+                    def results = queryResult.Results;
 
-        stub.setMaintainSession(true);
-
-//TODO:Remove
-        wsdlUser = rallyService.getCurrentUser() as com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
-//        println("wsdlUser.getRef():{wsdlUser.getRef()}");
-
-        if (wsdlUser != null) {
-        // Get the logged-user, project, and workspace
-        var userReadRequest:ReadRequest = ReadRequest {
-            endPoint: "{wsdlUser.getRef()}.js?fetch=subscription,userprofile"
-            onResponse: function(wrapper:DomainObjectWrapper):Void {
-//                println("In ReadRequest#onResponse, wrapper.User:{wrapper.User}");
-                myUser = wrapper.User;
-                loadUserProfile();
-                //loadMainProjects();
+                    if (sizeof results > 0) {
+                        myUser = results[0];
+                        loadUserProfile();
+                    }
+                    else {
+                        Alert.inform("Unable to login user");
+                        println("User {login.userName} not found");
+                    }
+                }
             }
+            //TODO: Consolidate onError and onErrors
             onError: function(obj:Object):Void {
-//                println("In onError, obj:{obj}");
+                 Alert.inform("Unable to login user");
+                 println("Unable to load user {login.userName} due to the following exception:{obj}");
+            }
+            onErrors: function(errors:String[]):Void {
+                Alert.inform("Unable to login user");
+                println("Unable to load user {login.userName} due to the following errors:");
+                for (error in errors) println('ERROR: {error}"');
             }
         }
-        userReadRequest.start();
+        readRequest.start();
+
+//        rallyService = new RallyServiceServiceLocator().getRallyService();
+//
+//        var stub = rallyService as Stub;
+//        stub.setUsername(login.userName);
+//        stub.setPassword(login.password);
+//
+//        stub.setMaintainSession(true);
+
+//TODO:Remove
+//        wsdlUser = rallyService.getCurrentUser() as com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
+//        println("wsdlUser.getRef():{wsdlUser.getRef()}");
+
+//        if (wsdlUser != null) {
+        // Get the logged-user, project, and workspace
+//        var userReadRequest:ReadRequest = ReadRequest {
+//            endPoint: "{wsdlUser.getRef()}.js?fetch=subscription,userprofile"
+//            onResponse: function(wrapper:DomainObjectWrapper):Void {
+////                println("In ReadRequest#onResponse, wrapper.User:{wrapper.User}");
+//                myUser = wrapper.User;
+//                loadUserProfile();
+//                //loadMainProjects();
+//            }
+//            onError: function(obj:Object):Void {
+////                println("In onError, obj:{obj}");
+//            }
+//        }
+//        userReadRequest.start();
             //myUserProfile = myUser.getUserProfile();
             //myUserProfile = rallyService.read(myUserProfile) as UserProfile;
             //def mainProjectWsdl = myUserProfile.getDefaultProject();
@@ -303,11 +345,11 @@ public class RallyModel extends XObject {
 //                defaultWorkspace = myUserProfile.getDefaultWorkspace();
 //                defaultWorkspace = rallyService.read(defaultWorkspace) as Workspace;
 //            }
-        }
-        else {
-            println("Unable to login user");
-            Alert.inform("Unable to login user");
-        }
+//        }
+//        else {
+//            println("Unable to login user");
+//            Alert.inform("Unable to login user");
+//        }
     }
 
     function loadUserProfile():Void {
@@ -437,6 +479,9 @@ public class RallyModel extends XObject {
 //        projectsInCurrentWorkspace = Sequences.sort(openProjectsInWorkspace, new ProjectComparator()) as Project[];
 //    }
 
+    /**
+     * TODO: Consider migrating this from RedFX to pure JSON parser after measuring performance differences
+     */
     function loadWorkspaces():Void {
         delete workspaces;
         //TODO: Put back in
@@ -457,8 +502,6 @@ public class RallyModel extends XObject {
             }
         }
         readRequest.start();
-
-
     }
 
     public function getRelease(releasePlanName:String) {

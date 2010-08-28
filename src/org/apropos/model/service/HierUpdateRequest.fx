@@ -73,10 +73,10 @@ public class HierUpdateRequest extends AbstractRequest {
 
     public var onErrors:function(:String[]);
 
-    var httpRequest:HttpRequest;
-
     var errors:String[];
     var warnings:String[];
+
+    var httpRequest:HttpRequest;
 
     public function start():Void {
         createHttpRequest();

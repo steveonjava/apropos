@@ -28,80 +28,69 @@
 package org.apropos.model.domain;
 
 /**
- * Represents a Rally User object via REST
+ * The results of a query
  * @author Jim Weaver
  */
-public class User extends DomainObject {
+public class UserQueryResult {
 
     /**
      *
      */
-    public var Disabled:Boolean;
+    public var Errors:String[];
 
     /**
      *
      */
-    public var DisplayName:String;
+    public var Warnings:String[];
 
     /**
      *
      */
-    public var EmailAddress:String;
+    public var TotalResultCount:Integer;
 
     /**
      *
      */
-    public var FirstName:String;
+    public var StartIndex:Integer;
 
     /**
      *
      */
-    public var LastName:String;
+    public var PageSize:Integer;
 
     /**
      *
      */
-    public var LastPasswordUpdateDate:String;
+    public var _ref:String;
 
     /**
      *
      */
-    public var MiddleName:String;
+    public var _objectVersion:String;
 
     /**
      *
      */
-    public var RevisionHistory:RefObject;
+    public var _type:String;
 
     /**
      *
      */
-    public var Role:String;
+    public var _refObjectName:String;
 
     /**
      *
      */
-    public var ShortDisplayName:String;
+    public var _rallyAPIMajor:String;
+
+    /**
+     *
+     */
+    public var _rallyAPIMinor:String;
 
     /**
      * 
      */
-    public var TeamMemberships:RefObject[];
-
-    /**
-     *
-     */
-    public var UserName:String;
-
-    /**
-     *
-     */
-    public var UserPermissions:RefObject[];
-
-    /**
-     * 
-     */
-    public var UserProfile:UserProfile;
-
+    public var Results:User[];
 
 }
