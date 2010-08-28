@@ -30,10 +30,7 @@ package org.apropos.model;
 import java.lang.Comparable;
 import java.lang.StringBuilder;
 import org.jfxtras.lang.XObject;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.User;
 import java.math.BigDecimal;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.Project;
-//import com.rallydev.webservice.v1_19.rallyworkspace.domain.HierarchicalRequirement;
 import javafx.util.Math;
 import java.lang.Boolean;
 import java.lang.Object;
@@ -47,9 +44,6 @@ import org.apropos.model.domain.Project;
 import org.apropos.model.domain.User;
 import org.jfxtras.util.BrowserUtil;
 import org.apropos.model.service.HierUpdateRequest;
-import org.apropos.model.domain.HierQueryResultWrapper;
-import org.apropos.model.service.HierQueryRequest;
-import org.jfxtras.util.SequenceUtil;
 
 /**
  * @author Stephen Chin
@@ -156,8 +150,6 @@ public class Story extends XObject, Comparable {
             var updateRequest:HierUpdateRequest = HierUpdateRequest {
                 hierarchicalRequirement: hierarchicalRequirement
                 onDone: function():Void {
-                    //TODO: Keep println in while validating functionality
-                    println("------2: updateRequest DONE");
                     model.waiting--;
                     executing = false;
                     if (dirty) {
@@ -169,11 +161,10 @@ public class Story extends XObject, Comparable {
                 }
                 onErrors: function(errors:String[]):Void {
                     model.waiting--;
-                   println("In onErrors, errors: [{for (error in errors)"\n  {error}"}\n]");
-                   println("hierarchicalRequirement._ref: {hierarchicalRequirement._ref}");
+                    println("In onErrors, errors: [{for (error in errors)"\n  {error}"}\n]");
+                    println("hierarchicalRequirement._ref: {hierarchicalRequirement._ref}");
                 }
             }
-            println("------1: updateRequest STARTED");
             updateRequest.start();
         }
     }
@@ -263,11 +254,6 @@ public class Story extends XObject, Comparable {
         estimate = hierarchicalRequirement.PlanEstimate;
 
         project = hierarchicalRequirement.Project;
-        //TODO: Determine if next three lines are necessary
-//        def proj:Project = hierarchicalRequirement.Project;
-//        if (proj instanceof Project) {
-//            project = model.rallyService.read(proj) as Project;
-//        }
 
         //TODO: Determine if necessary to do the following two lines
 //        inPackage = hierarchicalRequirement.get_package();
@@ -297,7 +283,7 @@ public class Story extends XObject, Comparable {
         }
     }
 
-    /* Use much of this code for S19376
+    /* TODO: Keep for a bit (Use much of this code for S19376)
     function loadEstimate(parent:HierarchicalRequirement, top:Boolean):Void {
         var query = "query=(Parent = \"{parent._ref}\")";
         query = query.replaceAll(" ", "%20");

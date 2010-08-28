@@ -39,13 +39,6 @@ import org.apropos.model.service.HierQueryRequest;
  */
 public class Release extends StoryContainer {
 
-// todo - release fix
-//    public var release:com.rallydev.webservice.v1_19.domain.Release on replace {
-//        if (release != null) {
-//            name = release.getName();
-//        }
-//    }
-
     package var model = RallyModel.instance;
 
     public function getAllocationTotals(name:String):Double {
@@ -101,50 +94,43 @@ public class Release extends StoryContainer {
             onResponse: function(wrapper:HierQueryResultWrapper):Void {
                 model.waiting--;
                 var queryResult = wrapper.HierQueryResult;
-                if (sizeof queryResult.Errors > 0) {
-                    //TODO: Implement the Errors and Warnings elements
-                    println("Unable to load release {name} due to the following errors:");
-                    for (error in queryResult.Errors) println('ERROR: {error}"');
-                }
-                else {
-                    def results = queryResult.Results;
+                def results = queryResult.Results;
 
-                    def newStories = for (domainObject in results) {
-                        def hierarchicalRequirement = domainObject as HierarchicalRequirement;
-                        Story {
-                           hierarchicalRequirement: hierarchicalRequirement
-                        };
+                def newStories = for (domainObject in results) {
+                    def hierarchicalRequirement = domainObject as HierarchicalRequirement;
+                    Story {
+                       hierarchicalRequirement: hierarchicalRequirement
+                    };
+                }
+                insert newStories into stories;
+                for (story in newStories) {
+                    def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
+                    if (insertionPoint < 0) {
+                        insert story.inPackage before model.packageNames[-insertionPoint - 1];
                     }
-                    insert newStories into stories;
-                    for (story in newStories) {
-                        def insertionPoint = Sequences.binarySearch(model.packageNames, story.inPackage);
+                }
+                for (story in newStories) {
+                    def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
+                    if (insertionPoint < 0) {
+                        insert story.parentName before model.epicNames[-insertionPoint - 1];
+                    }
+                }
+                for (story in newStories) {
+                    if (story.roadmapAllocation.trim() != "") {
+                        def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
                         if (insertionPoint < 0) {
-                            insert story.inPackage before model.packageNames[-insertionPoint - 1];
+                            insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
                         }
                     }
-                    for (story in newStories) {
-                        def insertionPoint = Sequences.binarySearch(model.epicNames, story.parentName);
-                        if (insertionPoint < 0) {
-                            insert story.parentName before model.epicNames[-insertionPoint - 1];
-                        }
-                    }
-                    for (story in newStories) {
-                        if (story.roadmapAllocation.trim() != "") {
-                            def insertionPoint = Sequences.binarySearch(model.allocationNames, story.roadmapAllocation);
-                            if (insertionPoint < 0) {
-                                insert story.roadmapAllocation before model.allocationNames[-insertionPoint - 1];
-                            }
-                        }
-                    }
-                    for (stage in model.stages) {
-                        def stageStories = newStories[s|s.stage == stage.name];
-                        insert stageStories into stage.stories;
-                    }
-                    def noStage = newStories[s|s.stage == null];
-                    insert noStage into model.stages[0].stories;
-                    if (sizeof results == 100) {
-                        loadStories(start + 100);
-                    }
+                }
+                for (stage in model.stages) {
+                    def stageStories = newStories[s|s.stage == stage.name];
+                    insert stageStories into stage.stories;
+                }
+                def noStage = newStories[s|s.stage == null];
+                insert noStage into model.stages[0].stories;
+                if (sizeof results == 100) {
+                    loadStories(start + 100);
                 }
             }
             //TODO: Consolidate onError and onErrors

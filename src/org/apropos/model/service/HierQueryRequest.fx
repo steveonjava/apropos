@@ -55,12 +55,6 @@ public class HierQueryRequest extends AbstractRequest {
 
     public-init var endPoint:String;
 
-//    var workspaceRef:String = model.selectedWorkspace._ref on replace {
-//        if (workspaceRef != null) {
-//            println("In ReadRequest#workspaceRef trigger, workspaceRef:{workspaceRef}");
-//        }
-//    };
-
     public var onResponse:function(hierQueryResultWrapper:HierQueryResultWrapper);
 
     //TODO: Consolidate these
@@ -110,8 +104,6 @@ public class HierQueryRequest extends AbstractRequest {
                 input: is
                 documentType: PullParser.JSON;
                 onEvent: function( e:Event ) {
-                    //TODO: Keep this prinln in while validating the SOAP to REST Conversion iteration
-                    //println("Event:{e}");
                     if (e.type == PullParser.START_ARRAY) {
                         if (e.level == 2) {
                             if (e.name == "Children") {
@@ -340,7 +332,6 @@ public class HierQueryRequest extends AbstractRequest {
     }
 
     function createHttpRequest():Void {
-        //println("endPoint:{endPoint}");
         def username = model.login.userName;
         def password = model.login.password;
         wrapper = HierQueryResultWrapper {};

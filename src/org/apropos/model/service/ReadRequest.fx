@@ -56,13 +56,6 @@ public class ReadRequest extends AbstractRequest {
 
     public-init var endPoint:String;
 
-//TODO: Implement in some manner
-//    var workspaceRef:String = model.selectedWorkspace._ref on replace {
-//        if (workspaceRef != null) {
-//            println("In ReadRequest#workspaceRef trigger, workspaceRef:{workspaceRef}");
-//        }
-//    };
-
     public var onResponse:function(domainObjectWrapper:DomainObjectWrapper);
 
     public var onError:function(obj:Object);
