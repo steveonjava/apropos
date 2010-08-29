@@ -162,10 +162,10 @@ public class PlanModule extends AbstractModulePage {
                     action: function() {
                         def story = filteredStories[table.selectedRow];
 //TODO: Put back in
-//                        if (story.project != project) {
-//                            story.project = project;
-//                            //story.projectName = project.getName();
-//                        }
+                        if (story.project != project) {
+                            story.project = project;
+                            //story.projectName = project.getName();
+                        }
                         story.drafted = true;
                         calculateOwnerTotals();
                     }

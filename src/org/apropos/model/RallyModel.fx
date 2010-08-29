@@ -86,7 +86,7 @@ public class RallyModel extends XObject {
     public-read var myImage:Image;
     public-read var ownerImages:Image[];
     //TODO: Make initialTargets, and other values, configurable
-    public-init var initialTargets = ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10", "10"];
+    public-init var initialTargets = for (i in [0..100]) "10";
     public-init var themeRatios = [.05, .38, .27, .16, .03, .08, .01];
     public-init var wipLimits = [0.0, 15.0, 15.0, 15.0, 0.0, 12.0, 12.0, 0.0];
     public-init var wipLimitByCount = [false, false, false, false, false, true, true, false];
